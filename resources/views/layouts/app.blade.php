@@ -16,6 +16,75 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/global.css'])
+
+    <style>
+
+.navbar-nav >.btn-register {
+    border-radius: 75rem;
+    background: white;
+    font-weight: bold;
+    width: 8rem;
+    text-align: center;
+    border: 1px solid transparent;
+    transition: 0.8s;
+}
+
+.navbar-nav >.btn-register:hover {
+    background: transparent;
+    border: 1px solid white;
+    color: white !important;
+    transition: 0.6s;
+}
+
+.navbar-nav > .btn-login {
+    border-radius: 75rem;
+    width: 8rem;
+    border: 1px solid transparent;
+    color: #efc643;
+    background: #ab8c3287;
+    text-align: center;
+}
+
+
+.navbar-nav > .btn-login:hover {
+    border-radius: 75rem;
+    background: #feca002e;
+    color: #feca00;
+    border: 1px solid #feca00;
+}
+
+
+
+
+
+
+/* navbar */
+
+.navbar-logo {
+    width: 3.5em;
+}
+
+.navbar {
+    background: black;
+}
+
+.navbar-brand.title {
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.navbar-nav {
+    gap: 1rem;
+}
+
+.navbar-nav.links>.nav-item>.nav-link:hover {
+    color: #feca00 !important;
+    text-decoration: underline;
+    text-underline-offset: 0.5em;
+    text-decoration-thickness: 2px;
+    text-decoration-color: #feca00;
+}
+    </style>
 </head>
 <body>
     <div id="app">
@@ -65,7 +134,7 @@
                                 @endif
                             @else
                                 <li class="nav-item dropdown">
-                                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    <a id="navbarDropdown" class="nav-link dropdown-toggle" style="color: #aaa" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                         {{ Auth::user()->name }}
                                     </a>
 
