@@ -1,0 +1,22 @@
+.navbar-logo {
+    width: 3.5em;
+}
+
+.navbar {
+    background: #00000087;
+}
+
+.navbar-brand.title {
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.navbar-nav {
+    gap: 1rem;
+}
+
+.btn-register {
+    border-radius: 75rem;
+    background: white;
+    font-weight: bold;
+}
