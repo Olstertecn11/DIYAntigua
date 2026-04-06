@@ -26,10 +26,11 @@ export default function AppNavbar() {
       position="sticky"
       top="0"
       zIndex="1000"
-      bg="rgba(255,255,255,0.85)"
+      //bg="rgba(255,255,255,0.85)"
+      bg="black"
       backdropFilter="blur(12px)"
-      borderBottom="1px solid"
-      borderColor="gray.200"
+    //borderBottom="1px solid"
+    //borderColor="gray.200"
     >
       <Container maxW="7xl">
         <Flex h="72px" align="center" justify="space-between">
