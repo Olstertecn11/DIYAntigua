@@ -48,7 +48,7 @@
 
 .badge-hero{
     background: #fbc9034d;
-    color: #322802;
+    color: #fed94d;
     font-size: 0.8rem;
     border-radius: 0.75rem;
 }
