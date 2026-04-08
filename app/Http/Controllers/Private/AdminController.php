@@ -103,6 +103,16 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('afiliados'));
     }
 
+    // Añade esto dentro de la clase AdminController
+    public function indexAfiliados()
+    {
+        // Obtenemos la información de los socios
+        $afiliados = AfiliadoInfo::with('user')->get();
+
+        // Puedes crear una vista específica o reutilizar la lógica del dashboard
+        return view('admin.dashboard', compact('afiliados'));
+    }
+
     public function logout(Request $request) {
         Auth::logout();
         $request->session()->invalidate();

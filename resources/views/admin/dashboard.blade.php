@@ -1,65 +1,96 @@
 @extends('layouts.admin')
 
 @section('content')
+<div x-data="{ openModal: false }" class="p-8 max-w-7xl mx-auto">
+    <header class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight text-white">Panel de Administración</h1>
+            <p class="text-sm text-[#a1a1a1]">Gestión de socios, reservas y logística de traslados.</p>
+        </div>
+        <div class="flex gap-3">
+            <button @click="openModal = true"
+                    class="bg-white hover:bg-gray-200 text-black font-bold py-2 px-6 rounded-md text-xs transition-all flex items-center shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                <i class="fas fa-plus mr-2"></i> Nuevo Socio
+            </button>
+        </div>
+    </header>
 
-    <div x-data="{ openModal: false }" class="p-6">
-        <div class="bg-transparent rounded shadow">
-            <div class="border-b p-3 flex justify-between items-center">
-                <h5 class="font-bold uppercase text-gray-600">Gestión de Afiliados</h5>
-                <button @click="openModal = true" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm transition">
-                    <i class="fas fa-plus mr-2"></i>Nuevo Socio
-                </button>
-            </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-[#0a0a0a] border border-[#262626] p-6 rounded-xl">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-1">Total Afiliados</p>
+            <h3 class="text-2xl font-bold text-white">{{ count($afiliados) }}</h3>
+        </div>
+        <div class="bg-[#0a0a0a] border border-[#262626] p-6 rounded-xl text-yellow-500">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-1">Comisiones Pendientes</p>
+            <h3 class="text-2xl font-bold italic">Q --.--</h3>
+        </div>
+        <div class="bg-[#0a0a0a] border border-[#262626] p-6 rounded-xl">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-1">Viajes Hoy</p>
+            <h3 class="text-2xl font-bold text-white">0</h3>
+        </div>
+    </div>
 
-            <div class="p-5">
-                @include('admin.modules.afiliados_table', ['afiliados' => $afiliados])
-            </div>
+    <div class="bg-[#0a0a0a] border border-[#262626] rounded-xl overflow-hidden shadow-2xl">
+        <div class="p-6 border-b border-[#262626] bg-[#050505]/50">
+            <h5 class="text-sm font-bold uppercase tracking-widest text-white">Gestión de Afiliados Activos</h5>
         </div>
 
-        <div x-show="openModal"
-             class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center bg-black/50"
-             x-cloak>
+        <div class="p-0"> {{-- Quitamos padding extra para que la tabla llegue a los bordes --}}
+            @include('admin.modules.afiliados_table', ['afiliados' => $afiliados])
+        </div>
+    </div>
 
-            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6" @click.away="openModal = false">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">Registrar Nuevo Socio</h2>
+    <div x-show="openModal"
+         class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-100"
+         x-cloak>
+
+        <div class="bg-[#0a0a0a] rounded-xl border border-[#262626] w-full max-w-md overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+             @click.away="openModal = false">
+
+            <div class="p-8">
+                <h2 class="text-xl font-bold text-white mb-1">Registrar Nuevo Socio</h2>
+                <p class="text-xs text-[#a1a1a1] mb-6">El socio recibirá sus credenciales por correo.</p>
 
                 <form action="{{ route('admin.afiliados.store') }}" method="POST">
                     @csrf
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Nombre del Encargado</label>
-                            <input type="text" name="name" required class="mt-1 block w-full border rounded-md shadow-sm p-2">
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-[#737373] block mb-1">Nombre</label>
+                            <input type="text" name="name" required class="w-full bg-black border border-[#262626] rounded-md px-3 py-2 text-sm text-white focus:border-white focus:ring-0 transition-all">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Email de Acceso</label>
-                            <input type="email" name="email" required class="mt-1 block w-full border rounded-md shadow-sm p-2">
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-[#737373] block mb-1">Email</label>
+                            <input type="email" name="email" required class="w-full bg-black border border-[#262626] rounded-md px-3 py-2 text-sm text-white focus:border-white focus:ring-0 transition-all">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase tracking-widest text-[#737373] block mb-1">Comercial</label>
+                                <input type="text" name="nombre_comercial" required class="w-full bg-black border border-[#262626] rounded-md px-3 py-2 text-sm text-white focus:border-white focus:ring-0 transition-all">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase tracking-widest text-[#737373] block mb-1">Comisión %</label>
+                                <input type="number" name="comision" value="10" class="w-full bg-black border border-[#262626] rounded-md px-3 py-2 text-sm text-white focus:border-white focus:ring-0 transition-all">
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Nombre Comercial (Negocio)</label>
-                            <input type="text" name="nombre_comercial" required class="mt-1 block w-full border rounded-md shadow-sm p-2">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Comisión (%)</label>
-                            <input type="number" name="comision" value="10" step="0.01" class="mt-1 block w-full border rounded-md shadow-sm p-2">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Contraseña</label>
-                            <input type="password" name="password" required class="mt-1 block w-full border rounded-md shadow-sm p-2">
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-[#737373] block mb-1">Contraseña</label>
+                            <input type="password" name="password" required class="w-full bg-black border border-[#262626] rounded-md px-3 py-2 text-sm text-white focus:border-white focus:ring-0 transition-all">
                         </div>
                     </div>
 
-                    <div class="mt-6 flex justify-end gap-3">
-                        <button type="button" @click="openModal = false" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
-                            Guardar Afiliado
-                        </button>
+                    <div class="mt-8 flex gap-3">
+                        <button type="button" @click="openModal = false" class="flex-1 px-4 py-2 border border-[#262626] rounded-md text-xs font-bold text-[#a1a1a1] hover:bg-[#111]">Cancelar</button>
+                        <button type="submit" class="flex-1 px-4 py-2 bg-white text-black rounded-md text-xs font-bold hover:bg-gray-200 transition-all">Guardar Socio</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+</div>
 
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 @endsection
