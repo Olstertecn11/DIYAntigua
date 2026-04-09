@@ -9,3 +9,4 @@
     @include('admin.partials.sidebar') <div class="main-content flex-1 bg-black   pb-24 md:pb-5">
         @yield('content') </div>
 </div>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

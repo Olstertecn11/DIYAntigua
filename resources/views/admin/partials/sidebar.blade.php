@@ -31,6 +31,7 @@
                         Rutas y Tarifas
                     </x-admin-nav-link>
 
+
                     <x-admin-nav-link href="{{ route('admin.lugares.index') }}" icon="fa-map-location-dot" :active="request()->routeIs('admin.lugares.*')">
                         Lugares / Hoteles
                     </x-admin-nav-link>

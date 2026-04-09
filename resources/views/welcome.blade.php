@@ -94,39 +94,37 @@
                     <h5 class="fw-bold mb-1">Reserva rápida</h5>
                     <p class="text-muted small mb-4">Selecciona ruta y fecha para ver tarifas.</p>
 
-                    <form action="{{ route('home') }}" method="GET">
+                    <form action="{{ route('reservas.cotizar') }}" method="GET">
                         <div class="row g-3">
                             <div class="col-md-6 text-start">
                                 <label class="form-label small fw-bold">Origen</label>
-                                <select class="form-select form-select-lg shadow-none" name="origen">
-                                    <option>Ciuadad de Guatemala</option>
+                                <select class="form-select form-select-lg shadow-none" name="origen" id="origen-select" required>
                                 </select>
                             </div>
                             <div class="col-md-6 text-start">
                                 <label class="form-label small fw-bold">Destino</label>
-                                <select class="form-select form-select-lg shadow-none" name="destino">
-                                    <option>Antigua Guatemala</option>
+                                <select class="form-select form-select-lg shadow-none" name="destino" id="destino-select" required>
                                 </select>
                             </div>
                             <div class="col-md-6 text-start">
                                 <label class="form-label small fw-bold">Fecha</label>
-                                <input type="date" class="form-control form-control-lg shadow-none">
+                                <input type="date" name="fecha" class="form-control form-control-lg shadow-none" required>
                             </div>
                             <div class="col-md-3 text-start">
                                 <label class="form-label small fw-bold">Hora</label>
-                                <input type="time" class="form-control form-control-lg shadow-none">
+                                <input type="time" name="hora" class="form-control form-control-lg shadow-none" required>
                             </div>
                             <div class="col-md-3 text-start">
                                 <label class="form-label small fw-bold">Pasajeros</label>
-                                <input type="number" class="form-control form-control-lg shadow-none" value="2">
+                                <input type="number" name="pasajeros" class="form-control form-control-lg shadow-none" value="2" min="1" max="15">
                             </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-warning btn-lg w-100 py-3 fw-bold shadow-sm">Ver tarifas</button>
+                                <button type="submit" class="btn btn-warning btn-lg w-100 py-3 fw-bold shadow-sm text-dark">Ver tarifas</button>
                             </div>
                         </div>
                     </form>
                     <p class="text-muted x-small mt-3 mb-0" style="font-size: 0.7rem;">
-                        * Tarifas finales visibles antes de confirmar. Sin cargos ocultos. *
+                    * Tarifas finales visibles antes de confirmar. Sin cargos ocultos. *
                     </p>
                 </div>
             </div>
@@ -157,3 +155,27 @@
     </div>
 </section>
 @endsection
+
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+
+        const origenSelect = document.getElementById('origen-select');
+        const destinoSelect = document.getElementById('destino-select');
+        const rutas = @json($rutas);
+        rutas.map((item)=>{
+            const optionOrigen = document.createElement('option');
+            optionOrigen.value = item.origen.id;
+            optionOrigen.textContent = item.origen.nombre;
+            origenSelect.appendChild(optionOrigen);
+
+            const optionDestino = document.createElement('option');
+            optionDestino.value = item.destino.id;
+            optionDestino.textContent = item.destino.nombre;
+            destinoSelect.appendChild(optionDestino);
+        });
+    });
+
+
+</script>

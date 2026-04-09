@@ -5,6 +5,8 @@ use App\Http\Controllers\Private\RutaController;
 use App\Http\Controllers\Private\SocioController;
 use App\Http\Controllers\Private\ConductorController;
 use App\Http\Controllers\Private\LugarController;
+use App\Http\Controllers\Public\ReservaController;
+use App\Models\Ruta;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -13,12 +15,23 @@ Route::get('/', function (Request $request) {
     if ($request->has('ref')) {
         session(['afiliado_referido' => $request->query('ref')]);
     }
-    return view('welcome');
+    $rutas = Ruta::where('activa', true)->with(['origen', 'destino'])->get();
+    return view('welcome', compact('rutas'));
 })->name('welcome');
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+// Flujo de Reservaciones
+Route::prefix('reservas')->group(function () {
+
+    Route::get('/cotizar', [ReservaController::class, 'cotizar'])->name('reservas.cotizar');
+    Route::get('/detalles', [ReservaController::class, 'detalles'])->name('reservas.detalles');
+    Route::post('/confirmar', [ReservaController::class, 'store'])->name('reservas.store');
+
+});
 
 // --- SECCIÓN SOCIOS ---
 Route::group(['prefix' => 'socios'], function () {
@@ -67,4 +80,5 @@ Route::group([
 
     // Pagos y Comisiones (Placeholder)
     Route::get('/pagos', [AdminController::class, 'pagos'])->name('pagos.index');
+
 });
