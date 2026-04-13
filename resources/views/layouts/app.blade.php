@@ -11,6 +11,7 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito:400,600,700,800" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/logo.png?raw=true">
     <script src="https://cdn.tailwindcss.com"></script>
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/global.css'])
