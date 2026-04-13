@@ -36,8 +36,8 @@
                         Lugares / Hoteles
                     </x-admin-nav-link>
 
-                    <x-admin-nav-link href="{{ route('admin.conductores.index') }}" icon="fa-truck-fast" :active="request()->routeIs('admin.conductores.*')">
-                        Conductores
+                    <x-admin-nav-link href="{{ route('admin.vehiculos.index') }}" icon="fa-truck-fast" :active="request()->routeIs('admin.vehiculos.*')">
+                        Vehículos
                     </x-admin-nav-link>
 
                     <li class="hidden md:block pt-4 pb-2 px-4">

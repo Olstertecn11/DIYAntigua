@@ -5,6 +5,7 @@ use App\Http\Controllers\Private\RutaController;
 use App\Http\Controllers\Private\SocioController;
 use App\Http\Controllers\Private\ConductorController;
 use App\Http\Controllers\Private\LugarController;
+use App\Http\Controllers\Private\VehiculoController;
 use App\Http\Controllers\Public\ReservaController;
 use App\Models\Ruta;
 use Illuminate\Support\Facades\Route;
@@ -33,13 +34,11 @@ Route::prefix('reservas')->group(function () {
 
 });
 
-// --- SECCIÓN SOCIOS ---
 Route::group(['prefix' => 'socios'], function () {
     Route::get('/login', [SocioController::class, 'login'])->name('socios.login');
 
     Route::middleware(['socio'])->group(function () {
         Route::get('/dashboard', [SocioController::class, 'dashboard'])->name('socios.dashboard');
-        // Futuras rutas de socios aquí (ej: reservas.create)
     });
 });
 
@@ -47,7 +46,7 @@ Route::group(['prefix' => 'socios'], function () {
 Route::group([
     'prefix' => 'admin',
     'middleware' => ['admin'],
-    'as' => 'admin.' // Esto añade automáticamente "admin." a todos los nombres de rutas internos
+    'as' => 'admin.'
 ], function () {
 
     // Login y Dashboard Principal
@@ -56,25 +55,24 @@ Route::group([
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
 
-    // OPERACIONES (Gestión Relacional)
-
-    // Lugares y Hoteles
     Route::resource('lugares', LugarController::class);
 
-    // Rutas (Tarifario basado en Lugares)
     Route::resource('rutas', RutaController::class);
 
-    // Gestión de Conductores
+    // VEHICULOS
+    Route::get('/vehiculos', [VehiculoController::class, 'index'])->name('vehiculos.index');
+    Route::post('/vehiculos', [VehiculoController::class, 'store'])->name('vehiculos.store');
+    Route::put('/vehiculos/{vehiculo}', [VehiculoController::class, 'update'])->name('vehiculos.update');
+    Route::delete('/vehiculos/{vehiculo}', [VehiculoController::class, 'destroy'])->name('vehiculos.destroy');
+
     Route::get('/conductores', [ConductorController::class, 'index'])->name('conductores.index');
     Route::post('/conductores', [ConductorController::class, 'store'])->name('conductores.store');
     Route::delete('/conductores/{conductore}', [ConductorController::class, 'destroy'])->name('conductores.destroy');
 
-    // Gestión de Reservas
     Route::get('/reservas', [AdminController::class, 'reservas'])->name('reservas.index');
 
     // NEGOCIO
 
-    // Gestión de Afiliados (Socios)
     Route::get('/afiliados', [AdminController::class, 'indexAfiliados'])->name('afiliados.index');
     Route::post('/afiliados', [AdminController::class, 'storeAfiliado'])->name('afiliados.store');
 

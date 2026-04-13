@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Reservacion;
 use App\Models\Ruta;
 use Illuminate\Http\Request;
 
