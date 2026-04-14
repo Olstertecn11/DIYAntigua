@@ -10,6 +10,7 @@ use App\Models\Vehiculo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReservaController extends Controller
 {
@@ -89,6 +90,32 @@ class ReservaController extends Controller
     {
         $reservacion = Reservacion::where('codigo_reserva', $codigo)->firstOrFail();
         return view('reservas.confirmar', compact('reservacion'));
+    }
+
+
+
+    public function descargarPDF($codigo)
+    {
+        $reserva = Reservacion::with(['ruta.origen', 'ruta.destino'])
+            ->where('codigo_reserva', $codigo)
+            ->firstOrFail();
+
+        // Convertimos la imagen a Base64
+        $path = public_path('images/logo.png');
+        $logoBase64 = '';
+
+        if (file_exists($path)) {
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data = file_get_contents($path);
+            $logoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        }
+
+        // Pasamos $logoBase64 a la vista
+        $pdf = Pdf::loadView('reservas.comprobante_pdf', compact('reserva', 'logoBase64'));
+
+        $pdf->setPaper('letter', 'portrait');
+
+        return $pdf->download("Comprobante-{$reserva->codigo_reserva}.pdf");
     }
 
 

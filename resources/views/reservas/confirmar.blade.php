@@ -30,9 +30,9 @@
             <a href="/" class="btn btn-outline-light rounded-pill py-3 fw-bold uppercase text-xs tracking-widest">
                 Volver al Inicio
             </a>
-            <button onclick="window.print()" class="btn btn-link text-[#b8b0b0] text-decoration-none small">
-                <i class="fas fa-print me-1"></i> Descargar Comprobante PDF
-            </button>
+            <a href="{{ route('reservas.pdf', $reservacion->codigo_reserva) }}" class="btn btn-link text-[#b8b0b0] text-decoration-none small">
+                <i class="fas fa-file-pdf me-1"></i> Descargar Comprobante PDF
+            </a>
         </div>
     </div>
 </div>

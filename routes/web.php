@@ -32,6 +32,7 @@ Route::prefix('reservas')->group(function () {
     Route::get('/detalles', [ReservaController::class, 'detalles'])->name('reservas.detalles');
     Route::post('/confirmar', [ReservaController::class, 'store'])->name('reservas.store');
     Route::get('/confirmar/{codigo}', [ReservaController::class, 'confirmar'])->name('reservas.confirmar');
+    Route::get('/pdf/{codigo}', [ReservaController::class, 'descargarPDF'])->name('reservas.pdf');
 
 });
 
