@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\AfiliadoInfo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Reservacion;
 
 
 class AdminController extends Controller
@@ -120,6 +121,15 @@ class AdminController extends Controller
         return redirect('/admin');
     }
 
+
+    public function reservas()
+    {
+        $reservas = Reservacion::with(['ruta.origen', 'ruta.destino'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return view('admin.reservas.index', compact('reservas'));
+    }
 
 
 
