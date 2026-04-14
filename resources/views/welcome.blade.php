@@ -1,9 +1,7 @@
 @extends('layouts.app', ['navbar' => true])
 
 @section('styles')
-    <style>
-.hero-section {
-    min-height: 80vh;
+    <style> .hero-section { min-height: 80vh;
     display: flex;
     align-items: center;
     color: white;
@@ -311,16 +309,21 @@
         const origenSelect = document.getElementById('origen-select');
         const destinoSelect = document.getElementById('destino-select');
         const rutas = @json($rutas);
+        console.log(rutas);
         rutas.map((item)=>{
             const optionOrigen = document.createElement('option');
             optionOrigen.value = item.origen.id;
             optionOrigen.textContent = item.origen.nombre;
             origenSelect.appendChild(optionOrigen);
-
-            const optionDestino = document.createElement('option');
-            optionDestino.value = item.destino.id;
-            optionDestino.textContent = item.destino.nombre;
-            destinoSelect.appendChild(optionDestino);
+            origenSelect.addEventListener('change', (e)=>{
+                if(e.target.value == item.origen.id){
+                    destinoSelect.innerHTML = '';
+                    const optionDestino = document.createElement('option');
+                    optionDestino.value = item.destino.id;
+                    optionDestino.textContent = item.destino.nombre;
+                    destinoSelect.appendChild(optionDestino);
+                }
+            });
         });
     });
 
