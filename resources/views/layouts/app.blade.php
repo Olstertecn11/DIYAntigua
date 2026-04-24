@@ -284,6 +284,7 @@
                                     class="relative h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-yellow-300/50 transition">
                                     <img src="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/logo.png?raw=true"
                                         class="h-10 w-10 object-contain" alt="Logo">
+
                                 </div>
 
                                 <div class="hidden lg:block leading-tight">
@@ -319,7 +320,7 @@
                                 <li>
                                     <a href="{{ url('/informacion-del-servicio') }}" class="nav-link-custom">
                                         <i class="fa-solid fa-circle-info text-[11px] text-yellow-300/80"></i>
-                                        Información
+                                        Nosotros
                                     </a>
                                 </li>
 
@@ -371,6 +372,10 @@
                                 @endguest
                             </div>
                         </div>
+                        <h2
+                            class="block md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[#fec800] font-black text-2xl pointer-events-none select-none whitespace-nowrap">
+                            DYANTIGUA
+                        </h2>
 
                         {{-- Mobile button --}}
                         <button id="mobile-menu-button"
@@ -401,7 +406,7 @@
                         <li>
                             <a href="{{ url('/informacion-del-servicio') }}" class="mobile-link">
                                 <i class="fa-solid fa-circle-info text-yellow-300"></i>
-                                Información
+                                Nosotros
                             </a>
                         </li>
 
@@ -492,6 +497,11 @@
             @yield('content')
         </main>
 
+        @include('components.whatsapp-button', [
+            'phone' => '50235977809',
+            'message' => 'Hola, quiero información sobre un traslado privado.',
+        ])
+        @include('components.language-translator')
         @include('components.footer')
     </div>
 
@@ -528,6 +538,7 @@
     </script>
 
     @yield('scripts')
+
 </body>
 
 </html>

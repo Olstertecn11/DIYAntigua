@@ -372,8 +372,8 @@
                     </div>
 
                     <div class="relative rounded-[2rem] overflow-hidden shadow-2xl">
-                        <img src="https://images.unsplash.com/photo-1535207010348-71e47296838a?auto=format&fit=crop&w=1200&q=80"
-                            alt="Traslado turístico en Guatemala" class="h-[520px] w-full object-cover">
+                        <img src="{{ asset('images/car_trip.jpg') }}" alt="Traslado turístico en Guatemala"
+                            class="h-[320px] sm:h-[420px] lg:h-[520px] w-full object-cover object-center sm:object-center group-hover:scale-105 transition">
 
                         <div class="absolute inset-x-6 bottom-6 dark-glass rounded-3xl p-6">
                             <p class="text-yellow-300 font-black text-sm uppercase tracking-widest mb-2">
@@ -415,8 +415,8 @@
                 <div
                     class="fleet-card rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 hover:border-yellow-300/60 transition">
                     <div class="h-56 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=900&q=80"
-                            alt="Sedán ejecutivo" class="h-full w-full object-cover">
+                        <img src="{{ asset('images/sedan_image.jpg') }}" alt=""
+                            class="h-full w-full object-cover">
                     </div>
                     <div class="p-7">
                         <p class="text-yellow-300 text-sm font-black uppercase tracking-widest mb-2">1-3 pasajeros</p>
@@ -439,8 +439,8 @@
                         MÁS POPULAR
                     </div>
                     <div class="h-56 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=900&q=80"
-                            alt="SUV familiar" class="h-full w-full object-cover">
+                        <img src="{{ asset('images/suv_image.jpg') }}" alt="SUV familiar"
+                            class="h-full w-full object-cover">
                     </div>
                     <div class="p-7">
                         <p class="text-yellow-300 text-sm font-black uppercase tracking-widest mb-2">4-6 pasajeros</p>
@@ -459,8 +459,8 @@
                 <div
                     class="fleet-card rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 hover:border-yellow-300/60 transition">
                     <div class="h-56 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=900&q=80"
-                            alt="Microbús grupal" class="h-full w-full object-cover">
+                        <img src="{{ asset('images/micro_image.jpg') }}" alt="Microbús grupal"
+                            class="h-full w-full object-cover">
                     </div>
                     <div class="p-7">
                         <p class="text-yellow-300 text-sm font-black uppercase tracking-widest mb-2">7-15 pasajeros</p>
@@ -500,8 +500,8 @@
 
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="destination-card relative h-96 rounded-[2rem] overflow-hidden shadow-xl group">
-                    <img src="https://images.unsplash.com/photo-1585543805890-605a7820f8ef?auto=format&fit=crop&w=900&q=80"
-                        alt="Antigua Guatemala" class="h-full w-full object-cover">
+                    <img src="{{ asset('images/antigua_image.jpg') }}" alt="Antigua Guatemala"
+                        class="h-full w-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
                     <div class="absolute bottom-0 p-6 text-white">
                         <h3 class="text-2xl font-black">Antigua Guatemala</h3>
@@ -510,8 +510,9 @@
                 </div>
 
                 <div class="destination-card relative h-96 rounded-[2rem] overflow-hidden shadow-xl group">
-                    <img src="https://images.unsplash.com/photo-1605217613423-0f61b847eb2e?auto=format&fit=crop&w=900&q=80"
-                        alt="Lago de Atitlán" class="h-full w-full object-cover">
+                    <img src="{{ asset('images/panajachel_image.jpg') }}" alt="Lago de Atitlán"
+                        class="h-full w-full object-cover">
+
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
                     <div class="absolute bottom-0 p-6 text-white">
                         <h3 class="text-2xl font-black">Panajachel</h3>
@@ -520,8 +521,8 @@
                 </div>
 
                 <div class="destination-card relative h-96 rounded-[2rem] overflow-hidden shadow-xl group">
-                    <img src="https://images.unsplash.com/photo-1628157588553-5eeea00af15c?auto=format&fit=crop&w=900&q=80"
-                        alt="Ciudad de Guatemala" class="h-full w-full object-cover">
+                    <img src="{{ asset('images/guatemala_image.jpg') }}" alt="Ciudad de Guatemala"
+                        class="h-full w-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
                     <div class="absolute bottom-0 p-6 text-white">
                         <h3 class="text-2xl font-black">Ciudad de Guatemala</h3>
@@ -530,8 +531,8 @@
                 </div>
 
                 <div class="destination-card relative h-96 rounded-[2rem] overflow-hidden shadow-xl group">
-                    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"
-                        alt="Quetzaltenango" class="h-full w-full object-cover">
+                    <img src="{{ asset('images/quetzaltenango_image.jpg') }}" alt="Quetzaltenango"
+                        class="h-full w-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
                     <div class="absolute bottom-0 p-6 text-white">
                         <h3 class="text-2xl font-black">Quetzaltenango</h3>
