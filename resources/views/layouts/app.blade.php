@@ -6,208 +6,528 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'DIY Antigua') }}</title>
 
+    {{-- Fonts --}}
     <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito:400,600,700,800" rel="stylesheet">
+    <link href="https://fonts.bunny.net/css?family=Nunito:400,500,600,700,800,900" rel="stylesheet">
+
+    {{-- Icons --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/logo.png?raw=true">
+
+    {{-- Favicon --}}
+    <link rel="icon" type="image/png"
+        href="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/logo.png?raw=true">
+
+    {{-- Tailwind CDN: úsalo si todavía no tienes Tailwind compilado en Vite --}}
     <script src="https://cdn.tailwindcss.com"></script>
 
+    {{-- Assets Laravel --}}
     @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/global.css'])
 
+    {{-- Estilos propios de cada vista --}}
+    @yield('styles')
+
     <style>
-        /* --- Estilos Base --- */
-        body { font-family: 'Nunito', sans-serif; background-color: #000; }
-
-        /* --- Estilos de Errores (Toasts) --- */
-        .toast-container { position: fixed; top: 25px; right: 25px; z-index: 9999; width: 300px; }
-        .toast-pill {
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50px; padding: 10px 15px;
-            display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); animation: toastIn 0.4s forwards;
+        :root {
+            --gold: #facc15;
+            --gold-dark: #eab308;
+            --orange: #fb923c;
+            --dark: #020617;
+            --dark-soft: #0f172a;
+            --border-dark: rgba(255, 255, 255, .10);
         }
-        .toast-icon { background: #ff4757; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; flex-shrink: 0; }
-        .toast-content { color: white; font-size: 12px; font-weight: 500; flex-grow: 1; }
-        .toast-close { background: none; border: none; color: rgba(255, 255, 255, 0.6); cursor: pointer; font-size: 12px; }
-        @keyframes toastIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        .toast-out { opacity: 0; transform: translateX(30px); transition: all 0.5s ease; }
 
-        /* --- Estilos Navbar --- */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #020617;
+            color: #0f172a;
+            min-height: 100vh;
+        }
+
+        #app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .app-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 80;
+            background:
+                linear-gradient(135deg, rgba(2, 6, 23, .94), rgba(15, 23, 42, .90));
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .app-navbar::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(250, 204, 21, .12), transparent 24%),
+                radial-gradient(circle at 90% 10%, rgba(251, 146, 60, .10), transparent 22%);
+            pointer-events: none;
+        }
+
         .nav-link-custom {
             position: relative;
-            color: rgba(255, 255, 255, 0.8) !important;
-            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, .78) !important;
+            transition: all .25s ease;
             text-decoration: none !important;
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
         }
-        .nav-link-custom:hover { color: #feca00 !important; }
 
-        /* Efecto Underline Amarillo */
+        .nav-link-custom:hover {
+            color: #facc15 !important;
+        }
+
         .nav-link-custom::after {
             content: '';
             position: absolute;
             width: 0;
             height: 2px;
-            bottom: -4px;
+            bottom: -8px;
             left: 0;
-            background-color: #feca00;
-            transition: width 0.3s ease;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #facc15, #fb923c);
+            transition: width .25s ease;
         }
-        .nav-link-custom:hover::after { width: 100%; }
+
+        .nav-link-custom:hover::after {
+            width: 100%;
+        }
 
         .btn-login {
-            border-radius: 50px;
-            color: #efc643 !important;
-            background: rgba(171, 140, 50, 0.1);
-            border: 1px solid rgba(239, 198, 67, 0.3);
-            font-weight: 700;
-            transition: all 0.3s ease;
+            border-radius: 999px;
+            color: #facc15 !important;
+            background: rgba(250, 204, 21, .09);
+            border: 1px solid rgba(250, 204, 21, .25);
+            font-weight: 800;
+            transition: all .25s ease;
             text-decoration: none !important;
         }
-        .btn-login:hover { background: rgba(254, 202, 0, 0.2); border-color: #feca00; color: #feca00 !important; }
+
+        .btn-login:hover {
+            background: rgba(250, 204, 21, .16);
+            border-color: rgba(250, 204, 21, .60);
+            color: #fde68a !important;
+            transform: translateY(-1px);
+        }
 
         .btn-register {
-            border-radius: 50px;
-            background: white;
-            color: black !important;
-            font-weight: 800;
-            border: 1px solid white;
-            transition: all 0.3s ease;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #facc15, #fb923c);
+            color: #020617 !important;
+            font-weight: 900;
+            border: 1px solid rgba(250, 204, 21, .55);
+            transition: all .25s ease;
             text-decoration: none !important;
+            box-shadow: 0 16px 35px rgba(250, 204, 21, .14);
         }
-        .btn-register:hover { background: transparent !important; color: white !important; }
 
-        /* Dropdown Estilo */
+        .btn-register:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 20px 45px rgba(250, 204, 21, .22);
+            color: #020617 !important;
+        }
+
         .dropdown-custom {
-            background: #0a0a0a;
-            border: 1px solid #262626;
-            border-radius: 12px;
+            background: rgba(2, 6, 23, .96);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, .10);
+            border-radius: 1.25rem;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+        }
+
+        .mobile-menu-panel {
+            background:
+                linear-gradient(135deg, rgba(2, 6, 23, .98), rgba(15, 23, 42, .96));
+            border-top: 1px solid rgba(255, 255, 255, .10);
+        }
+
+        .mobile-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .65rem;
+            width: 100%;
+            color: rgba(255, 255, 255, .86);
+            font-size: .82rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            padding: .9rem 1rem;
+            border-radius: 1rem;
+            text-decoration: none !important;
+            transition: all .25s ease;
+        }
+
+        .mobile-link:hover {
+            background: rgba(255, 255, 255, .07);
+            color: #facc15;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 92px;
+            right: 24px;
+            z-index: 9999;
+            width: min(360px, calc(100vw - 32px));
+        }
+
+        .toast-pill {
+            background: rgba(15, 23, 42, .88);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 1.25rem;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+            animation: toastIn .35s ease forwards;
+        }
+
+        .toast-icon {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.35;
+            flex-grow: 1;
+        }
+
+        .toast-close {
+            background: rgba(255, 255, 255, .08);
+            border: none;
+            color: rgba(255, 255, 255, .72);
+            cursor: pointer;
+            font-size: 12px;
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            transition: all .2s ease;
+        }
+
+        .toast-close:hover {
+            background: rgba(255, 255, 255, .15);
+            color: white;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(-16px) scale(.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .toast-out {
+            opacity: 0;
+            transform: translateX(24px);
+            transition: all .45s ease;
         }
 
         @media (max-width: 768px) {
-            #nav-content.show { display: block !important; }
-            .nav-link-custom::after { display: none; } /* Quitamos underline en móvil por espacio */
+            .nav-link-custom::after {
+                display: none;
+            }
         }
     </style>
 </head>
 
 <body>
     <div id="app">
+
         @if (!isset($navbar) || $navbar !== false)
-            <nav class="w-full z-50 py-4 border-b border-[#1a1a1a]" style="background: #000;">
-                <div class="container mx-auto px-4 flex items-center justify-between">
+            <nav class="app-navbar w-full">
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
+                    <div class="flex items-center justify-between py-4">
 
-                    <div class="flex-shrink-0">
-                        <a class="flex items-center gap-3 no-underline" href="{{ url('/') }}">
-                            <img src="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/logo.png?raw=true"
-                                 class="w-10 h-10 md:w-12 md:h-12 object-contain" alt="Logo">
-                            <span class="text-white font-extrabold text-xl tracking-tighter uppercase hidden lg:block">
-                                {{ config('app.name', 'DiyAntigua') }}
-                            </span>
-                        </a>
-                    </div>
-
-                    <button id="mobile-menu-button" class="md:hidden text-white p-2">
-                        <i class="fas fa-bars text-2xl"></i>
-                    </button>
-
-                    <div id="nav-content" class="hidden md:flex flex-grow items-center justify-between ml-10">
-
-                        <ul class="flex flex-row list-none p-0 m-0 mx-auto gap-8 text-[12px] lg:text-[13px] uppercase tracking-widest font-bold">
-                            <li><a href="{{ url('/reservar-traslado') }}" class="nav-link-custom block">Reservar Traslado</a></li>
-                            <li><a href="{{ url('/destinos') }}" class="nav-link-custom block">Destinos</a></li>
-                            <li><a href="{{ url('/informacion-del-servicio') }}" class="nav-link-custom block">Información</a></li>
-                            <li><a href="{{ url('/ayuda') }}" class="nav-link-custom block">Ayuda</a></li>
-                        </ul>
-
-                        <div class="flex flex-row gap-3 items-center flex-shrink-0">
-                            @guest
-                                <a href="{{ route('login') }}" class="btn-login px-5 py-2 text-sm">Iniciar Sesión</a>
-                                <a href="{{ route('register') }}" class="btn-register px-5 py-2 text-sm">Registrarse</a>
-                            @else
-                                <div class="relative group">
-                                    <button class="text-white/90 hover:text-white flex items-center gap-2 font-bold text-sm outline-none bg-[#111] px-4 py-2 rounded-full border border-[#262626]">
-                                        <i class="fas fa-user-circle text-lg text-[#feca00]"></i>
-                                        {{ Auth::user()->name }}
-                                        <i class="fas fa-chevron-down text-[10px] opacity-50 group-hover:rotate-180 transition-transform"></i>
-                                    </button>
-                                    <div class="absolute right-0 mt-2 w-48 dropdown-custom hidden group-hover:block z-[100]">
-                                        <a class="block px-4 py-3 text-sm text-white hover:bg-[#1a1a1a] no-underline" href="{{ route('logout') }}"
-                                                                                                                      onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            <i class="fas fa-sign-out-alt me-2 text-red-500"></i> Cerrar Sesión
-                                        </a>
-                                    </div>
+                        {{-- Brand --}}
+                        <div class="flex-shrink-0">
+                            <a class="flex items-center gap-3 no-underline group" href="{{ url('/') }}">
+                                <div
+                                    class="relative h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-yellow-300/50 transition">
+                                    <img src="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/logo.png?raw=true"
+                                        class="h-10 w-10 object-contain" alt="Logo">
                                 </div>
-                            @endguest
+
+                                <div class="hidden lg:block leading-tight">
+                                    <span class="block text-white font-black text-xl tracking-tight uppercase">
+                                        {{ config('app.name', 'DIY Antigua') }}
+                                    </span>
+                                    <span
+                                        class="block text-[11px] text-yellow-300 font-black uppercase tracking-[0.22em]">
+                                        Private Transfers
+                                    </span>
+                                </div>
+                            </a>
                         </div>
+
+                        {{-- Desktop nav --}}
+                        <div class="hidden md:flex flex-1 items-center justify-between ml-10">
+                            <ul
+                                class="flex flex-row items-center list-none p-0 m-0 mx-auto gap-8 text-[12px] lg:text-[13px] uppercase tracking-widest font-black">
+                                <li>
+                                    <a href="{{ url('/reservar-traslado') }}" class="nav-link-custom">
+                                        <i class="fa-solid fa-route text-[11px] text-yellow-300/80"></i>
+                                        Reservar Traslado
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="{{ url('/destinos') }}" class="nav-link-custom">
+                                        <i class="fa-solid fa-map-location-dot text-[11px] text-yellow-300/80"></i>
+                                        Destinos
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="{{ url('/informacion-del-servicio') }}" class="nav-link-custom">
+                                        <i class="fa-solid fa-circle-info text-[11px] text-yellow-300/80"></i>
+                                        Información
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                            <div class="flex flex-row gap-3 items-center flex-shrink-0">
+                                @guest
+                                    <a href="{{ route('login') }}" class="btn-login px-5 py-2.5 text-sm">
+                                        Iniciar Sesión
+                                    </a>
+
+                                    <a href="{{ route('register') }}" class="btn-register px-5 py-2.5 text-sm">
+                                        Registrarse
+                                    </a>
+                                @else
+                                    <div class="relative group">
+                                        <button type="button"
+                                            class="text-white/90 hover:text-white flex items-center gap-3 font-black text-sm outline-none bg-white/5 px-4 py-2.5 rounded-full border border-white/10 hover:border-yellow-300/40 transition">
+                                            <span
+                                                class="h-8 w-8 rounded-full bg-yellow-300/10 border border-yellow-300/20 flex items-center justify-center">
+                                                <i class="fas fa-user text-sm text-yellow-300"></i>
+                                            </span>
+
+                                            <span class="max-w-[150px] truncate">
+                                                {{ Auth::user()->name }}
+                                            </span>
+
+                                            <i
+                                                class="fas fa-chevron-down text-[10px] opacity-60 group-hover:rotate-180 transition-transform"></i>
+                                        </button>
+
+                                        <div
+                                            class="absolute right-0 mt-3 w-56 dropdown-custom hidden group-hover:block z-[100]">
+                                            <div class="px-4 py-3 border-b border-white/10">
+                                                <p class="text-xs text-slate-400 mb-0">Sesión iniciada como</p>
+                                                <p class="text-sm text-white font-black mb-0 truncate">
+                                                    {{ Auth::user()->name }}
+                                                </p>
+                                            </div>
+
+                                            <a class="block px-4 py-3 text-sm text-white hover:bg-white/5 no-underline"
+                                                href="{{ route('logout') }}"
+                                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                <i class="fas fa-sign-out-alt me-2 text-red-400"></i>
+                                                Cerrar Sesión
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endguest
+                            </div>
+                        </div>
+
+                        {{-- Mobile button --}}
+                        <button id="mobile-menu-button"
+                            class="md:hidden h-11 w-11 rounded-2xl bg-white/5 border border-white/10 text-white flex items-center justify-center hover:border-yellow-300/50 transition"
+                            type="button" aria-label="Abrir menú">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
                     </div>
                 </div>
 
-                <div id="mobile-menu" class="hidden md:hidden px-4 pt-4 pb-6 border-t border-[#1a1a1a] bg-black">
-                    <ul class="flex flex-col gap-4 text-center">
-                        <li><a href="{{ url('/reservar-traslado') }}" class="text-white text-sm uppercase font-bold">Reservar Traslado</a></li>
-                        <li><a href="{{ url('/destinos') }}" class="text-white text-sm uppercase font-bold">Destinos</a></li>
-                        <li><a href="{{ url('/informacion-del-servicio') }}" class="text-white text-sm uppercase font-bold">Información</a></li>
-                        <li><a href="{{ url('/ayuda') }}" class="text-white text-sm uppercase font-bold">Ayuda</a></li>
-                        <hr class="border-[#1a1a1a]">
+                {{-- Mobile menu --}}
+                <div id="mobile-menu" class="hidden md:hidden mobile-menu-panel px-4 pt-4 pb-6">
+                    <ul class="flex flex-col gap-2 list-none p-0 m-0">
+                        <li>
+                            <a href="{{ url('/reservar-traslado') }}" class="mobile-link">
+                                <i class="fa-solid fa-route text-yellow-300"></i>
+                                Reservar Traslado
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ url('/destinos') }}" class="mobile-link">
+                                <i class="fa-solid fa-map-location-dot text-yellow-300"></i>
+                                Destinos
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ url('/informacion-del-servicio') }}" class="mobile-link">
+                                <i class="fa-solid fa-circle-info text-yellow-300"></i>
+                                Información
+                            </a>
+                        </li>
+
+                        <li>
+                            <hr class="border-white/10 my-3">
+                        </li>
+
                         @guest
-                            <a href="{{ route('login') }}" class="btn-login py-2">Iniciar Sesión</a>
-                            <a href="{{ route('register') }}" class="btn-register py-2">Registrarse</a>
+                            <li>
+                                <a href="{{ route('login') }}" class="btn-login block text-center py-3">
+                                    Iniciar Sesión
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{{ route('register') }}" class="btn-register block text-center py-3">
+                                    Registrarse
+                                </a>
+                            </li>
+                        @else
+                            <li>
+                                <div class="rounded-2xl bg-white/5 border border-white/10 p-4 text-center">
+                                    <p class="text-xs text-slate-400 mb-1">Sesión iniciada como</p>
+                                    <p class="text-white font-black mb-3">
+                                        {{ Auth::user()->name }}
+                                    </p>
+
+                                    <a class="inline-flex items-center justify-center gap-2 rounded-full bg-red-500/10 border border-red-500/30 px-5 py-2.5 text-sm font-black text-red-300 no-underline"
+                                        href="{{ route('logout') }}"
+                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        Cerrar Sesión
+                                    </a>
+                                </div>
+                            </li>
                         @endguest
                     </ul>
                 </div>
             </nav>
         @endif
 
+        {{-- Form logout --}}
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+            @csrf
+        </form>
+
         {{-- Notificaciones Toast --}}
         @if ($errors->any())
             <div id="toast-wrapper" class="toast-container">
                 @foreach ($errors->all() as $error)
                     <div class="toast-pill">
-                        <div class="toast-icon"><i class="fas fa-exclamation"></i></div>
-                        <div class="toast-content">{{ $error }}</div>
-                        <button onclick="this.parentElement.remove()" class="toast-close"><i class="fas fa-times"></i></button>
+                        <div class="toast-icon">
+                            <i class="fas fa-exclamation"></i>
+                        </div>
+
+                        <div class="toast-content">
+                            {{ $error }}
+                        </div>
+
+                        <button onclick="this.parentElement.remove()" class="toast-close" type="button">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                 @endforeach
             </div>
         @endif
 
+        {{-- Flash messages opcionales --}}
+        @if (session('success'))
+            <div id="toast-wrapper-success" class="toast-container">
+                <div class="toast-pill">
+                    <div class="toast-icon" style="background: linear-gradient(135deg, #22c55e, #84cc16);">
+                        <i class="fas fa-check"></i>
+                    </div>
+
+                    <div class="toast-content">
+                        {{ session('success') }}
+                    </div>
+
+                    <button onclick="this.parentElement.remove()" class="toast-close" type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        @endif
+
         <main>
-            @yield('styles')
             @yield('content')
-            @yield('scripts')
         </main>
+
+        @include('components.footer')
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Toasts auto-hide
-            const container = document.getElementById('toast-wrapper');
-            if (container) {
-                setTimeout(() => {
-                    container.classList.add('toast-out');
-                    setTimeout(() => container.remove(), 500);
-                }, 5000);
-            }
+            const errorToast = document.getElementById('toast-wrapper');
+            const successToast = document.getElementById('toast-wrapper-success');
 
-            // Mobile Menu Toggle
+            [errorToast, successToast].forEach((container) => {
+                if (container) {
+                    setTimeout(() => {
+                        container.classList.add('toast-out');
+                        setTimeout(() => container.remove(), 500);
+                    }, 5000);
+                }
+            });
+
             const menuButton = document.getElementById('mobile-menu-button');
-            const navContent = document.getElementById('nav-content');
+            const mobileMenu = document.getElementById('mobile-menu');
 
-            if (menuButton && navContent) {
+            if (menuButton && mobileMenu) {
                 menuButton.addEventListener('click', () => {
-                    navContent.classList.toggle('hidden');
-                    navContent.classList.toggle('show');
-                    // Cambiar icono al abrir
+                    mobileMenu.classList.toggle('hidden');
+
                     const icon = menuButton.querySelector('i');
-                    icon.classList.toggle('fa-bars');
-                    icon.classList.toggle('fa-times');
+
+                    if (icon) {
+                        icon.classList.toggle('fa-bars');
+                        icon.classList.toggle('fa-times');
+                    }
                 });
             }
         });
     </script>
+
+    @yield('scripts')
 </body>
+
 </html>
