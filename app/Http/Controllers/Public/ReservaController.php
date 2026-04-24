@@ -28,7 +28,13 @@ class ReservaController extends Controller
             'pasajeros' => $request->pasajeros,
         ];
 
-        return view('reservas.cotizar', compact('ruta', 'datos'));
+        $images = [
+            'sedan'=> asset('images/sedan_image.jpg'),
+            'suv' => asset('images/suv_image.jpg'),
+            'van' => asset('images/micro_image.jpg'),
+        ];
+
+        return view('reservas.cotizar', compact('ruta', 'datos', 'images'));
     }
 
 

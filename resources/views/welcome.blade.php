@@ -162,7 +162,7 @@
                                             Origen
                                         </label>
                                         <select name="origen" id="origen-select" required
-                                            class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100">
+                                            class="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100">
                                             <option value="">Selecciona origen</option>
                                         </select>
                                     </div>
@@ -172,7 +172,7 @@
                                             Destino
                                         </label>
                                         <select name="destino" id="destino-select" required
-                                            class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100">
+                                            class="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100">
                                             <option value="">Selecciona destino</option>
                                         </select>
                                     </div>
@@ -184,7 +184,7 @@
                                             Fecha
                                         </label>
                                         <input type="date" name="fecha" id="fecha-reserva" required
-                                            class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100">
+                                            class="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100">
                                     </div>
 
                                     <div>
@@ -192,7 +192,7 @@
                                             Hora
                                         </label>
                                         <input type="time" name="hora" required
-                                            class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100">
+                                            class="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100">
                                     </div>
 
                                     <div>
@@ -200,12 +200,12 @@
                                             Pasajeros
                                         </label>
                                         <input type="number" name="pasajeros" value="2" min="1" max="15"
-                                            class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100">
+                                            class="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100">
                                     </div>
                                 </div>
 
                                 <button type="submit"
-                                    class="w-full rounded-2xl gold-gradient px-6 py-4 text-lg font-black text-slate-950 shadow-xl shadow-yellow-500/20 hover:scale-[1.01] transition">
+                                    class="w-full rounded-2xl gold-gradient px-6 py-3 text-lg font-black text-slate-950 shadow-xl shadow-yellow-500/20 hover:scale-[1.01] transition">
                                     Ver tarifas disponibles
                                 </button>
                             </form>
