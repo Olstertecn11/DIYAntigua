@@ -7,6 +7,7 @@ use App\Http\Controllers\Private\ConductorController;
 use App\Http\Controllers\Private\LugarController;
 use App\Http\Controllers\Private\VehiculoController;
 use App\Http\Controllers\Public\ReservaController;
+use App\Http\Controllers\Public\ReservaEmailVerificationController;
 use App\Models\Ruta;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -33,6 +34,10 @@ Route::prefix('reservas')->group(function () {
     Route::post('/confirmar', [ReservaController::class, 'store'])->name('reservas.store');
     Route::get('/confirmar/{codigo}', [ReservaController::class, 'confirmar'])->name('reservas.confirmar');
     Route::get('/pdf/{codigo}', [ReservaController::class, 'descargarPDF'])->name('reservas.pdf');
+    Route::post('/email-code/send', [ReservaEmailVerificationController::class, 'send'])
+    ->name('reservas.email-code.send');
+    Route::post('/email-code/verify', [ReservaEmailVerificationController::class, 'verify'])
+    ->name('reservas.email-code.verify');
 
 });
 

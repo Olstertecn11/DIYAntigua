@@ -88,13 +88,7 @@
             <div class="max-w-7xl mx-auto px-6 py-24 lg:py-32">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
 
-                    {{-- TEXTO PRINCIPAL --}}
                     <div>
-                        <div
-                            class="inline-flex items-center gap-2 rounded-full border border-yellow-300/30 bg-yellow-300/10 px-4 py-2 text-sm font-semibold text-yellow-200 mb-6">
-                            <span class="h-2 w-2 rounded-full bg-yellow-300"></span>
-                            Traslados privados, seguros y puntuales en Guatemala
-                        </div>
 
                         <h1 class="text-5xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tight mb-6">
                             Viaja cómodo,

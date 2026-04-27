@@ -7,11 +7,6 @@
             {{-- Encabezado superior --}}
             <div class="row mb-5">
                 <div class="col-lg-8">
-                    <span class="eyebrow-badge mb-3">
-                        <i class="fas fa-car-side me-2"></i>
-                        Transporte privado
-                    </span>
-
                     <h1 class="display-5 fw-black mb-3 text-white">
                         Vehículos disponibles
                     </h1>
