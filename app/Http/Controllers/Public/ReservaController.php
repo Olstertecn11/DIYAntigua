@@ -17,8 +17,8 @@ class ReservaController extends Controller
     public function cotizar(Request $request)
     {
         $validated = $request->validate([
-            'origen' => ['required', 'exists:destinos,id'],
-            'destino' => ['required', 'exists:destinos,id', 'different:origen'],
+            'origen' => ['required', 'exists:lugares,id'],
+            'destino' => ['required', 'exists:lugares,id', 'different:origen'],
             'fecha' => ['required', 'date', 'after_or_equal:today'],
             'hora' => ['required'],
             'pasajeros' => ['required', 'integer', 'min:1', 'max:15'],
@@ -28,7 +28,13 @@ class ReservaController extends Controller
             ->where('origen_id', $validated['origen'])
             ->where('destino_id', $validated['destino'])
             ->where('activa', true)
-            ->firstOrFail();
+            ->first();
+
+        if (! $ruta) {
+            return back()
+                ->withErrors(['ruta' => 'No existe una ruta activa para el origen y destino seleccionados.'])
+                ->withInput();
+        }
 
         $datos = [
             'fecha' => $validated['fecha'],
@@ -62,8 +68,8 @@ class ReservaController extends Controller
             ->findOrFail($validated['ruta_id']);
 
         $vehiculoSeleccionado = $ruta->vehiculosDisponibles
-            ->where('id', (int) $validated['vehiculo_id'])
-            ->first();
+                                     ->where('id', (int) $validated['vehiculo_id'])
+                                     ->first();
 
         if (! $vehiculoSeleccionado) {
             return redirect()
@@ -126,8 +132,8 @@ class ReservaController extends Controller
                     ->findOrFail($validated['ruta_id']);
 
                 $vehiculo = $ruta->vehiculosDisponibles
-                    ->where('id', (int) $validated['vehiculo_id'])
-                    ->first();
+                                 ->where('id', (int) $validated['vehiculo_id'])
+                                 ->first();
 
                 if (! $vehiculo) {
                     return back()
