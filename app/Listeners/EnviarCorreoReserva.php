@@ -4,15 +4,21 @@ namespace App\Listeners;
 
 use App\Events\ReservaCreada;
 use App\Mail\ReservaConfirmada;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
-class EnviarCorreoReserva implements ShouldQueue
+class EnviarCorreoReserva
 {
     public function handle(ReservaCreada $event)
     {
-        // Accedemos a la reserva a través del evento
-        Mail::to($event->reserva->correo_cliente)
-            ->send(new ReservaConfirmada($event->reserva));
+        try {
+            Mail::to($event->reserva->correo_cliente)
+                ->send(new ReservaConfirmada($event->reserva));
+        } catch (\Throwable $exception) {
+            Log::warning('No se pudo enviar el correo de reserva.', [
+                'reservacion_id' => $event->reserva->id,
+                'error' => $exception->getMessage(),
+            ]);
+        }
     }
 }

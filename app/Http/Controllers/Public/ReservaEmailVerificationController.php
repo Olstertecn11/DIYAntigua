@@ -15,7 +15,7 @@ class ReservaEmailVerificationController extends Controller
     public function send(Request $request)
     {
         $validated = $request->validate([
-            'correo_cliente' => ['required', 'email:rfc,dns', 'max:150'],
+            'correo_cliente' => ['required', 'email', 'max:150'],
         ]);
 
         $email = strtolower(trim($validated['correo_cliente']));

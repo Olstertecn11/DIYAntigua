@@ -16,10 +16,10 @@
                     </tr>
                     <tr>
                         <td style="background:#0b0b0b;border:1px solid #262626;border-radius:16px;padding:34px;">
-                            <p style="margin:0 0 10px;color:#facc15;font-size:12px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;">Reserva recibida</p>
-                            <h1 style="margin:0 0 14px;font-size:28px;line-height:1.2;color:#ffffff;">Hola, {{ $reserva->nombre_cliente }}</h1>
+                            <p style="margin:0 0 10px;color:#22c55e;font-size:12px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;">Pago aprobado</p>
+                            <h1 style="margin:0 0 14px;font-size:28px;line-height:1.2;color:#ffffff;">Tu reserva está confirmada</h1>
                             <p style="margin:0 0 24px;color:#cfcfcf;font-size:15px;line-height:1.7;">
-                                Recibimos tu solicitud de traslado. Para confirmar completamente tu reserva, completa el pago desde el enlace seguro.
+                                Gracias, {{ $reserva->nombre_cliente }}. Recibimos el pago de tu traslado y tu reserva quedó confirmada.
                             </p>
 
                             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#111111;border:1px solid #242424;border-radius:12px;margin:0 0 24px;">
@@ -36,24 +36,19 @@
                                     <td align="right" style="padding:18px;border-bottom:1px solid #242424;color:#ffffff;font-weight:700;">{{ \Carbon\Carbon::parse($reserva->fecha_viaje)->format('d/m/Y') }} {{ $reserva->hora_viaje }}</td>
                                 </tr>
                                 <tr>
-                                    <td style="padding:18px;border-bottom:1px solid #242424;color:#9ca3af;">Vehículo</td>
-                                    <td align="right" style="padding:18px;border-bottom:1px solid #242424;color:#ffffff;font-weight:700;">{{ strtoupper($reserva->tipo_vehiculo) }}</td>
+                                    <td style="padding:18px;border-bottom:1px solid #242424;color:#9ca3af;">Referencia</td>
+                                    <td align="right" style="padding:18px;border-bottom:1px solid #242424;color:#ffffff;font-weight:700;">{{ $transaction->provider_transaction_id ?: $transaction->reference }}</td>
                                 </tr>
                                 <tr>
-                                    <td style="padding:18px;color:#9ca3af;">Total</td>
-                                    <td align="right" style="padding:18px;color:#22c55e;font-size:20px;font-weight:900;">Q{{ number_format($reserva->precio_total, 2) }}</td>
+                                    <td style="padding:18px;color:#9ca3af;">Pagado</td>
+                                    <td align="right" style="padding:18px;color:#22c55e;font-size:20px;font-weight:900;">Q{{ number_format($transaction->amount, 2) }}</td>
                                 </tr>
                             </table>
-
-                            <div style="background:#111111;border-left:4px solid #facc15;border-radius:10px;padding:18px;margin-bottom:26px;">
-                                <p style="margin:0 0 10px;color:#facc15;font-weight:800;">Puntos de traslado</p>
-                                <div style="color:#e5e7eb;font-size:14px;line-height:1.7;">{!! nl2br(e($reserva->notas_adicionales)) !!}</div>
-                            </div>
 
                             <table role="presentation" cellspacing="0" cellpadding="0" align="center">
                                 <tr>
                                     <td style="border-radius:999px;background:#facc15;">
-                                        <a href="{{ route('payments.checkout', $reserva->codigo_reserva) }}" style="display:inline-block;padding:14px 26px;color:#050505;text-decoration:none;font-weight:900;border-radius:999px;">Completar pago</a>
+                                        <a href="{{ route('reservas.confirmar', $reserva->codigo_reserva) }}" style="display:inline-block;padding:14px 26px;color:#050505;text-decoration:none;font-weight:900;border-radius:999px;">Ver reserva</a>
                                     </td>
                                 </tr>
                             </table>
@@ -62,7 +57,7 @@
                     <tr>
                         <td align="center" style="padding:22px;color:#6b7280;font-size:12px;line-height:1.6;">
                             © {{ date('Y') }} DIY Antigua Private Transfers<br>
-                            Este correo fue enviado automáticamente por tu reserva.
+                            Conserva este correo como confirmación de pago.
                         </td>
                     </tr>
                 </table>

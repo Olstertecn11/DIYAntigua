@@ -67,7 +67,7 @@
 
                                         <input type="text" name="nombre_cliente" required
                                             class="form-control modern-input" placeholder="Ej. Juan Pérez"
-                                            value="{{ old('nombre_cliente') }}">
+                                            value="{{ old('nombre_cliente', auth()->user()?->name) }}">
                                     </div>
                                 </div>
 
@@ -81,7 +81,7 @@
 
                                         <input type="email" name="correo_cliente" required
                                             class="form-control modern-input" placeholder="usuario@gmail.com"
-                                            value="{{ old('correo_cliente') }}">
+                                            value="{{ old('correo_cliente', auth()->user()?->email) }}">
                                     </div>
                                 </div>
 
@@ -521,7 +521,36 @@
                 }
             }
 
-            openButton.addEventListener('click', sendCode);
+            const authenticatedEmail = @json(auth()->user()?->email ? strtolower(auth()->user()->email) : null);
+
+            function submitAuthenticatedReservationIfPossible() {
+                if (!authenticatedEmail) {
+                    return false;
+                }
+
+                if (!validateMainForm()) {
+                    return true;
+                }
+
+                if (emailInput.value.trim().toLowerCase() !== authenticatedEmail) {
+                    return false;
+                }
+
+                tokenInput.value = '';
+                openButton.disabled = true;
+                openButton.innerHTML = 'Creando reserva...';
+                form.submit();
+
+                return true;
+            }
+
+            openButton.addEventListener('click', function() {
+                if (submitAuthenticatedReservationIfPossible()) {
+                    return;
+                }
+
+                sendCode();
+            });
             closeButton.addEventListener('click', closeModal);
             resendButton.addEventListener('click', sendCode);
             verifyButton.addEventListener('click', verifyCode);

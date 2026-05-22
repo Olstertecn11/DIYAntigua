@@ -5,9 +5,8 @@ use App\Models\Reservacion;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ReservaConfirmada extends Mailable implements ShouldQueue
+class ReservaConfirmada extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -20,7 +19,9 @@ class ReservaConfirmada extends Mailable implements ShouldQueue
 
     public function build()
     {
-        return $this->subject('Confirmación de tu Reserva - DiyAntigua')
+        $this->reserva->loadMissing(['ruta.origen', 'ruta.destino']);
+
+        return $this->subject('Reserva recibida - ' . $this->reserva->codigo_reserva)
                     ->view('emails.reserva_confirmada');
     }
 }

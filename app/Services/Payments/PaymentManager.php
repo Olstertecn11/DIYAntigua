@@ -4,6 +4,7 @@ namespace App\Services\Payments;
 
 use App\Enums\Payments\PaymentProvider;
 use App\Enums\Payments\PaymentStatus;
+use App\Events\PagoAprobado;
 use App\Models\PaymentAttempt;
 use App\Models\PaymentTransaction;
 use App\Models\Reservacion;
@@ -88,7 +89,7 @@ class PaymentManager
             ];
         }
 
-        return DB::transaction(function () use ($attempt, $freshReservation, $cardData, $clientResponse) {
+        $transaction = DB::transaction(function () use ($attempt, $freshReservation, $cardData, $clientResponse) {
             $lockedReservation = Reservacion::whereKey($freshReservation->id)->lockForUpdate()->firstOrFail();
             $mapped = $this->responseMapper->map($clientResponse);
             $status = $mapped['status'];
@@ -119,6 +120,12 @@ class PaymentManager
 
             return $transaction;
         });
+
+        if ($transaction->status === PaymentStatus::Approved->value) {
+            event(new PagoAprobado($transaction->reservacion, $transaction));
+        }
+
+        return $transaction;
     }
 
     private function updateReservationStatus(Reservacion $reservacion, PaymentTransaction $transaction): void

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Events\ReservaCreada;
+use App\Events\PagoAprobado;
+use App\Listeners\EnviarCorreoPagoAprobado;
 use App\Listeners\EnviarCorreoReserva;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
-        // Event::listen(ReservaCreada::class, EnviarCorreoReserva::class);
+        Event::listen(ReservaCreada::class, EnviarCorreoReserva::class);
+        Event::listen(PagoAprobado::class, EnviarCorreoPagoAprobado::class);
     }
 }

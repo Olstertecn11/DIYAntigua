@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\EmailVerificationCode;
 use App\Models\Reservacion;
 use App\Models\Ruta;
+use App\Models\RutaVehiculo;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -56,7 +57,7 @@ class ReservaController extends Controller
         $validated = $request->validate([
             'ruta_id' => ['required', 'exists:rutas,id'],
             'vehiculo_id' => ['required', 'exists:vehiculos,id'],
-            'id_detalle_ruta' => ['required'],
+            'id_detalle_ruta' => ['required', 'integer', 'exists:ruta_vehiculo,id'],
             'fecha' => ['required', 'date', 'after_or_equal:today'],
             'hora' => ['required'],
             'pasajeros' => ['required', 'integer', 'min:1', 'max:15'],
@@ -93,7 +94,7 @@ class ReservaController extends Controller
         $validated = $request->validate([
             'ruta_id' => ['required', 'exists:rutas,id'],
             'vehiculo_id' => ['required', 'exists:vehiculos,id'],
-            'id_detalle_ruta' => ['required'],
+            'id_detalle_ruta' => ['required', 'integer', 'exists:ruta_vehiculo,id'],
             'nombre_cliente' => ['required', 'string', 'max:150'],
             'correo_cliente' => ['required', 'email', 'max:150'],
             'telefono_cliente' => ['required', 'string', 'max:25'],
@@ -104,25 +105,34 @@ class ReservaController extends Controller
             'hora_viaje' => ['required'],
             'pasajeros' => ['required', 'integer', 'min:1', 'max:15'],
             'precio_total' => ['required', 'numeric', 'min:0'],
-            'email_verification_token' => ['required', 'string', 'size:64'],
+            'email_verification_token' => ['nullable', 'string', 'max:64'],
         ]);
 
         $email = strtolower(trim($validated['correo_cliente']));
-        $tokenHash = hash('sha256', $validated['email_verification_token']);
+        $authenticatedEmail = auth()->check() && strtolower((string) auth()->user()->email) === $email;
+        $verification = null;
 
-        $verification = EmailVerificationCode::where('email', $email)
-            ->where('purpose', 'reservation')
-            ->where('verification_token_hash', $tokenHash)
-            ->whereNotNull('verified_at')
-            ->whereNull('used_at')
-            ->where('expires_at', '>', now())
-            ->latest()
-            ->first();
+        if (! $authenticatedEmail) {
+            if (empty($validated['email_verification_token']) || strlen($validated['email_verification_token']) !== 64) {
+                return back()
+                    ->withErrors(['correo_cliente' => 'Verifica tu correo antes de continuar con la reserva.'])
+                    ->withInput();
+            }
 
-        if (! $verification) {
-            return back()
-                ->withErrors(['correo_cliente' => 'La verificación de correo es inválida o venció. Solicita un nuevo código.'])
-                ->withInput();
+            $verification = EmailVerificationCode::where('email', $email)
+                ->where('purpose', 'reservation')
+                ->where('verification_token_hash', hash('sha256', $validated['email_verification_token']))
+                ->whereNotNull('verified_at')
+                ->whereNull('used_at')
+                ->where('expires_at', '>', now())
+                ->latest()
+                ->first();
+
+            if (! $verification) {
+                return back()
+                    ->withErrors(['correo_cliente' => 'La verificación de correo es inválida o venció. Solicita un nuevo código.'])
+                    ->withInput();
+            }
         }
 
         try {
@@ -131,9 +141,14 @@ class ReservaController extends Controller
                     ->where('activa', true)
                     ->findOrFail($validated['ruta_id']);
 
-                $vehiculo = $ruta->vehiculosDisponibles
-                                 ->where('id', (int) $validated['vehiculo_id'])
-                                 ->first();
+                $detalleRuta = RutaVehiculo::whereKey($validated['id_detalle_ruta'])
+                    ->where('ruta_id', $ruta->id)
+                    ->where('vehiculo_id', $validated['vehiculo_id'])
+                    ->first();
+
+                $vehiculo = $detalleRuta
+                    ? $ruta->vehiculosDisponibles->where('id', (int) $validated['vehiculo_id'])->first()
+                    : null;
 
                 if (! $vehiculo) {
                     return back()
@@ -157,16 +172,20 @@ class ReservaController extends Controller
                     'correo_cliente' => $email,
                     'telefono_cliente' => $validated['telefono_cliente'],
                     'notas_adicionales' => $notasCompletas,
-                    'precio_total' => $validated['precio_total'],
+                    'precio_total' => $detalleRuta->precio_tarifa,
                     'estado_pago' => 'pendiente',
                     'estado_viaje' => 'programado',
                 ]);
 
-                $verification->update([
-                    'used_at' => now(),
-                ]);
+                if ($verification) {
+                    $verification->update([
+                        'used_at' => now(),
+                    ]);
+                }
 
-                event(new ReservaCreada($reserva));
+                DB::afterCommit(function () use ($reserva) {
+                    event(new ReservaCreada($reserva));
+                });
 
                 return redirect()
                     ->route('payments.checkout', ['codigo' => $reserva->codigo_reserva])
