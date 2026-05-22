@@ -41,6 +41,8 @@ Route::prefix('reservas')->group(function () {
 
 });
 
+require __DIR__.'/payments.php';
+
 Route::group(['prefix' => 'socios'], function () {
     Route::get('/login', [SocioController::class, 'login'])->name('socios.login');
 

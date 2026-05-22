@@ -21,7 +21,7 @@
             <p class="small text-white mb-3"><i class="fas fa-info-circle me-2"></i> ¿Qué sigue ahora?</p>
             <ul class="list-unstyled space-y-3">
                 <li class="mb-2 text-[#dcdcdc9e]"><i class="fas fa-envelope text-success me-2"></i> Recibirás un correo de confirmación.</li>
-                <li class="mb-2 text-[#dcdcdc9e]"><i class="fab fa-whatsapp text-success me-2"></i> Un agente te contactará para el pago.</li>
+                <li class="mb-2 text-[#dcdcdc9e]"><i class="fas fa-credit-card text-success me-2"></i> Estado del pago: {{ strtoupper($reservacion->estado_pago) }}.</li>
                 <li class="text-[#dcdcdc9e]"><i class="fas fa-clock  me-2"></i> Tu piloto te esperará en la fecha indicada.</li>
             </ul>
         </div>
@@ -33,6 +33,11 @@
             <a href="{{ route('reservas.pdf', $reservacion->codigo_reserva) }}" class="btn btn-link text-[#b8b0b0] text-decoration-none small">
                 <i class="fas fa-file-pdf me-1"></i> Descargar Comprobante PDF
             </a>
+            @if ($reservacion->estado_pago !== 'pagado')
+                <a href="{{ route('payments.checkout', $reservacion->codigo_reserva) }}" class="btn btn-warning rounded-pill py-3 fw-bold uppercase text-xs tracking-widest">
+                    Pagar Reserva
+                </a>
+            @endif
         </div>
     </div>
 </div>

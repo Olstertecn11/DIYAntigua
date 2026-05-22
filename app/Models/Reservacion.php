@@ -4,6 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Reservacion extends Model
 {
@@ -15,7 +16,13 @@ class Reservacion extends Model
         'codigo_reserva', 'ruta_id', 'user_id', 'socio_id', 'fecha_viaje',
         'hora_viaje', 'pasajeros', 'tipo_vehiculo', 'nombre_cliente',
         'correo_cliente', 'telefono_cliente', 'notas_adicionales',
-        'precio_total', 'estado_pago', 'estado_viaje'
+        'precio_total', 'estado_pago', 'estado_viaje', 'pago_provider',
+        'pago_referencia', 'pagado_at', 'pago_error_mensaje'
+    ];
+
+    protected $casts = [
+        'pagado_at' => 'datetime',
+        'precio_total' => 'decimal:2',
     ];
 
     /**
@@ -32,5 +39,15 @@ class Reservacion extends Model
     public function socio(): BelongsTo
     {
         return $this->belongsTo(User::class, 'socio_id');
+    }
+
+    public function paymentAttempts(): HasMany
+    {
+        return $this->hasMany(PaymentAttempt::class);
+    }
+
+    public function paymentTransactions(): HasMany
+    {
+        return $this->hasMany(PaymentTransaction::class);
     }
 }

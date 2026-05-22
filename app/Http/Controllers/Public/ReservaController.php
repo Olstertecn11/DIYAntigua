@@ -169,8 +169,8 @@ class ReservaController extends Controller
                 event(new ReservaCreada($reserva));
 
                 return redirect()
-                    ->route('reservas.confirmar', ['codigo' => $reserva->codigo_reserva])
-                    ->with('success', '¡Reserva creada con éxito!');
+                    ->route('payments.checkout', ['codigo' => $reserva->codigo_reserva])
+                    ->with('success', 'Reserva creada. Completa el pago para confirmarla.');
             });
         } catch (\Throwable $e) {
             return back()
