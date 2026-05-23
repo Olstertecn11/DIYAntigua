@@ -9,7 +9,7 @@ class QPayProClient
 {
     public function charge(array $payload): array
     {
-        $response = Http::asForm()
+        $response = Http::acceptJson()
             ->timeout(config('qpaypro.timeout'))
             ->withOptions(['verify' => config('qpaypro.verify_ssl')])
             ->post(config('qpaypro.endpoint'), $payload);

@@ -5,6 +5,7 @@ use App\Http\Controllers\Payments\QPayProCallbackController;
 use App\Http\Controllers\Payments\QPayProPaymentController;
 use App\Http\Middleware\EnsureOrderCanBePaid;
 use App\Http\Middleware\PreventDuplicatePayment;
+use App\Models\PaymentTransaction;
 use App\Models\Reservacion;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,19 @@ Route::prefix('pagos')->name('payments.')->group(function () {
     Route::post('/qpaypro/callback', [QPayProCallbackController::class, 'store'])
         ->middleware('throttle:30,1')
         ->name('qpaypro.callback');
+
+    Route::get('/retorno', function () {
+        return redirect()->route('welcome');
+    })->name('return');
+
+    Route::get('/resultado/{transaction}', function (PaymentTransaction $transaction) {
+        $transaction->loadMissing(['reservacion.ruta.origen', 'reservacion.ruta.destino']);
+
+        return view('payments.result', [
+            'transaction' => $transaction,
+            'reservacion' => $transaction->reservacion,
+        ]);
+    })->middleware('signed')->name('result');
 
     Route::get('/reservas/{codigo}/procesando', function (string $codigo) {
         $reservacion = Reservacion::where('codigo_reserva', $codigo)->firstOrFail();

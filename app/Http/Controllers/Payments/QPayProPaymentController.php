@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Payments;
 
-use App\Enums\Payments\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Payments\StoreCardPaymentRequest;
 use App\Models\Reservacion;
 use App\Services\Payments\PaymentManager;
+use Illuminate\Support\Facades\URL;
 
 class QPayProPaymentController extends Controller
 {
@@ -21,11 +21,6 @@ class QPayProPaymentController extends Controller
 
         $transaction = $this->paymentManager->pay($reservacion, $request->validated(), $request);
 
-        return match ($transaction->status) {
-            PaymentStatus::Approved->value => redirect()->route('payments.success', $reservacion->codigo_reserva),
-            PaymentStatus::Declined->value => redirect()->route('payments.declined', $reservacion->codigo_reserva),
-            PaymentStatus::Error->value => redirect()->route('payments.error', $reservacion->codigo_reserva),
-            default => redirect()->route('payments.processing', $reservacion->codigo_reserva),
-        };
+        return redirect(URL::signedRoute('payments.result', ['transaction' => $transaction->id]));
     }
 }

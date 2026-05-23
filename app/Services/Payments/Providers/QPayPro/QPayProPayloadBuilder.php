@@ -12,19 +12,20 @@ class QPayProPayloadBuilder
     {
         [$firstName, $lastName] = $this->splitName($reservacion->nombre_cliente);
 
-        return [
-            'x_login' => config('qpaypro.login'),
+        $payload = [
+            'x_login' => config('qpaypro.merchant_id'),
             'x_private_key' => config('qpaypro.private_key'),
             'x_api_secret' => config('qpaypro.api_secret'),
-            'x_product_id' => config('qpaypro.product_id'),
+            'x_product_id' => (int) config('qpaypro.product_id'),
             'x_audit_number' => random_int(100000, 999999),
             'x_fp_sequence' => random_int(1000000000, 2147483647),
             'x_fp_timestamp' => now()->timestamp,
             'x_invoice_num' => $reservacion->codigo_reserva,
+            'x_description' => "Reserva {$reservacion->codigo_reserva}",
             'x_currency_code' => config('qpaypro.currency'),
-            'x_amount' => number_format((float) $reservacion->precio_total, 2, '.', ''),
+            'x_amount' => (float) number_format((float) $reservacion->precio_total, 2, '.', ''),
             'x_line_item' => $this->lineItem($reservacion),
-            'x_freight' => '0',
+            'x_freight' => 0.00,
             'x_email' => $reservacion->correo_cliente,
             'cc_number' => preg_replace('/\D+/', '', $cardData['cc_number']),
             'cc_exp' => $this->expiration($cardData['cc_exp_month'], $cardData['cc_exp_year']),
@@ -44,14 +45,28 @@ class QPayProPayloadBuilder
             'x_type' => config('qpaypro.transaction_type'),
             'x_method' => 'CC',
             'http_origin' => config('app.url'),
-            'visaencuotas' => '0',
-            'device_fingerprint_id' => $attempt->fingerprint_session_id,
+            'visaencuotas' => 0,
             'payment_response_url' => [
-                'success_url' => route('payments.success', $reservacion->codigo_reserva),
-                'error_url' => route('payments.error', $reservacion->codigo_reserva),
+                'success_url' => route('payments.return'),
+                'error_url' => route('payments.return'),
             ],
+            'origen' => config('qpaypro.origin'),
             'finger' => $finger,
         ];
+
+        if (config('qpaypro.send_device_fingerprint_id')) {
+            $payload['device_fingerprint_id'] = $attempt->fingerprint_session_id;
+        }
+
+        if ($customFields = $this->configuredJson('custom_fields')) {
+            $payload['custom_fields'] = json_encode($customFields);
+        }
+
+        if ($firstTokenCustomFields = $this->configuredJson('first_token_custom_fields')) {
+            $payload['first_token_custom_fields'] = $firstTokenCustomFields;
+        }
+
+        return $payload;
     }
 
     private function splitName(string $name): array
@@ -71,5 +86,18 @@ class QPayProPayloadBuilder
         $description = Str::limit("Reserva {$reservacion->codigo_reserva}", 40, '');
 
         return "{$description}<|>{$reservacion->codigo_reserva}<|><|>1<|>" . number_format((float) $reservacion->precio_total, 2, '.', '') . '<|>N';
+    }
+
+    private function configuredJson(string $key): ?array
+    {
+        $value = config("qpaypro.{$key}");
+
+        if (! is_string($value) || trim($value) === '') {
+            return null;
+        }
+
+        $decoded = json_decode($value, true);
+
+        return is_array($decoded) ? $decoded : null;
     }
 }

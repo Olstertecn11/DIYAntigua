@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+    <script src="https://h.online-metrix.net/fp/tags.js?org_id={{ $fingerprintOrgId }}&session_id={{ $fingerprintFullSessionId }}" type="application/javascript"></script>
+    <noscript>
+        <iframe style="width:100px;height:100px;border:0;position:absolute;top:-5000px;" src="https://h.online-metrix.net/fp/tags?org_id={{ $fingerprintOrgId }}&session_id={{ $fingerprintFullSessionId }}"></iframe>
+    </noscript>
+
     <div class="reservation-details-page min-h-screen py-5">
         <div class="container max-w-6xl position-relative">
             <form action="{{ route('reservas.store') }}" method="POST" id="reservation-form">
@@ -14,6 +19,8 @@
                 <input type="hidden" name="precio_total" value="{{ $datos['precio'] }}">
                 <input type="hidden" name="id_detalle_ruta" value="{{ $datos['id_detalle_ruta'] }}">
                 <input type="hidden" name="email_verification_token" id="email_verification_token">
+                <input type="hidden" name="fingerprint_session_id" value="{{ $fingerprintSessionId }}">
+                <input type="hidden" name="finger" id="finger">
 
                 @php
                     $vehiculoSeleccionado = $ruta->vehiculosDisponibles->where('id', $datos['vehiculo_id'])->first();
@@ -101,7 +108,7 @@
                             </div>
                         </section>
 
-                        <section class="form-section-card">
+                        <section class="form-section-card mb-4">
                             <div class="section-heading mb-4">
                                 <div class="section-icon icon-blue">
                                     <i class="fas fa-map-location-dot"></i>
@@ -159,6 +166,126 @@
                                         <textarea name="notas_adicionales" class="form-control modern-textarea" rows="3"
                                             placeholder="Número de vuelo, silla de bebé, maletas extra, instrucciones especiales...">{{ old('notas_adicionales') }}</textarea>
                                     </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="form-section-card payment-premium-card">
+                            <div class="section-heading mb-4">
+                                <div class="section-icon icon-gold">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+
+                                <div>
+                                    <span class="section-kicker">
+                                        Pago seguro
+                                    </span>
+
+                                    <h2 class="h3 fw-black mb-0 text-slate-main">
+                                        Confirma y paga tu traslado
+                                    </h2>
+                                </div>
+                            </div>
+
+                            <div class="payment-trust-strip mb-4">
+                                <div>
+                                    <i class="fas fa-lock"></i>
+                                    Datos protegidos
+                                </div>
+                                <div>
+                                    <i class="fas fa-receipt"></i>
+                                    Constancia digital
+                                </div>
+                                <div>
+                                    <i class="fas fa-plane-departure"></i>
+                                    Reserva al instante
+                                </div>
+                            </div>
+
+                            <div class="row g-4">
+                                <div class="col-md-12">
+                                    <label class="form-label-custom">Nombre en la tarjeta</label>
+                                    <div class="input-shell">
+                                        <i class="fas fa-id-card input-icon"></i>
+                                        <input type="text" name="cc_name" required class="form-control modern-input"
+                                            placeholder="Como aparece en la tarjeta" value="{{ old('cc_name') }}" autocomplete="cc-name">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label class="form-label-custom">Número de tarjeta</label>
+                                    <div class="input-shell">
+                                        <i class="fas fa-credit-card input-icon"></i>
+                                        <input type="text" name="cc_number" required class="form-control modern-input"
+                                            placeholder="4111 1111 1111 1111" maxlength="23" inputmode="numeric" autocomplete="cc-number">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label-custom">Mes</label>
+                                    <div class="input-shell">
+                                        <input type="text" name="cc_exp_month" required class="form-control modern-input ps-3"
+                                            placeholder="01" maxlength="2" inputmode="numeric" value="{{ old('cc_exp_month') }}" autocomplete="cc-exp-month">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label-custom">Año</label>
+                                    <div class="input-shell">
+                                        <input type="text" name="cc_exp_year" required class="form-control modern-input ps-3"
+                                            placeholder="2026" maxlength="4" inputmode="numeric" value="{{ old('cc_exp_year') }}" autocomplete="cc-exp-year">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label-custom">CVV</label>
+                                    <div class="input-shell">
+                                        <input type="password" name="cc_cvv2" required class="form-control modern-input ps-3"
+                                            placeholder="4567" maxlength="4" inputmode="numeric" autocomplete="cc-csc">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label-custom">Tipo</label>
+                                    <div class="input-shell">
+                                        <select name="cc_type" required class="form-control modern-input ps-3">
+                                            <option value="visa" @selected(old('cc_type') === 'visa')>Visa</option>
+                                            <option value="mastercard" @selected(old('cc_type') === 'mastercard')>Mastercard</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label class="form-label-custom">Dirección de facturación</label>
+                                    <div class="input-shell">
+                                        <i class="fas fa-location-dot input-icon"></i>
+                                        <input type="text" name="billing_address" required class="form-control modern-input"
+                                            value="{{ old('billing_address', 'Guatemala') }}">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Ciudad</label>
+                                    <input type="text" name="billing_city" required class="form-control modern-input"
+                                        value="{{ old('billing_city', 'Guatemala') }}">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Departamento</label>
+                                    <input type="text" name="billing_state" required class="form-control modern-input"
+                                        value="{{ old('billing_state', 'Guatemala') }}">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">País</label>
+                                    <input type="text" name="billing_country" required class="form-control modern-input"
+                                        value="{{ old('billing_country', 'Guatemala') }}">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label-custom">Código postal</label>
+                                    <input type="text" name="billing_zip" required class="form-control modern-input"
+                                        value="{{ old('billing_zip', '01001') }}">
                                 </div>
                             </div>
                         </section>
@@ -266,8 +393,8 @@
                             </div>
 
                             <button type="button" id="open-email-verification" class="confirm-btn w-100">
-                                Continuar con mi reserva
-                                <i class="fas fa-arrow-right ms-2"></i>
+                                Confirmar y pagar
+                                <i class="fas fa-lock ms-2"></i>
                             </button>
 
                             <div class="secure-note mt-4">
@@ -334,7 +461,79 @@
         </div>
     </div>
 
+    @guest
+        <div id="guest-choice-modal" class="email-modal-backdrop d-none">
+            <div class="email-modal-card guest-choice-card">
+                <button type="button" id="close-guest-choice-modal" class="email-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+
+                <div class="email-modal-icon">
+                    <i class="fas fa-passport"></i>
+                </div>
+
+                <span class="email-modal-kicker">Reserva flexible</span>
+
+                <h3 class="email-modal-title">Puedes reservar como invitado o iniciar sesión</h3>
+
+                <p class="email-modal-text">
+                    Si inicias sesión, guardaremos la reserva en tu cuenta. Si prefieres avanzar rápido, continúa como invitado y verificaremos tu correo.
+                </p>
+
+                <div class="d-grid gap-3 mt-4">
+                    <a href="{{ route('login') }}" class="confirm-btn text-center text-decoration-none">
+                        Iniciar sesión
+                        <i class="fas fa-arrow-right-to-bracket ms-2"></i>
+                    </a>
+
+                    <button type="button" id="continue-as-guest" class="resend-code-btn">
+                        Continuar como invitado
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endguest
+
     <link rel="stylesheet" href="{{ asset('css/reservas/detalles.css') }}">
+
+    <style>
+        .payment-premium-card {
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,248,226,.94)),
+                radial-gradient(circle at 8% 0%, rgba(250,204,21,.16), transparent 32%);
+        }
+
+        .payment-trust-strip {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .payment-trust-strip div {
+            border: 1px solid rgba(15,23,42,.08);
+            background: rgba(255,255,255,.72);
+            border-radius: 14px;
+            padding: 12px;
+            font-size: 12px;
+            font-weight: 900;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+        }
+
+        .guest-choice-card {
+            max-width: 520px;
+        }
+
+        @media (max-width: 768px) {
+            .payment-trust-strip {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 @endsection
 
 @section('scripts')
@@ -351,6 +550,12 @@
             const emailPreview = document.getElementById('email-preview');
             const messageBox = document.getElementById('email-code-message');
             const otpInputs = document.querySelectorAll('.otp-input');
+            const guestChoiceModal = document.getElementById('guest-choice-modal');
+            const closeGuestChoiceModal = document.getElementById('close-guest-choice-modal');
+            const continueAsGuestButton = document.getElementById('continue-as-guest');
+            const fingerInput = document.getElementById('finger');
+            let guestChoiceAccepted = false;
+            let formSubmitting = false;
 
             function showMessage(message, type = 'error') {
                 messageBox.textContent = message;
@@ -510,7 +715,7 @@
                     showMessage('Correo verificado. Continuando con tu reserva...', 'success');
 
                     setTimeout(() => {
-                        form.submit();
+                        finalizeSubmit();
                     }, 600);
 
                 } catch (error) {
@@ -522,6 +727,37 @@
             }
 
             const authenticatedEmail = @json(auth()->user()?->email ? strtolower(auth()->user()->email) : null);
+
+            function showGuestChoiceIfNeeded() {
+                if (authenticatedEmail || guestChoiceAccepted || !guestChoiceModal) {
+                    return false;
+                }
+
+                if (!validateMainForm()) {
+                    return true;
+                }
+
+                guestChoiceModal.classList.remove('d-none');
+
+                return true;
+            }
+
+            function closeGuestChoice() {
+                if (guestChoiceModal) {
+                    guestChoiceModal.classList.add('d-none');
+                }
+            }
+
+            function finalizeSubmit() {
+                if (formSubmitting) {
+                    return;
+                }
+
+                formSubmitting = true;
+                openButton.disabled = true;
+                openButton.innerHTML = 'Procesando reserva y pago...';
+                form.submit();
+            }
 
             function submitAuthenticatedReservationIfPossible() {
                 if (!authenticatedEmail) {
@@ -537,14 +773,16 @@
                 }
 
                 tokenInput.value = '';
-                openButton.disabled = true;
-                openButton.innerHTML = 'Creando reserva...';
-                form.submit();
+                finalizeSubmit();
 
                 return true;
             }
 
             openButton.addEventListener('click', function() {
+                if (showGuestChoiceIfNeeded()) {
+                    return;
+                }
+
                 if (submitAuthenticatedReservationIfPossible()) {
                     return;
                 }
@@ -554,6 +792,18 @@
             closeButton.addEventListener('click', closeModal);
             resendButton.addEventListener('click', sendCode);
             verifyButton.addEventListener('click', verifyCode);
+
+            if (closeGuestChoiceModal) {
+                closeGuestChoiceModal.addEventListener('click', closeGuestChoice);
+            }
+
+            if (continueAsGuestButton) {
+                continueAsGuestButton.addEventListener('click', function() {
+                    guestChoiceAccepted = true;
+                    closeGuestChoice();
+                    sendCode();
+                });
+            }
 
             otpInputs.forEach((input, index) => {
                 input.addEventListener('input', function() {
@@ -601,6 +851,24 @@
                     closeModal();
                 }
             });
+
+            if (guestChoiceModal) {
+                guestChoiceModal.addEventListener('click', function(event) {
+                    if (event.target === guestChoiceModal) {
+                        closeGuestChoice();
+                    }
+                });
+            }
         });
+
+        function initFingerprintJS() {
+            FingerprintJS.load({}).then(fp => fp.get()).then(data => {
+                const input = document.getElementById('finger');
+                if (input) {
+                    input.value = data.visitorId;
+                }
+            });
+        }
     </script>
+    <script async src="https://fpcdn.io/v3/cUXvdB6hHu/iife.min.js" onload="initFingerprintJS()"></script>
 @endsection

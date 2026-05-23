@@ -454,7 +454,7 @@
         </form>
 
         {{-- Notificaciones Toast --}}
-        @if ($errors->any())
+        @if (isset($errors) && $errors->any())
             <div id="toast-wrapper" class="toast-container">
                 @foreach ($errors->all() as $error)
                     <div class="toast-pill">

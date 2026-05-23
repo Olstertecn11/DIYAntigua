@@ -8,9 +8,13 @@ use App\Models\EmailVerificationCode;
 use App\Models\Reservacion;
 use App\Models\Ruta;
 use App\Models\RutaVehiculo;
+use App\Services\Payments\PaymentManager;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class ReservaController extends Controller
@@ -85,11 +89,14 @@ class ReservaController extends Controller
         }
 
         $datos = $validated;
+        $fingerprintSessionId = 'DIYQ' . Str::upper(Str::random(24));
+        $fingerprintFullSessionId = config('qpaypro.fingerprint_prefix') . $fingerprintSessionId;
+        $fingerprintOrgId = config('qpaypro.fingerprint_org_id');
 
-        return view('reservas.detalles', compact('ruta', 'datos'));
+        return view('reservas.detalles', compact('ruta', 'datos', 'fingerprintSessionId', 'fingerprintFullSessionId', 'fingerprintOrgId'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, PaymentManager $paymentManager)
     {
         $validated = $request->validate([
             'ruta_id' => ['required', 'exists:rutas,id'],
@@ -106,6 +113,19 @@ class ReservaController extends Controller
             'pasajeros' => ['required', 'integer', 'min:1', 'max:15'],
             'precio_total' => ['required', 'numeric', 'min:0'],
             'email_verification_token' => ['nullable', 'string', 'max:64'],
+            'cc_name' => ['required', 'string', 'max:120'],
+            'cc_number' => ['required', 'string', 'regex:/^[0-9\s-]{13,23}$/'],
+            'cc_exp_month' => ['required', 'regex:/^(0[1-9]|1[0-2])$/'],
+            'cc_exp_year' => ['required', 'digits:4', 'integer', 'min:' . now()->year, 'max:' . now()->addYears(20)->year],
+            'cc_cvv2' => ['required', 'string', 'regex:/^[0-9]{3,4}$/'],
+            'cc_type' => ['required', 'in:visa,mastercard'],
+            'billing_address' => ['required', 'string', 'max:191'],
+            'billing_city' => ['required', 'string', 'max:100'],
+            'billing_state' => ['required', 'string', 'max:100'],
+            'billing_country' => ['required', 'string', 'max:100'],
+            'billing_zip' => ['required', 'string', 'max:20'],
+            'finger' => ['nullable', 'string', 'max:191'],
+            'fingerprint_session_id' => ['required', 'string', 'max:191'],
         ]);
 
         $email = strtolower(trim($validated['correo_cliente']));
@@ -135,8 +155,16 @@ class ReservaController extends Controller
             }
         }
 
+        $lock = Cache::lock('reservation-submit:' . sha1((string) $request->session()->getId()), 120);
+
+        if (! $lock->get()) {
+            return back()
+                ->withErrors(['reserva' => 'Ya estamos procesando tu reserva y pago. Espera un momento.'])
+                ->withInput();
+        }
+
         try {
-            return DB::transaction(function () use ($validated, $verification, $email) {
+            $reserva = DB::transaction(function () use ($validated, $verification, $email) {
                 $ruta = Ruta::with(['vehiculosDisponibles'])
                     ->where('activa', true)
                     ->findOrFail($validated['ruta_id']);
@@ -187,14 +215,32 @@ class ReservaController extends Controller
                     event(new ReservaCreada($reserva));
                 });
 
-                return redirect()
-                    ->route('payments.checkout', ['codigo' => $reserva->codigo_reserva])
-                    ->with('success', 'Reserva creada. Completa el pago para confirmarla.');
+                return $reserva;
             });
+
+            $transaction = $paymentManager->pay($reserva, [
+                'cc_name' => $validated['cc_name'],
+                'cc_number' => preg_replace('/\D+/', '', $validated['cc_number']),
+                'cc_exp_month' => $validated['cc_exp_month'],
+                'cc_exp_year' => $validated['cc_exp_year'],
+                'cc_cvv2' => $validated['cc_cvv2'],
+                'cc_type' => strtolower($validated['cc_type']),
+                'billing_address' => $validated['billing_address'],
+                'billing_city' => $validated['billing_city'],
+                'billing_state' => $validated['billing_state'],
+                'billing_country' => $validated['billing_country'],
+                'billing_zip' => $validated['billing_zip'],
+                'finger' => $validated['finger'] ?: '',
+                'fingerprint_session_id' => $validated['fingerprint_session_id'],
+            ], $request);
+
+            return redirect(URL::signedRoute('payments.result', ['transaction' => $transaction->id]));
         } catch (\Throwable $e) {
             return back()
                 ->withErrors(['reserva' => 'Error al procesar la reserva: ' . $e->getMessage()])
                 ->withInput();
+        } finally {
+            optional($lock)->release();
         }
     }
 
@@ -207,23 +253,57 @@ class ReservaController extends Controller
 
     public function descargarPDF($codigo)
     {
-        $reserva = Reservacion::with(['ruta.origen', 'ruta.destino'])
+        $reserva = Reservacion::with([
+            'ruta.origen',
+            'ruta.destino',
+            'paymentTransactions' => fn ($query) => $query->latest(),
+        ])
             ->where('codigo_reserva', $codigo)
             ->firstOrFail();
 
-        $path = public_path('images/logo.png');
-        $logoBase64 = '';
+        $logoBase64 = $this->localImageDataUri(public_path('images/logo.png'));
+        $qrPayload = route('reservas.confirmar', $reserva->codigo_reserva);
+        $qrBase64 = $this->remoteImageDataUri('https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=12&data=' . urlencode($qrPayload));
+        $transaction = $reserva->paymentTransactions->first();
 
-        if (file_exists($path)) {
-            $type = pathinfo($path, PATHINFO_EXTENSION);
-            $data = file_get_contents($path);
-            $logoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-        }
-
-        $pdf = Pdf::loadView('reservas.comprobante_pdf', compact('reserva', 'logoBase64'));
+        $pdf = Pdf::loadView('reservas.comprobante_pdf', compact('reserva', 'logoBase64', 'qrBase64', 'transaction'));
         $pdf->setPaper('letter', 'portrait');
 
         return $pdf->download("Comprobante-{$reserva->codigo_reserva}.pdf");
+    }
+
+    private function localImageDataUri(string $path): string
+    {
+        if (! file_exists($path)) {
+            return '';
+        }
+
+        $type = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $mime = match ($type) {
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            default => 'image/' . $type,
+        };
+
+        return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($path));
+    }
+
+    private function remoteImageDataUri(string $url): string
+    {
+        try {
+            $response = Http::timeout(8)->get($url);
+
+            if (! $response->successful()) {
+                return '';
+            }
+
+            $contentType = $response->header('Content-Type') ?: 'image/png';
+
+            return 'data:' . $contentType . ';base64,' . base64_encode($response->body());
+        } catch (\Throwable) {
+            return '';
+        }
     }
 
     private function generarCodigoReserva()
