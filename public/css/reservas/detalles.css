@@ -558,3 +558,296 @@
     font-weight: 900;
     text-decoration: underline;
 }
+
+.reservation-details-page {
+    background:
+        linear-gradient(90deg, #FCCA00 0 12px, transparent 12px),
+        linear-gradient(135deg, #ffffff 0%, #f7f7f2 50%, #ecebe5 100%);
+    color: #363636;
+}
+
+.reservation-details-page::before {
+    background-image:
+        linear-gradient(rgba(54, 54, 54, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(54, 54, 54, .035) 1px, transparent 1px);
+}
+
+.reservation-details-page .container {
+    padding-left: clamp(1.75rem, 4vw, 3rem);
+    padding-right: clamp(1.25rem, 3vw, 2rem);
+}
+
+.text-slate-main,
+.summary-text,
+.selected-vehicle-name {
+    color: #000000;
+}
+
+.text-muted-custom,
+.summary-label,
+.price-note {
+    color: #5f5f5f;
+}
+
+.eyebrow-badge,
+.section-kicker,
+.label-pickup,
+.label-destination,
+.vehicle-category {
+    color: #363636;
+}
+
+.eyebrow-badge,
+.selected-vehicle-meta,
+.price-total-box,
+.email-target-box {
+    background: rgba(252, 202, 0, .18);
+    border-color: rgba(252, 202, 0, .45);
+}
+
+.form-section-card {
+    background: rgba(255, 255, 255, .90);
+    border-color: rgba(54, 54, 54, .14);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .08);
+}
+
+.section-icon,
+.confirm-icon,
+.email-modal-icon,
+.summary-icon-small,
+.icon-gold,
+.icon-blue,
+.icon-route,
+.icon-calendar,
+.icon-lock {
+    color: #000000;
+    background: #FCCA00;
+    box-shadow: 0 16px 35px rgba(252, 202, 0, .24);
+}
+
+.input-icon,
+.textarea-icon,
+.destination-shell .textarea-icon,
+.notes-shell .textarea-icon {
+    color: #363636;
+}
+
+.modern-input,
+.modern-textarea {
+    background: #fbfbf8;
+    border-color: rgba(54, 54, 54, .16);
+    color: #000000;
+}
+
+.modern-input:focus,
+.modern-textarea:focus {
+    border-color: #FCCA00;
+    box-shadow:
+        0 0 0 .25rem rgba(252, 202, 0, .18),
+        0 18px 40px rgba(0, 0, 0, .08);
+}
+
+.confirmation-card {
+    background:
+        linear-gradient(90deg, #FCCA00 0 8px, transparent 8px),
+        linear-gradient(135deg, rgba(255, 255, 255, .96), rgba(246, 246, 243, .94));
+    border-color: rgba(54, 54, 54, .14);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .10);
+}
+
+.email-modal-card {
+    background:
+        linear-gradient(90deg, #FCCA00 0 8px, transparent 8px),
+        linear-gradient(135deg, rgba(0, 0, 0, .98), rgba(54, 54, 54, .98));
+    border-color: rgba(255, 255, 255, .14);
+}
+
+.selected-vehicle-box {
+    background: #ffffff;
+    border-color: rgba(54, 54, 54, .12);
+}
+
+.confirmation-card .text-white,
+.confirmation-card .summary-text,
+.confirmation-card .selected-vehicle-name {
+    color: #000000 !important;
+}
+
+.confirmation-card .summary-label,
+.confirmation-card .price-note {
+    color: #6f6a5f;
+}
+
+.confirmation-card .summary-item {
+    border-bottom-color: rgba(54, 54, 54, .10);
+}
+
+.selected-vehicle-meta,
+.price-total,
+.change-link,
+.email-modal-kicker,
+.email-target-box,
+.resend-code-btn {
+    color: #FCCA00;
+}
+
+.price-total {
+    text-shadow: none;
+}
+
+.confirm-btn {
+    color: #000000;
+    background: #FCCA00;
+    box-shadow: 0 18px 40px rgba(252, 202, 0, .25);
+}
+
+.confirm-btn:hover {
+    color: #000000;
+    background: #ffd735;
+    box-shadow: 0 24px 55px rgba(252, 202, 0, .32);
+}
+
+.secure-note {
+    color: #5f5a50;
+}
+
+.reservation-stepper {
+    width: min(100%, 720px);
+    display: grid;
+    grid-template-columns: auto minmax(60px, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding: 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .72);
+    border: 1px solid rgba(54, 54, 54, .12);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, .06);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.stepper-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #777267;
+    font-size: .78rem;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    white-space: nowrap;
+    transition: color .25s ease;
+}
+
+.stepper-item span {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #efeee8;
+    color: #363636;
+    border: 1px solid rgba(54, 54, 54, .10);
+    transition: all .25s ease;
+}
+
+.stepper-item.active {
+    color: #000000;
+}
+
+.stepper-item.active span {
+    color: #000000;
+    background: #FCCA00;
+    border-color: #FCCA00;
+    box-shadow: 0 12px 24px rgba(252, 202, 0, .24);
+}
+
+.stepper-line {
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #FCCA00 0%, rgba(54, 54, 54, .14) 58%);
+}
+
+.reservation-step-panel {
+    transition: opacity .22s ease, transform .22s ease;
+}
+
+.step-panel-leaving {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.step-panel-entering {
+    animation: stepPanelIn .28s ease both;
+}
+
+@keyframes stepPanelIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.step-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.secondary-step-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(54, 54, 54, .16);
+    border-radius: 999px;
+    padding: 1rem 1.25rem;
+    color: #363636;
+    background: rgba(255, 255, 255, .72);
+    font-size: .82rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    transition: all .25s ease;
+}
+
+.secondary-step-btn:hover {
+    background: #ffffff;
+    border-color: rgba(54, 54, 54, .26);
+    transform: translateY(-1px);
+}
+
+.payment-premium-card {
+    border-top: 4px solid #FCCA00;
+}
+
+@media (max-width: 767.98px) {
+    .reservation-stepper {
+        grid-template-columns: 1fr;
+        border-radius: 1.4rem;
+        align-items: flex-start;
+    }
+
+    .stepper-line {
+        width: 2px;
+        height: 22px;
+        margin-left: 15px;
+        background: linear-gradient(180deg, #FCCA00 0%, rgba(54, 54, 54, .14) 100%);
+    }
+
+    .step-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .secondary-step-btn,
+    .step-actions .confirm-btn {
+        width: 100%;
+    }
+}

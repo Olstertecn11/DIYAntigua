@@ -126,10 +126,12 @@
         .ticket-result-page {
             min-height: 100vh;
             background:
-                linear-gradient(135deg, rgba(2,6,23,.94), rgba(7,7,7,.92)),
+                linear-gradient(90deg, #FCCA00 0 12px, transparent 12px),
+                linear-gradient(135deg, rgba(0,0,0,.94), rgba(54,54,54,.90)),
                 url('{{ asset('images/car_trip.jpg') }}') center/cover no-repeat;
             padding: 56px 16px;
             color: white;
+            font-family: 'Avant Garde Gothic', 'ITC Avant Garde Gothic', 'Montserrat', 'Century Gothic', Arial, sans-serif;
         }
 
         .ticket-shell {
@@ -146,7 +148,7 @@
         }
 
         .ticket-kicker {
-            color: #facc15;
+            color: #FCCA00;
             font-size: 12px;
             font-weight: 900;
             text-transform: uppercase;
@@ -177,7 +179,7 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background: rgba(0,0,0,.38);
+            background: rgba(0,0,0,.58);
             white-space: nowrap;
         }
 
@@ -187,7 +189,7 @@
             border-radius: 28px;
             overflow: hidden;
             background: #f8fafc;
-            color: #0f172a;
+            color: #000000;
             box-shadow: 0 30px 80px rgba(0,0,0,.42);
         }
 
@@ -209,7 +211,7 @@
         .payment-band span,
         .boarding-side span {
             display: block;
-            color: #64748b;
+            color: #5f5f5f;
             font-size: 11px;
             font-weight: 950;
             text-transform: uppercase;
@@ -231,11 +233,11 @@
             width: 58px;
             height: 58px;
             border-radius: 999px;
-            background: linear-gradient(135deg, #facc15, #fb923c);
+            background: #FCCA00;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #020617;
+            color: #000000;
             font-size: 22px;
         }
 
@@ -257,18 +259,18 @@
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 16px;
-            background: #0f172a;
+            background: #000000;
             color: white;
             border-radius: 18px;
             padding: 20px;
         }
 
         .payment-band span {
-            color: #94a3b8;
+            color: #c9c9c9;
         }
 
         .boarding-side {
-            background: #0f172a;
+            background: #363636;
             color: white;
             padding: 28px;
             display: flex;
@@ -308,7 +310,7 @@
         }
 
         .boarding-side strong {
-            color: #facc15;
+            color: #FCCA00;
             font-size: 18px;
         }
 
@@ -316,9 +318,9 @@
             margin-top: 18px;
             padding: 16px 18px;
             border-radius: 18px;
-            background: rgba(250,204,21,.14);
-            border: 1px solid rgba(250,204,21,.28);
-            color: #fde68a;
+            background: rgba(252,202,0,.14);
+            border: 1px solid rgba(252,202,0,.34);
+            color: #FCCA00;
             display: flex;
             gap: 12px;
             align-items: center;
@@ -341,8 +343,8 @@
         }
 
         .btn-primary-ticket {
-            background: linear-gradient(135deg, #facc15, #fb923c);
-            color: #020617;
+            background: #FCCA00;
+            color: #000000;
         }
 
         .btn-secondary-ticket {

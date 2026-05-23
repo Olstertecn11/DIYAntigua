@@ -24,6 +24,8 @@
 
                 @php
                     $vehiculoSeleccionado = $ruta->vehiculosDisponibles->where('id', $datos['vehiculo_id'])->first();
+                    $paymentFields = ['cc_name', 'cc_number', 'cc_exp_month', 'cc_exp_year', 'cc_cvv2', 'cc_type', 'billing_address', 'billing_city', 'billing_state', 'billing_country', 'billing_zip', 'reserva'];
+                    $showPaymentStep = collect($paymentFields)->contains(fn ($field) => $errors->has($field));
                 @endphp
 
                 <div class="row mb-5">
@@ -44,8 +46,21 @@
                     </div>
                 </div>
 
+                <div class="reservation-stepper mb-4" data-current-step="{{ $showPaymentStep ? 'payment' : 'details' }}">
+                    <div class="stepper-item stepper-details active">
+                        <span>1</span>
+                        <strong>Datos del viaje</strong>
+                    </div>
+                    <div class="stepper-line"></div>
+                    <div class="stepper-item stepper-payment {{ $showPaymentStep ? 'active' : '' }}">
+                        <span>2</span>
+                        <strong>Pago seguro</strong>
+                    </div>
+                </div>
+
                 <div class="row g-4">
                     <div class="col-lg-8">
+                        <div id="details-step" class="reservation-step-panel {{ $showPaymentStep ? 'd-none' : '' }}">
                         <section class="form-section-card mb-4">
                             <div class="section-heading mb-4">
                                 <div class="section-icon icon-gold">
@@ -170,7 +185,15 @@
                             </div>
                         </section>
 
-                        <section class="form-section-card payment-premium-card">
+                        <div class="step-actions">
+                            <button type="button" id="continue-to-payment" class="confirm-btn">
+                                Continuar al pago
+                                <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                        </div>
+
+                        <section id="payment-step" class="form-section-card payment-premium-card reservation-step-panel {{ $showPaymentStep ? '' : 'd-none' }}">
                             <div class="section-heading mb-4">
                                 <div class="section-icon icon-gold">
                                     <i class="fas fa-credit-card"></i>
@@ -200,6 +223,11 @@
                                     <i class="fas fa-plane-departure"></i>
                                     Reserva al instante
                                 </div>
+                            </div>
+
+                            <div class="payment-step-note mb-4">
+                                <i class="fas fa-circle-check"></i>
+                                Revisa tu resumen a la derecha y completa el pago para emitir tu constancia digital.
                             </div>
 
                             <div class="row g-4">
@@ -287,6 +315,18 @@
                                     <input type="text" name="billing_zip" required class="form-control modern-input"
                                         value="{{ old('billing_zip', '01001') }}">
                                 </div>
+                            </div>
+
+                            <div class="step-actions justify-content-between mt-4">
+                                <button type="button" id="back-to-details" class="secondary-step-btn">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Volver a datos
+                                </button>
+
+                                <button type="button" id="payment-submit-button" class="confirm-btn">
+                                    Confirmar y pagar
+                                    <i class="fas fa-lock ms-2"></i>
+                                </button>
                             </div>
                         </section>
                     </div>
@@ -392,9 +432,9 @@
                                 </span>
                             </div>
 
-                            <button type="button" id="open-email-verification" class="confirm-btn w-100">
-                                Confirmar y pagar
-                                <i class="fas fa-lock ms-2"></i>
+                            <button type="button" id="open-email-verification" class="confirm-btn w-100" data-step="{{ $showPaymentStep ? 'payment' : 'details' }}">
+                                {{ $showPaymentStep ? 'Confirmar y pagar' : 'Continuar al pago' }}
+                                <i class="fas {{ $showPaymentStep ? 'fa-lock' : 'fa-arrow-right' }} ms-2"></i>
                             </button>
 
                             <div class="secure-note mt-4">
@@ -499,8 +539,8 @@
     <style>
         .payment-premium-card {
             background:
-                linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,248,226,.94)),
-                radial-gradient(circle at 8% 0%, rgba(250,204,21,.16), transparent 32%);
+                linear-gradient(135deg, rgba(255,255,255,.98), rgba(248,247,242,.96)),
+                radial-gradient(circle at 8% 0%, rgba(252,202,0,.12), transparent 32%);
         }
 
         .payment-trust-strip {
@@ -510,18 +550,39 @@
         }
 
         .payment-trust-strip div {
-            border: 1px solid rgba(15,23,42,.08);
-            background: rgba(255,255,255,.72);
+            border: 1px solid rgba(54,54,54,.12);
+            background: rgba(255,255,255,.76);
             border-radius: 14px;
             padding: 12px;
             font-size: 12px;
             font-weight: 900;
-            color: #0f172a;
+            color: #363636;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             text-align: center;
+        }
+
+        .payment-trust-strip i {
+            color: #000000;
+        }
+
+        .payment-step-note {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: rgba(252,202,0,.12);
+            border: 1px solid rgba(252,202,0,.34);
+            color: #363636;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .payment-step-note i {
+            color: #000000;
         }
 
         .guest-choice-card {
@@ -554,8 +615,16 @@
             const closeGuestChoiceModal = document.getElementById('close-guest-choice-modal');
             const continueAsGuestButton = document.getElementById('continue-as-guest');
             const fingerInput = document.getElementById('finger');
+            const detailsStep = document.getElementById('details-step');
+            const paymentStep = document.getElementById('payment-step');
+            const continueToPaymentButton = document.getElementById('continue-to-payment');
+            const paymentSubmitButton = document.getElementById('payment-submit-button');
+            const backToDetailsButton = document.getElementById('back-to-details');
+            const stepper = document.querySelector('.reservation-stepper');
+            const paymentStepperItem = document.querySelector('.stepper-payment');
             let guestChoiceAccepted = false;
             let formSubmitting = false;
+            let currentStep = openButton?.dataset.step || stepper?.dataset.currentStep || 'details';
 
             function showMessage(message, type = 'error') {
                 messageBox.textContent = message;
@@ -576,6 +645,84 @@
                 }
 
                 return true;
+            }
+
+            function validateTripDetails() {
+                const fields = [
+                    'nombre_cliente',
+                    'correo_cliente',
+                    'telefono_cliente',
+                    'punto_recogida',
+                    'punto_destino',
+                    'fecha_viaje',
+                    'hora_viaje',
+                    'pasajeros',
+                ];
+
+                for (const field of fields) {
+                    const input = form.querySelector(`[name="${field}"]`);
+
+                    if (input && !input.checkValidity()) {
+                        input.reportValidity();
+                        input.focus();
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            function setPrimaryButtonForStep(step) {
+                currentStep = step;
+                openButton.dataset.step = step;
+
+                if (step === 'payment') {
+                    openButton.innerHTML = 'Confirmar y pagar <i class="fas fa-lock ms-2"></i>';
+                } else {
+                    openButton.innerHTML = 'Continuar al pago <i class="fas fa-arrow-right ms-2"></i>';
+                }
+            }
+
+            function goToPaymentStep() {
+                if (!validateTripDetails()) {
+                    return;
+                }
+
+                detailsStep.classList.add('step-panel-leaving');
+
+                setTimeout(() => {
+                    detailsStep.classList.add('d-none');
+                    detailsStep.classList.remove('step-panel-leaving');
+                    paymentStep.classList.remove('d-none');
+                    paymentStep.classList.add('step-panel-entering');
+                    paymentStepperItem?.classList.add('active');
+                    stepper?.setAttribute('data-current-step', 'payment');
+                    setPrimaryButtonForStep('payment');
+                    window.scrollTo({ top: Math.max(0, form.getBoundingClientRect().top + window.scrollY - 110), behavior: 'smooth' });
+
+                    setTimeout(() => {
+                        paymentStep.classList.remove('step-panel-entering');
+                    }, 260);
+                }, 180);
+            }
+
+            function goToDetailsStep() {
+                paymentStep.classList.add('step-panel-leaving');
+
+                setTimeout(() => {
+                    paymentStep.classList.add('d-none');
+                    paymentStep.classList.remove('step-panel-leaving');
+                    detailsStep.classList.remove('d-none');
+                    detailsStep.classList.add('step-panel-entering');
+                    paymentStepperItem?.classList.remove('active');
+                    stepper?.setAttribute('data-current-step', 'details');
+                    setPrimaryButtonForStep('details');
+                    window.scrollTo({ top: Math.max(0, form.getBoundingClientRect().top + window.scrollY - 110), behavior: 'smooth' });
+
+                    setTimeout(() => {
+                        detailsStep.classList.remove('step-panel-entering');
+                    }, 260);
+                }, 180);
             }
 
             function openModal() {
@@ -779,6 +926,11 @@
             }
 
             openButton.addEventListener('click', function() {
+                if (currentStep !== 'payment') {
+                    goToPaymentStep();
+                    return;
+                }
+
                 if (showGuestChoiceIfNeeded()) {
                     return;
                 }
@@ -788,6 +940,12 @@
                 }
 
                 sendCode();
+            });
+
+            continueToPaymentButton?.addEventListener('click', goToPaymentStep);
+            backToDetailsButton?.addEventListener('click', goToDetailsStep);
+            paymentSubmitButton?.addEventListener('click', function() {
+                openButton.click();
             });
             closeButton.addEventListener('click', closeModal);
             resendButton.addEventListener('click', sendCode);

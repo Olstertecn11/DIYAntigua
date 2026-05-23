@@ -34,8 +34,8 @@
         body {
             margin: 0;
             font-family: DejaVu Sans, Arial, sans-serif;
-            color: #101827;
-            background: #eef2f7;
+            color: #363636;
+            background: #f6f6f3;
             font-size: 12px;
             line-height: 1.45;
         }
@@ -44,13 +44,14 @@
             background: #ffffff;
             border-radius: 22px;
             overflow: hidden;
-            border: 1px solid #dbe3ef;
+            border: 1px solid #deded6;
         }
 
         .hero {
-            background: #08111f;
+            background: #000000;
             color: #ffffff;
             padding: 26px 30px 30px;
+            border-left: 12px solid #FCCA00;
         }
 
         .hero-table,
@@ -69,7 +70,7 @@
 
         .brand {
             font-size: 10px;
-            color: #f8c44f;
+            color: #FCCA00;
             text-transform: uppercase;
             letter-spacing: 2px;
             font-weight: 700;
@@ -84,15 +85,15 @@
 
         .subtitle {
             margin: 0;
-            color: #cbd5e1;
+            color: #d8d8d8;
             font-size: 12px;
         }
 
         .status-pill {
             display: inline-block;
-            background: #173424;
-            border: 1px solid #35d07f;
-            color: #9df7c2;
+            background: #FCCA00;
+            border: 1px solid #FCCA00;
+            color: #000000;
             border-radius: 999px;
             padding: 8px 12px;
             font-size: 10px;
@@ -103,14 +104,14 @@
 
         .code-card {
             margin-top: 18px;
-            background: #111d2e;
-            border: 1px solid #26374f;
+            background: #1a1a1a;
+            border: 1px solid #363636;
             border-radius: 16px;
             padding: 14px 16px;
         }
 
         .label {
-            color: #708095;
+            color: #6a6a6a;
             font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 1.2px;
@@ -118,11 +119,11 @@
         }
 
         .hero .label {
-            color: #9fb0c7;
+            color: #c9c9c9;
         }
 
         .code {
-            color: #f8c44f;
+            color: #FCCA00;
             font-size: 20px;
             font-weight: 800;
             letter-spacing: 1px;
@@ -133,30 +134,30 @@
         }
 
         .ticket {
-            border: 1px solid #dbe3ef;
+            border: 1px solid #deded6;
             border-radius: 20px;
             overflow: hidden;
         }
 
         .route-panel {
             padding: 22px 24px;
-            background: #f8fafc;
-            border-bottom: 1px dashed #b8c2d2;
+            background: #fbfbf8;
+            border-bottom: 1px dashed #b8b8b0;
         }
 
         .route-place {
             font-size: 25px;
             font-weight: 800;
             line-height: 1.05;
-            color: #101827;
+            color: #000000;
         }
 
         .route-icon {
             width: 58px;
             height: 58px;
             border-radius: 50%;
-            background: #f8c44f;
-            color: #101827;
+            background: #FCCA00;
+            color: #000000;
             text-align: center;
             vertical-align: middle;
             font-size: 24px;
@@ -177,14 +178,14 @@
             display: block;
             margin-top: 5px;
             font-size: 13px;
-            color: #101827;
+            color: #000000;
             font-weight: 800;
             word-break: break-word;
         }
 
         .payment-band {
             margin-top: 4px;
-            background: #101827;
+            background: #000000;
             color: #ffffff;
             border-radius: 16px;
             padding: 16px 18px;
@@ -197,7 +198,7 @@
         }
 
         .payment-band .label {
-            color: #9fb0c7;
+            color: #c9c9c9;
         }
 
         .payment-band .value {
@@ -205,13 +206,13 @@
         }
 
         .total {
-            color: #f8c44f !important;
+            color: #FCCA00 !important;
             font-size: 20px;
         }
 
         .qr-panel {
             margin-top: 18px;
-            border: 1px solid #dbe3ef;
+            border: 1px solid #deded6;
             border-radius: 18px;
             padding: 16px 18px;
             background: #ffffff;
@@ -220,7 +221,7 @@
         .qr-img {
             width: 118px;
             height: 118px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #deded6;
             border-radius: 14px;
             padding: 8px;
         }
@@ -228,32 +229,32 @@
         .fallback-qr {
             width: 118px;
             height: 118px;
-            border: 1px dashed #94a3b8;
+            border: 1px dashed #8a8a8a;
             border-radius: 14px;
             text-align: center;
-            color: #64748b;
+            color: #5f5f5f;
             font-size: 10px;
             padding-top: 42px;
         }
 
         .qr-title {
             margin: 0 0 6px;
-            color: #101827;
+            color: #000000;
             font-size: 16px;
             font-weight: 800;
         }
 
         .qr-copy {
             margin: 0;
-            color: #64748b;
+            color: #5f5f5f;
             font-size: 11px;
         }
 
         .notice {
             margin-top: 18px;
-            background: #fff7df;
-            border: 1px solid #f3d27b;
-            color: #59430e;
+            background: rgba(252, 202, 0, .14);
+            border: 1px solid rgba(252, 202, 0, .45);
+            color: #363636;
             border-radius: 16px;
             padding: 13px 16px;
             font-size: 11px;
@@ -261,13 +262,13 @@
 
         .footer {
             padding: 16px 30px 22px;
-            border-top: 1px solid #e2e8f0;
-            color: #64748b;
+            border-top: 1px solid #deded6;
+            color: #5f5f5f;
             font-size: 10px;
         }
 
         .footer strong {
-            color: #101827;
+            color: #000000;
         }
     </style>
 </head>

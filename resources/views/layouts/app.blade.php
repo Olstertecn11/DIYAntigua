@@ -10,7 +10,7 @@
 
     {{-- Fonts --}}
     <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito:400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.bunny.net/css?family=Montserrat:400,500,600,700,800,900" rel="stylesheet">
 
     {{-- Icons --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -30,12 +30,18 @@
 
     <style>
         :root {
-            --gold: #facc15;
-            --gold-dark: #eab308;
-            --orange: #fb923c;
-            --dark: #020617;
-            --dark-soft: #0f172a;
-            --border-dark: rgba(255, 255, 255, .10);
+            --brand-yellow: #FCCA00;
+            --brand-gray: #363636;
+            --brand-black: #000000;
+            --brand-white: #ffffff;
+            --brand-soft: #f6f6f3;
+            --brand-border: rgba(54, 54, 54, .14);
+            --gold: var(--brand-yellow);
+            --gold-dark: #d6aa00;
+            --orange: var(--brand-yellow);
+            --dark: var(--brand-black);
+            --dark-soft: #181818;
+            --border-dark: rgba(255, 255, 255, .12);
         }
 
         html {
@@ -43,9 +49,9 @@
         }
 
         body {
-            font-family: 'Nunito', sans-serif;
-            background: #020617;
-            color: #0f172a;
+            font-family: 'Avant Garde Gothic', 'ITC Avant Garde Gothic', 'Montserrat', 'Century Gothic', Arial, sans-serif;
+            background: var(--brand-black);
+            color: var(--brand-gray);
             min-height: 100vh;
         }
 
@@ -63,8 +69,7 @@
             position: sticky;
             top: 0;
             z-index: 80;
-            background:
-                linear-gradient(135deg, rgba(2, 6, 23, .94), rgba(15, 23, 42, .90));
+            background: rgba(0, 0, 0, .92);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             border-bottom: 1px solid var(--border-dark);
@@ -74,9 +79,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background:
-                radial-gradient(circle at 10% 20%, rgba(250, 204, 21, .12), transparent 24%),
-                radial-gradient(circle at 90% 10%, rgba(251, 146, 60, .10), transparent 22%);
+            background: linear-gradient(90deg, var(--brand-yellow) 0 10px, transparent 10px);
             pointer-events: none;
         }
 
@@ -91,7 +94,7 @@
         }
 
         .nav-link-custom:hover {
-            color: #facc15 !important;
+            color: var(--brand-yellow) !important;
         }
 
         .nav-link-custom::after {
@@ -102,7 +105,7 @@
             bottom: -8px;
             left: 0;
             border-radius: 999px;
-            background: linear-gradient(135deg, #facc15, #fb923c);
+            background: var(--brand-yellow);
             transition: width .25s ease;
         }
 
@@ -112,36 +115,36 @@
 
         .btn-login {
             border-radius: 999px;
-            color: #facc15 !important;
-            background: rgba(250, 204, 21, .09);
-            border: 1px solid rgba(250, 204, 21, .25);
+            color: var(--brand-yellow) !important;
+            background: rgba(252, 202, 0, .10);
+            border: 1px solid rgba(252, 202, 0, .34);
             font-weight: 800;
             transition: all .25s ease;
             text-decoration: none !important;
         }
 
         .btn-login:hover {
-            background: rgba(250, 204, 21, .16);
-            border-color: rgba(250, 204, 21, .60);
-            color: #fde68a !important;
+            background: rgba(252, 202, 0, .18);
+            border-color: rgba(252, 202, 0, .72);
+            color: var(--brand-yellow) !important;
             transform: translateY(-1px);
         }
 
         .btn-register {
             border-radius: 999px;
-            background: linear-gradient(135deg, #facc15, #fb923c);
-            color: #020617 !important;
+            background: var(--brand-yellow);
+            color: var(--brand-black) !important;
             font-weight: 900;
-            border: 1px solid rgba(250, 204, 21, .55);
+            border: 1px solid rgba(252, 202, 0, .72);
             transition: all .25s ease;
             text-decoration: none !important;
-            box-shadow: 0 16px 35px rgba(250, 204, 21, .14);
+            box-shadow: 0 16px 35px rgba(252, 202, 0, .18);
         }
 
         .btn-register:hover {
             transform: translateY(-1px);
-            box-shadow: 0 20px 45px rgba(250, 204, 21, .22);
-            color: #020617 !important;
+            box-shadow: 0 20px 45px rgba(252, 202, 0, .25);
+            color: var(--brand-black) !important;
         }
 
         .dropdown-custom {
@@ -156,7 +159,7 @@
 
         .mobile-menu-panel {
             background:
-                linear-gradient(135deg, rgba(2, 6, 23, .98), rgba(15, 23, 42, .96));
+                linear-gradient(135deg, rgba(0, 0, 0, .98), rgba(54, 54, 54, .96));
             border-top: 1px solid rgba(255, 255, 255, .10);
         }
 
@@ -179,7 +182,7 @@
 
         .mobile-link:hover {
             background: rgba(255, 255, 255, .07);
-            color: #facc15;
+            color: var(--brand-yellow);
         }
 
         .toast-container {
@@ -191,7 +194,7 @@
         }
 
         .toast-pill {
-            background: rgba(15, 23, 42, .88);
+            background: rgba(0, 0, 0, .88);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             border: 1px solid rgba(255, 255, 255, .12);
@@ -206,7 +209,7 @@
         }
 
         .toast-icon {
-            background: linear-gradient(135deg, #ef4444, #f97316);
+            background: var(--brand-gray);
             width: 34px;
             height: 34px;
             border-radius: 999px;
@@ -373,7 +376,7 @@
                             </div>
                         </div>
                         <h2
-                            class="block md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[#fec800] font-black text-2xl pointer-events-none select-none whitespace-nowrap">
+                            class="block md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[#FCCA00] font-black text-2xl pointer-events-none select-none whitespace-nowrap">
                             DYANTIGUA
                         </h2>
 

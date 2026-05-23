@@ -1,139 +1,215 @@
-<footer class="bg-slate-950 text-white">
-    <div class="max-w-7xl mx-auto px-6 py-16">
-        <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+<footer class="brand-footer">
+    <div class="brand-footer-inner">
+        <div class="brand-footer-top">
+            <div class="brand-footer-main">
+                <a href="{{ url('/') }}" class="brand-footer-logo">
+                    <span class="brand-footer-mark">
+                        <img src="{{ asset('images/logo.png') }}" alt="DYANTIGUA">
+                    </span>
+                    <span>
+                        <strong>DYANTIGUA</strong>
+                        <small>Tours & Transport</small>
+                    </span>
+                </a>
 
-            {{-- Marca --}}
-            <div class="lg:col-span-1">
-                <div class="flex items-center gap-3 mb-5">
-                    <div
-                        class="h-11 w-11 rounded-2xl bg-gradient-to-br from-yellow-300 to-orange-400 flex items-center justify-center font-black text-slate-950">
-                        DIY
-                    </div>
-
-                    <div>
-                        <h3 class="text-xl font-black">DIY Antigua</h3>
-                        <p class="text-xs text-slate-400">Private Transfers</p>
-                    </div>
-                </div>
-
-                <p class="text-sm text-slate-400 leading-relaxed text-justify">
-                    Traslados privados, seguros y cómodos entre Ciudad de Guatemala,
-                    Antigua Guatemala, Panajachel, Quetzaltenango y otros destinos.
+                <p>
+                    Traslados privados para descubrir Guatemala con puntualidad, comodidad y una experiencia clara desde la reserva hasta el destino.
                 </p>
             </div>
 
-            {{-- Navegación --}}
-            <div>
-                <h4 class="font-black mb-5 text-yellow-300">Navegación</h4>
+            <div class="brand-footer-columns">
+                <div>
+                    <h4>Navegación</h4>
+                    <a href="{{ url('/') }}">Inicio</a>
+                    <a href="{{ url('/reservar-traslado') }}">Reservar traslado</a>
+                    <a href="{{ url('/destinos') }}">Destinos</a>
+                    <a href="{{ url('/informacion-del-servicio') }}">Nosotros</a>
+                </div>
 
-                <ul class="space-y-3 text-sm text-slate-400">
-                    <li>
-                        <a href="{{ url('/') }}" class="hover:text-yellow-300 transition">
-                            Inicio
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#booking" class="hover:text-yellow-300 transition">
-                            Reservar
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#como-funciona" class="hover:text-yellow-300 transition">
-                            Cómo funciona
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#destinos" class="hover:text-yellow-300 transition">
-                            Destinos
-                        </a>
-                    </li>
-                </ul>
-            </div>
+                <div>
+                    <h4>Servicios</h4>
+                    <span>Aeropuerto</span>
+                    <span>Traslados privados</span>
+                    <span>Viajes familiares</span>
+                    <span>Rutas turísticas</span>
+                </div>
 
-            {{-- Servicios --}}
-            <div>
-                <h4 class="font-black mb-5 text-yellow-300">Servicios</h4>
-
-                <ul class="space-y-3 text-sm text-slate-400">
-                    <li>Traslados privados</li>
-                    <li>Servicio desde aeropuerto</li>
-                    <li>Viajes familiares</li>
-                    <li>Traslados grupales</li>
-                    <li>Viajes corporativos</li>
-                </ul>
-            </div>
-
-            {{-- Contacto --}}
-            <div>
-                <h4 class="font-black mb-5 text-yellow-300">Contacto</h4>
-
-                <ul class="space-y-3 text-sm text-slate-400">
-                    <li class="flex gap-3">
-                        <span class="text-yellow-300">📍</span>
-                        <span>Antigua Guatemala, Guatemala</span>
-                    </li>
-
-                    <li class="flex gap-3">
-                        <span class="text-yellow-300">📞</span>
-                        <a href="tel:+50200000000" class="hover:text-yellow-300 transition">
-                            +502 0000-0000
-                        </a>
-                    </li>
-
-                    <li class="flex gap-3">
-                        <span class="text-yellow-300">✉️</span>
-                        <a href="mailto:info@diyantigua.com" class="hover:text-yellow-300 transition">
-                            info@diyantigua.com
-                        </a>
-                    </li>
-                </ul>
-
-                <div class="flex gap-3 mt-6">
-                    <a href="#"
-                        class="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-300 hover:text-slate-950 transition"
-                        aria-label="Facebook">
-                        f
-                    </a>
-
-                    <a href="#"
-                        class="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-300 hover:text-slate-950 transition"
-                        aria-label="Instagram">
-                        ig
-                    </a>
-
-                    <a href="#"
-                        class="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-300 hover:text-slate-950 transition"
-                        aria-label="WhatsApp">
-                        wa
-                    </a>
+                <div>
+                    <h4>Contacto</h4>
+                    <a href="tel:+50235977809"><i class="fas fa-phone"></i> +502 3597-7809</a>
+                    <a href="mailto:info@diyantigua.com"><i class="fas fa-envelope"></i> info@diyantigua.com</a>
+                    <span><i class="fas fa-location-dot"></i> Antigua Guatemala</span>
                 </div>
             </div>
-
         </div>
 
-        <div
-            class="border-t border-white/10 mt-12 pt-6 flex flex-col md:flex-row justify-between gap-4 text-sm text-slate-500">
-            <p>
-                © {{ date('Y') }} DIY Antigua. Todos los derechos reservados.
-            </p>
-
-            <div class="flex flex-wrap gap-5">
-                <a href="#" class="hover:text-yellow-300 transition">
-                    Términos
-                </a>
-
-                <a href="#" class="hover:text-yellow-300 transition">
-                    Privacidad
-                </a>
-
-                <a href="{{ url('/ayuda') }}" class="hover:text-yellow-300 transition">
-                    Ayuda
-                </a>
-
-                <a href="{{ url('/ayuda') }}" class="hover:text-yellow-300 transition">
-                    Soporte
-                </a>
+        <div class="brand-footer-bottom">
+            <span>© {{ date('Y') }} DYANTIGUA. Todos los derechos reservados.</span>
+            <div>
+                <a href="#">Términos</a>
+                <a href="#">Privacidad</a>
+                <a href="{{ url('/ayuda') }}">Ayuda</a>
             </div>
         </div>
     </div>
 </footer>
+
+<style>
+    .brand-footer {
+        position: relative;
+        overflow: hidden;
+        color: #f7f4ec;
+        background:
+            linear-gradient(90deg, #FCCA00 0 10px, transparent 10px),
+            linear-gradient(135deg, #080806 0%, #171713 58%, #29251a 100%);
+        border-top: 1px solid rgba(252, 202, 0, .28);
+    }
+
+    .brand-footer::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+        background-size: 44px 44px;
+        opacity: .45;
+        pointer-events: none;
+    }
+
+    .brand-footer-inner {
+        position: relative;
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 54px 24px 28px;
+    }
+
+    .brand-footer-top {
+        display: grid;
+        grid-template-columns: minmax(260px, .95fr) 1.65fr;
+        gap: 48px;
+    }
+
+    .brand-footer-logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        color: #fff;
+        text-decoration: none;
+        margin-bottom: 20px;
+    }
+
+    .brand-footer-mark {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,.18);
+        background: rgba(255,255,255,.06);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .brand-footer-mark img {
+        width: 42px;
+        height: 42px;
+        object-fit: contain;
+    }
+
+    .brand-footer-logo strong {
+        display: block;
+        font-size: 22px;
+        line-height: 1;
+        font-weight: 950;
+        letter-spacing: .02em;
+    }
+
+    .brand-footer-logo small {
+        display: block;
+        margin-top: 5px;
+        color: #FCCA00;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: .2em;
+        text-transform: uppercase;
+    }
+
+    .brand-footer-main p {
+        max-width: 390px;
+        color: rgba(247,244,236,.68);
+        font-size: 14px;
+        line-height: 1.75;
+        margin: 0;
+    }
+
+    .brand-footer-columns {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 28px;
+    }
+
+    .brand-footer h4 {
+        color: #FCCA00;
+        font-size: 12px;
+        font-weight: 950;
+        text-transform: uppercase;
+        letter-spacing: .16em;
+        margin: 0 0 16px;
+    }
+
+    .brand-footer a,
+    .brand-footer span {
+        display: block;
+        color: rgba(247,244,236,.72);
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        margin-bottom: 11px;
+        transition: color .2s ease, transform .2s ease;
+    }
+
+    .brand-footer a:hover {
+        color: #ffffff;
+        transform: translateX(3px);
+    }
+
+    .brand-footer i {
+        color: #FCCA00;
+        margin-right: 8px;
+        width: 14px;
+    }
+
+    .brand-footer-bottom {
+        margin-top: 42px;
+        padding-top: 22px;
+        border-top: 1px solid rgba(255,255,255,.10);
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        color: rgba(247,244,236,.52);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .brand-footer-bottom div {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+    }
+
+    .brand-footer-bottom a {
+        margin: 0;
+        font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+        .brand-footer-top,
+        .brand-footer-columns {
+            grid-template-columns: 1fr;
+        }
+
+        .brand-footer-bottom {
+            flex-direction: column;
+        }
+    }
+</style>

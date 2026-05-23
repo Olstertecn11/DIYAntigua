@@ -718,5 +718,124 @@
                 padding: .95rem 1.2rem;
             }
         }
+
+        .vehicles-page {
+            background:
+                linear-gradient(90deg, #FCCA00 0 12px, transparent 12px),
+                linear-gradient(135deg, #ffffff 0%, #f7f7f2 52%, #ecebe5 100%);
+            color: #363636;
+        }
+
+        .vehicles-page::before {
+            background-image:
+                linear-gradient(rgba(54, 54, 54, .035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(54, 54, 54, .035) 1px, transparent 1px);
+        }
+
+        .vehicles-page::after {
+            display: none;
+        }
+
+        .vehicles-page .container {
+            padding-left: clamp(1.75rem, 4vw, 3rem);
+            padding-right: clamp(1.25rem, 3vw, 2rem);
+        }
+
+        .text-main,
+        .summary-value,
+        .vehicle-title {
+            color: #000000;
+        }
+
+        .text-soft,
+        .summary-label,
+        .price-label {
+            color: #5f5f5f;
+        }
+
+        .section-kicker,
+        .vehicle-category,
+        .change-route-link,
+        .feature-item i {
+            color: #363636;
+        }
+
+        .trip-summary-card,
+        .vehicle-card,
+        .empty-state {
+            background: rgba(255, 255, 255, .92);
+            border-color: rgba(54, 54, 54, .14);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, .08);
+        }
+
+        .summary-icon,
+        .passenger-icon,
+        .info-icon,
+        .empty-icon {
+            color: #000000;
+            background: #FCCA00;
+            box-shadow: 0 14px 32px rgba(252, 202, 0, .24);
+        }
+
+        .route-box,
+        .summary-mini-card,
+        .feature-item {
+            background: #fbfbf8;
+            border-color: rgba(54, 54, 54, .12);
+        }
+
+        .route-dot,
+        .route-dot-end,
+        .route-line {
+            background: #FCCA00;
+            box-shadow: 0 0 0 5px rgba(252, 202, 0, .18);
+        }
+
+        .info-box,
+        .capacity-badge,
+        .vehicle-capacity-mobile {
+            color: #363636;
+            background: rgba(252, 202, 0, .16);
+            border-color: rgba(252, 202, 0, .42);
+        }
+
+        .available-pill {
+            color: #000000;
+            background: rgba(252, 202, 0, .18);
+            border-color: rgba(252, 202, 0, .42);
+        }
+
+        .vehicle-card:hover {
+            border-color: rgba(252, 202, 0, .58);
+            box-shadow: 0 30px 90px rgba(0, 0, 0, .13), 0 0 45px rgba(252, 202, 0, .12);
+        }
+
+        .vehicle-image-box {
+            background:
+                radial-gradient(circle at center, rgba(252, 202, 0, .26), transparent 48%),
+                linear-gradient(135deg, #ffffff, #efeee8);
+            border-color: rgba(54, 54, 54, .12);
+        }
+
+        .vehicle-glow {
+            background: rgba(252, 202, 0, .30);
+        }
+
+        .price-value {
+            color: #000000;
+            text-shadow: none;
+        }
+
+        .select-vehicle-btn {
+            color: #000000;
+            background: #FCCA00;
+            box-shadow: 0 16px 35px rgba(252, 202, 0, .24);
+        }
+
+        .select-vehicle-btn:hover {
+            color: #000000;
+            background: #ffd735;
+            box-shadow: 0 20px 45px rgba(252, 202, 0, .32);
+        }
     </style>
 @endsection
