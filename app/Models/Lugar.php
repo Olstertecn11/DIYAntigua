@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\UsesHashidRouteKey;
 use Illuminate\Database\Eloquent\Model;
 
 class Lugar extends Model
 {
+    use UsesHashidRouteKey;
+
     protected $table = 'lugares';
     protected $fillable = ['nombre', 'ciudad', 'estado'];
 

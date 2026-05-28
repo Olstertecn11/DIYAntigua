@@ -21,6 +21,6 @@ class QPayProPaymentController extends Controller
 
         $transaction = $this->paymentManager->pay($reservacion, $request->validated(), $request);
 
-        return redirect(URL::signedRoute('payments.result', ['transaction' => $transaction->id]));
+        return redirect(URL::signedRoute('payments.result', ['transaction' => $transaction]));
     }
 }

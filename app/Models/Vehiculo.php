@@ -1,10 +1,13 @@
 <?php
 namespace App\Models;
 
+use App\Models\Concerns\UsesHashidRouteKey;
 use Illuminate\Database\Eloquent\Model;
 
 class Vehiculo extends Model
 {
+    use UsesHashidRouteKey;
+
     protected $table = 'vehiculos';
 
     protected $fillable = [

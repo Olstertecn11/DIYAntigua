@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\UsesHashidRouteKey;
 use Illuminate\Database\Eloquent\Model;
 
 class Ruta extends Model
 {
+    use UsesHashidRouteKey;
+
     protected $fillable = [
         'origen_id',
         'destino_id',

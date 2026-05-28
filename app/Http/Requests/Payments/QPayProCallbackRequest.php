@@ -18,6 +18,7 @@ class QPayProCallbackRequest extends FormRequest
             'status' => ['nullable', 'string', 'max:100'],
             'response_code' => ['nullable', 'string', 'max:100'],
             'transaction_id' => ['nullable', 'string', 'max:191'],
+            'callback_token' => ['nullable', 'string', 'max:191'],
         ];
     }
 }

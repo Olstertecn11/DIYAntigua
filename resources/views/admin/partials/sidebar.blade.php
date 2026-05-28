@@ -14,7 +14,7 @@
         <nav class="flex-grow overflow-y-auto custom-scrollbar pt-6">
             <ul class="flex flex-row md:flex-col px-4 space-y-0 md:space-y-1">
 
-                @if(Auth::user()->role_id == 1) {{-- ADMINISTRADOR --}}
+                @if(Auth::user()->role_id == config('constantes.idAdmin'))
                     <x-admin-nav-link href="{{ route('admin.dashboard') }}" icon="fa-grid-2" :active="request()->routeIs('admin.dashboard')">
                         Dashboard
                     </x-admin-nav-link>
@@ -48,14 +48,18 @@
                         Afiliados
                     </x-admin-nav-link>
 
-                    <x-admin-nav-link href="#" icon="fa-wallet">Pagos y Comis.</x-admin-nav-link>
+                    <x-admin-nav-link href="{{ route('admin.pagos.index') }}" icon="fa-wallet" :active="request()->routeIs('admin.pagos.*')">
+                        Pagos y Comis.
+                    </x-admin-nav-link>
                 @endif
 
-                @if(Auth::user()->role_id == 2) {{-- SOCIO --}}
+                @if(Auth::user()->role_id == config('constantes.idAffiliate'))
                     <x-admin-nav-link href="{{ route('socios.dashboard') }}" icon="fa-home" :active="request()->routeIs('socios.dashboard')">
                         Mi Panel
                     </x-admin-nav-link>
-                    <x-admin-nav-link href="#" icon="fa-chart-line">Mis Ventas</x-admin-nav-link>
+                    <x-admin-nav-link href="{{ route('socios.profile.edit') }}" icon="fa-user-gear" :active="request()->routeIs('socios.profile.*')">
+                        Mi Perfil
+                    </x-admin-nav-link>
                 @endif
             </ul>
         </nav>
@@ -68,12 +72,16 @@
                 <div class="ml-3 overflow-hidden">
                     <p class="text-[11px] font-bold text-white truncate">{{ Auth::user()->name }}</p>
                     <p class="text-[9px] text-[#737373] font-medium uppercase tracking-tighter">
-                    {{ Auth::user()->role_id == 1 ? 'Administrator' : 'Socio Afiliado' }}
+                    {{ Auth::user()->role_id == config('constantes.idAdmin') ? 'Administrator' : 'Socio Afiliado' }}
                     </p>
                 </div>
             </div>
 
-            <form action="{{ Auth::user()->role_id == 1 ? route('admin.logout') : route('logout') }}" method="POST">
+            <a href="{{ Auth::user()->role_id == config('constantes.idAdmin') ? route('admin.profile.edit') : route('socios.profile.edit') }}" class="mb-3 flex items-center justify-center rounded-lg border border-white/10 py-2 text-[10px] font-bold uppercase tracking-widest text-[#a1a1a1] transition hover:border-[#fcca00]/40 hover:text-[#fcca00]">
+                <i class="fas fa-user-gear mr-2 text-[8px]"></i> Perfil
+            </a>
+
+            <form action="{{ Auth::user()->role_id == config('constantes.idAdmin') ? route('admin.logout') : route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full text-[#a1a1a1] hover:text-white hover:bg-red-500/10 py-2 rounded-lg text-[10px] font-bold transition-all flex items-center justify-center border border-transparent hover:border-red-500/20 uppercase tracking-widest">
                     <i class="fas fa-power-off mr-2 text-[8px]"></i> Salir del Sistema

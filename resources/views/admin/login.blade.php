@@ -1,127 +1,42 @@
-
-@section('styles')
-    <style>
-.login-container {
-    min-height: 100vh;
-    background-color: #fff;
-}
-
-.login-aside {
-    {{-- background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); --}}
-    background: linear-gradient(135deg, #973737d1 0%, #222222 100%);
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    overflow: hidden;
-}
-
-/* Efecto de curva blanca a la izquierda */
-.login-aside::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -1px;
-    width: 100px;
-    height: 100%;
-    background: white;
-    clip-path: ellipse(50% 50% at 0% 50%);
-}
-
-.login-card {
-    max-width: 400px;
-    width: 100%;
-    z-index: 2;
-}
-
-.form-control-login {
-    border-radius: 50px;
-    padding: 0.75rem 1.5rem;
-    border: 1px solid #dee2e6;
-    background: transparent;
-    color: white;
-}
-
-.form-control-login::placeholder {
-    color: #ffffff99;
-}
-
-.form-control-login:focus {
-    box-shadow: 0 0 0 0.2rem rgba(5, 150, 105, 0.25);
-    background: transparent;
-    border: 1px solid #000;
-}
-
-.btn-login {
-    border-radius: 50px;
-    padding: 0.75rem;
-    background: #2a2525;
-    border: none;
-    font-weight: bold;
-    color: white;
-}
-
-.btn-login:hover {
-    background-color: #3d3636;
-}
-
-.logo{
-    width: 28rem;
-}
-    </style>
-@endsection
-
 @extends('layouts.app', ['navbar' => false])
 
 @section('content')
-<div class="container-fluid login-container p-0">
-    <div class="row g-0 min-vh-100">
-
-        <div class="col-lg-5 d-flex flex-column justify-content-center px-5 bg-white">
-            <div class="mb-5">
-                <div class="d-flex flex-column align-items-center gap-2">
-                    <img class="logo" src="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/slogan.png?raw=true" alt="Logo" width="40">
-                </div>
+<main class="min-h-screen bg-[#f7f6f1]">
+    <div class="grid min-h-screen lg:grid-cols-[0.9fr_1.1fr]">
+        <section class="flex items-center justify-center bg-white px-8 py-12">
+            <div class="max-w-md">
+                <img src="{{ asset('images/logo.png') }}" alt="DYANTIGUA" class="h-20 w-auto">
+                <p class="mt-10 text-[11px] font-black uppercase tracking-[0.22em] text-[#fcca00]">Portal administrador</p>
+                <h1 class="mt-3 text-4xl font-black leading-tight text-[#111111]">Control operativo de reservas y socios.</h1>
+                <p class="mt-4 text-sm leading-6 text-[#666666]">Ingresa para gestionar rutas, pagos, reservaciones y comisiones con una vista clara del negocio.</p>
             </div>
+        </section>
 
-            <div class="py-5">
-                <h2 class="fw-light display-6" style="color: #9c5555">BIEVENIDO DE NUEVO !</h2>
-                <p class="text-muted lead">Ingresa tu corero y contraseña para continuar</p>
-            </div>
-        </div>
+        <section class="relative flex items-center justify-center overflow-hidden bg-[#111111] px-6 py-12 text-white">
+            <div class="absolute inset-x-0 top-0 h-1 bg-[#fcca00]"></div>
+            <div class="w-full max-w-md rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 shadow-2xl">
+                <h2 class="text-2xl font-black">Iniciar sesión</h2>
+                <p class="mt-2 text-sm text-white/60">Acceso exclusivo para administradores.</p>
 
-        <div class="col-lg-7 login-aside">
-            <div class="login-card text-center p-4">
-                <h3 class="text-white fw-bold mb-1">Iniciar Sesión</h3>
-                <p class="text-white-50 mb-5 text-uppercase small">PORTAL ADMINISTRADOR</p>
+                @if(isset($errors) && $errors->any())
+                    <div class="mt-5 rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-200">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
 
-                <form method="POST" action="{{ route('login') }}">
+                <form method="POST" action="{{ route('login') }}" class="mt-8 space-y-5">
                     @csrf
+                    <input type="email" name="email" placeholder="Correo" required autocomplete="email" autofocus class="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[#fcca00]">
+                    <input type="password" name="password" placeholder="Contraseña" required autocomplete="current-password" class="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[#fcca00]">
 
-                    <div class="mb-3 position-relative">
-                        <input type="email" name="email" class="form-control form-control-login shadow-sm" placeholder="Correo" required>
-                    </div>
-
-                    <div class="mb-4 position-relative">
-                        <input type="password" name="password" class="form-control form-control-login shadow-sm" placeholder="Contraseña" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-login w-100 shadow-sm mb-3">
-                        Login
+                    <button class="flex w-full items-center justify-center gap-2 rounded-full bg-[#fcca00] px-6 py-3 text-sm font-black text-black transition hover:bg-[#e8ba00]">
+                        <i class="fas fa-lock"></i> Entrar
                     </button>
 
-                    <div class="d-flex justify-content-end">
-                        <a href="{{ route('password.request') }}" class="text-black fw-bold text-decoration-none small">Olvidé mi contraseña</a>
-                    </div>
+                    <a href="{{ route('password.request') }}" class="block text-center text-sm font-bold text-white/70 hover:text-[#fcca00]">Olvidé mi contraseña</a>
                 </form>
             </div>
-
-            <div class="position-absolute bottom-0 mb-3 text-white" style="font-size: 0.7rem;">
-                Copyright © 2026 DIY Antigua. All rights reserved.
-            </div>
-        </div>
-
+        </section>
     </div>
-</div>
+</main>
 @endsection

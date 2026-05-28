@@ -19,4 +19,5 @@ return [
     'send_device_fingerprint_id' => (bool) env('QPAYPRO_SEND_DEVICE_FINGERPRINT_ID', false),
     'timeout' => (int) env('QPAYPRO_TIMEOUT', 45),
     'verify_ssl' => (bool) env('QPAYPRO_VERIFY_SSL', true),
+    'callback_token' => env('QPAYPRO_CALLBACK_TOKEN'),
 ];

@@ -45,7 +45,7 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <form action="{{ route('admin.conductores.destroy', $conductor->id) }}" method="POST" class="inline" onsubmit="return confirm('¿Eliminar conductor?')">
+                        <form action="{{ route('admin.conductores.destroy', $conductor) }}" method="POST" class="inline" onsubmit="return confirm('¿Eliminar conductor?')">
                             @csrf @method('DELETE')
                             <button type="submit" class="text-red-500/50 hover:text-red-500 transition-colors text-xs uppercase font-bold">Eliminar</button>
                         </form>

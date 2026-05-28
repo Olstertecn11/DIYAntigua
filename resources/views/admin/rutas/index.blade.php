@@ -59,7 +59,7 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <form action="{{ route('admin.rutas.destroy', $ruta->id) }}" method="post">
+                        <form action="{{ route('admin.rutas.destroy', $ruta) }}" method="post">
                             @csrf @method('delete')
                             <button class="text-red-500/40 hover:text-red-500 transition-colors"><i class="fas fa-trash"></i></button>
                         </form>

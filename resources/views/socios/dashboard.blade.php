@@ -32,6 +32,17 @@
         </div>
     </div>
 
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <div class="bg-[#0a0a0a] border border-white/10 p-6 rounded-xl">
+            <p class="text-gray-500 text-xs uppercase font-black tracking-widest">Ventas Generadas</p>
+            <p class="text-3xl font-mono mt-2 text-white font-bold">Q{{ number_format($stats['ventas'], 2) }}</p>
+        </div>
+        <div class="bg-[#0a0a0a] border border-white/10 p-6 rounded-xl">
+            <p class="text-gray-500 text-xs uppercase font-black tracking-widest">Estado</p>
+            <p class="text-3xl mt-2 {{ $info?->activo ? 'text-green-500' : 'text-red-400' }} font-bold">{{ $info?->activo ? 'Activo' : 'Inactivo' }}</p>
+        </div>
+    </div>
+
     <div class="bg-[#0a0a0a] border border-white/10 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
         <div class="absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 bg-blue-500/5 blur-3xl rounded-full"></div>
 
@@ -67,6 +78,52 @@
                     <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Mensaje automático de confirmación</li>
                 </ul>
             </div>
+        </div>
+    </div>
+
+    <div class="mt-8 bg-[#0a0a0a] border border-white/10 rounded-2xl p-8 shadow-2xl">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+            <div>
+                <h2 class="text-xl font-bold">Reservas referidas</h2>
+                <p class="text-gray-500 text-sm">Historial de clientes que llegaron desde tu enlace.</p>
+            </div>
+            <a href="{{ route('socios.profile.edit') }}" class="inline-flex items-center justify-center rounded-md border border-yellow-500/40 px-4 py-2 text-xs font-black uppercase tracking-widest text-yellow-500 hover:bg-yellow-500 hover:text-black transition">
+                Perfil de pago
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full min-w-[760px] text-left text-sm text-gray-400">
+                <thead class="border-b border-white/10 text-[10px] uppercase tracking-widest text-gray-500">
+                    <tr>
+                        <th class="py-3">Reserva</th>
+                        <th class="py-3">Ruta</th>
+                        <th class="py-3">Estado</th>
+                        <th class="py-3 text-right">Venta</th>
+                        <th class="py-3 text-right">Comisión</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    @forelse($reservas as $reserva)
+                        <tr>
+                            <td class="py-4">
+                                <div class="font-bold text-white">{{ $reserva->codigo_reserva }}</div>
+                                <div class="text-xs text-gray-500">{{ $reserva->nombre_cliente }}</div>
+                            </td>
+                            <td class="py-4">{{ $reserva->ruta?->origen?->nombre }} → {{ $reserva->ruta?->destino?->nombre }}</td>
+                            <td class="py-4">
+                                <span class="rounded-full border border-white/10 px-3 py-1 text-[11px] font-bold">{{ $reserva->estado_pago }} / {{ $reserva->estado_viaje }}</span>
+                            </td>
+                            <td class="py-4 text-right">Q{{ number_format((float) $reserva->precio_total, 2) }}</td>
+                            <td class="py-4 text-right font-black text-yellow-500">Q{{ number_format((float) $reserva->comision_socio, 2) }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="py-10 text-center text-gray-500">Aún no hay reservas desde tu enlace.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

@@ -25,11 +25,11 @@
             <tbody class="divide-y divide-[#262626]">
                 @foreach($lugares as $lugar)
                 <tr class="hover:bg-[#111] transition-colors">
-                    <td class="px-6 py-4 text-[#737373]">#{{ $lugar->id }}</td>
+                    <td class="px-6 py-4 text-[#737373]">{{ strtoupper(substr($lugar->nombre, 0, 3)) }}</td>
                     <td class="px-6 py-4 font-bold">{{ $lugar->nombre }}</td>
                     <td class="px-6 py-4 text-[#a1a1a1]">{{ $lugar->ciudad ?? 'N/A' }}</td>
                     <td class="px-6 py-4 text-right">
-                        <form action="{{ route('admin.lugares.destroy', $lugar->id) }}" method="POST" onsubmit="return confirm('¿Eliminar lugar?')">
+                        <form action="{{ route('admin.lugares.destroy', $lugar) }}" method="POST" onsubmit="return confirm('¿Eliminar lugar?')">
                             @csrf @method('DELETE')
                             <button type="submit" class="text-red-500/50 hover:text-red-500 transition-colors text-xs font-bold uppercase">Eliminar</button>
                         </form>

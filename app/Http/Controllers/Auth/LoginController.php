@@ -15,13 +15,11 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        // 1 = Administrador (Antigua Transfers Admin)
-        if ($user->role_id == 1) {
+        if ($user->role_id == config('constantes.idAdmin')) {
             return redirect()->route('admin.dashboard');
         }
 
-        // 2 = Socio / Afiliado (Dueño de Airbnb)
-        if ($user->role_id == 2) {
+        if ($user->role_id == config('constantes.idAffiliate')) {
             return redirect()->route('socios.dashboard');
         }
 

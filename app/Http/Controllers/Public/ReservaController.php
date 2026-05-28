@@ -8,6 +8,7 @@ use App\Models\EmailVerificationCode;
 use App\Models\Reservacion;
 use App\Models\Ruta;
 use App\Models\RutaVehiculo;
+use App\Services\Affiliates\ReferralTracker;
 use App\Services\Payments\PaymentManager;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -96,7 +97,7 @@ class ReservaController extends Controller
         return view('reservas.detalles', compact('ruta', 'datos', 'fingerprintSessionId', 'fingerprintFullSessionId', 'fingerprintOrgId'));
     }
 
-    public function store(Request $request, PaymentManager $paymentManager)
+    public function store(Request $request, PaymentManager $paymentManager, ReferralTracker $referrals)
     {
         $validated = $request->validate([
             'ruta_id' => ['required', 'exists:rutas,id'],
@@ -164,7 +165,7 @@ class ReservaController extends Controller
         }
 
         try {
-            $reserva = DB::transaction(function () use ($validated, $verification, $email) {
+            $reserva = DB::transaction(function () use ($validated, $verification, $email, $request, $referrals) {
                 $ruta = Ruta::with(['vehiculosDisponibles'])
                     ->where('activa', true)
                     ->findOrFail($validated['ruta_id']);
@@ -188,10 +189,14 @@ class ReservaController extends Controller
                     . "DESTINO: {$validated['punto_destino']}\n"
                     . "NOTAS: " . ($validated['notas_adicionales'] ?? 'Ninguna');
 
+                $socioId = $referrals->currentSocioId($request);
+                $precioTotal = (float) $detalleRuta->precio_tarifa;
+
                 $reserva = Reservacion::create([
                     'codigo_reserva' => $this->generarCodigoReserva(),
                     'ruta_id' => $validated['ruta_id'],
                     'user_id' => auth()->id(),
+                    'socio_id' => $socioId,
                     'fecha_viaje' => $validated['fecha_viaje'],
                     'hora_viaje' => $validated['hora_viaje'],
                     'pasajeros' => $validated['pasajeros'],
@@ -200,7 +205,8 @@ class ReservaController extends Controller
                     'correo_cliente' => $email,
                     'telefono_cliente' => $validated['telefono_cliente'],
                     'notas_adicionales' => $notasCompletas,
-                    'precio_total' => $detalleRuta->precio_tarifa,
+                    'precio_total' => $precioTotal,
+                    'comision_socio' => $referrals->commissionFor($socioId, $precioTotal),
                     'estado_pago' => 'pendiente',
                     'estado_viaje' => 'programado',
                 ]);
@@ -234,7 +240,11 @@ class ReservaController extends Controller
                 'fingerprint_session_id' => $validated['fingerprint_session_id'],
             ], $request);
 
-            return redirect(URL::signedRoute('payments.result', ['transaction' => $transaction->id]));
+            if ($transaction->status === 'approved') {
+                $referrals->clear($request);
+            }
+
+            return redirect(URL::signedRoute('payments.result', ['transaction' => $transaction]));
         } catch (\Throwable $e) {
             return back()
                 ->withErrors(['reserva' => 'Error al procesar la reserva: ' . $e->getMessage()])

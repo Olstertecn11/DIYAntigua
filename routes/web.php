@@ -1,29 +1,51 @@
 <?php
 
 use App\Http\Controllers\Private\AdminController;
+use App\Http\Controllers\Private\AdminProfileController;
+use App\Http\Controllers\Private\AdminReservationController;
 use App\Http\Controllers\Private\RutaController;
 use App\Http\Controllers\Private\SocioController;
 use App\Http\Controllers\Private\ConductorController;
 use App\Http\Controllers\Private\LugarController;
 use App\Http\Controllers\Private\VehiculoController;
+use App\Http\Controllers\Public\ProfileController;
 use App\Http\Controllers\Public\ReservaController;
 use App\Http\Controllers\Public\ReservaEmailVerificationController;
+use App\Http\Controllers\Public\UserReservationController;
 use App\Models\Ruta;
+use App\Services\Affiliates\ReferralTracker;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 // --- RUTA PÚBLICA / REFERIDOS ---
-Route::get('/', function (Request $request) {
-    if ($request->has('ref')) {
-        session(['afiliado_referido' => $request->query('ref')]);
-    }
-    $rutas = Ruta::where('activa', true)->with(['origen', 'destino'])->get();
+Route::get('/', function (Request $request, ReferralTracker $referrals) {
+    $referrals->capture($request);
+
+    $rutas = Cache::remember('welcome:rutas-activas', now()->addMinutes(10), function () {
+        return Ruta::where('activa', true)->with(['origen', 'destino'])->get();
+    });
+
     return view('welcome', compact('rutas'));
 })->name('welcome');
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::middleware('auth')->prefix('perfil')->name('profile.')->group(function () {
+    Route::get('/', [ProfileController::class, 'edit'])->name('edit');
+    Route::put('/', [ProfileController::class, 'update'])->name('update');
+    Route::put('/password', [ProfileController::class, 'password'])->name('password');
+});
+
+Route::middleware('auth')->prefix('mis-reservas')->name('reservas.mine.')->group(function () {
+    Route::get('/', [UserReservationController::class, 'index'])->name('index');
+    Route::get('/{reserva}', [UserReservationController::class, 'show'])->name('show');
+    Route::post('/{reserva}/cancelar', [UserReservationController::class, 'cancel'])
+        ->middleware('throttle:4,1')
+        ->name('cancel');
+});
 
 
 // Flujo de Reservaciones
@@ -48,6 +70,9 @@ Route::group(['prefix' => 'socios'], function () {
 
     Route::middleware(['socio'])->group(function () {
         Route::get('/dashboard', [SocioController::class, 'dashboard'])->name('socios.dashboard');
+        Route::get('/perfil', [AdminProfileController::class, 'edit'])->name('socios.profile.edit');
+        Route::put('/perfil', [AdminProfileController::class, 'update'])->name('socios.profile.update');
+        Route::put('/perfil/password', [AdminProfileController::class, 'password'])->name('socios.profile.password');
     });
 });
 
@@ -63,6 +88,9 @@ Route::group([
     Route::post('/login', [AdminController::class, 'postLogin'])->name('login.post')->withoutMiddleware(['admin']);
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
+    Route::get('/perfil', [AdminProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/perfil', [AdminProfileController::class, 'update'])->name('profile.update');
+    Route::put('/perfil/password', [AdminProfileController::class, 'password'])->name('profile.password');
 
     Route::resource('lugares', LugarController::class);
 
@@ -78,7 +106,11 @@ Route::group([
     Route::post('/conductores', [ConductorController::class, 'store'])->name('conductores.store');
     Route::delete('/conductores/{conductore}', [ConductorController::class, 'destroy'])->name('conductores.destroy');
 
-    Route::get('/reservas', [AdminController::class, 'reservas'])->name('reservas.index');
+    Route::get('/reservas', [AdminReservationController::class, 'index'])->name('reservas.index');
+    Route::get('/reservas/{reserva}', [AdminReservationController::class, 'show'])->name('reservas.show');
+    Route::post('/reservas/{reserva}/cancelar', [AdminReservationController::class, 'cancel'])
+        ->middleware('throttle:8,1')
+        ->name('reservas.cancel');
 
     // NEGOCIO
 

@@ -16,8 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     {{-- Favicon --}}
-    <link rel="icon" type="image/png"
-        href="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/logo.png?raw=true">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
     {{-- Tailwind CDN: úsalo si todavía no tienes Tailwind compilado en Vite --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -46,6 +45,28 @@
 
         html {
             scroll-behavior: smooth;
+            scrollbar-color: rgba(252, 202, 0, .72) rgba(0, 0, 0, .12);
+            scrollbar-width: thin;
+        }
+
+        *::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        *::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, .08);
+            border-radius: 999px;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, rgba(252, 202, 0, .95), rgba(54, 54, 54, .55));
+            border: 2px solid rgba(255, 255, 255, .18);
+            border-radius: 999px;
+        }
+
+        *::-webkit-scrollbar-thumb:hover {
+            background: var(--brand-yellow);
         }
 
         body {
@@ -285,7 +306,7 @@
                             <a class="flex items-center gap-3 no-underline group" href="{{ url('/') }}">
                                 <div
                                     class="relative h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-yellow-300/50 transition">
-                                    <img src="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/logo.png?raw=true"
+                                    <img src="{{ asset('images/logo.png') }}"
                                         class="h-10 w-10 object-contain" alt="Logo">
 
                                 </div>
@@ -327,6 +348,15 @@
                                     </a>
                                 </li>
 
+                                @auth
+                                    <li>
+                                        <a href="{{ route('reservas.mine.index') }}" class="nav-link-custom">
+                                            <i class="fa-solid fa-ticket text-[11px] text-yellow-300/80"></i>
+                                            Mis Reservas
+                                        </a>
+                                    </li>
+                                @endauth
+
                             </ul>
 
                             <div class="flex flex-row gap-3 items-center flex-shrink-0">
@@ -363,6 +393,18 @@
                                                     {{ Auth::user()->name }}
                                                 </p>
                                             </div>
+
+                                            <a class="block px-4 py-3 text-sm text-white hover:bg-white/5 no-underline"
+                                                href="{{ route('profile.edit') }}">
+                                                <i class="fas fa-user-gear me-2 text-yellow-300"></i>
+                                                Mi Perfil
+                                            </a>
+
+                                            <a class="block px-4 py-3 text-sm text-white hover:bg-white/5 no-underline"
+                                                href="{{ route('reservas.mine.index') }}">
+                                                <i class="fas fa-ticket me-2 text-yellow-300"></i>
+                                                Mis Reservas
+                                            </a>
 
                                             <a class="block px-4 py-3 text-sm text-white hover:bg-white/5 no-underline"
                                                 href="{{ route('logout') }}"
@@ -413,6 +455,15 @@
                             </a>
                         </li>
 
+                        @auth
+                            <li>
+                                <a href="{{ route('reservas.mine.index') }}" class="mobile-link">
+                                    <i class="fa-solid fa-ticket text-yellow-300"></i>
+                                    Mis Reservas
+                                </a>
+                            </li>
+                        @endauth
+
                         <li>
                             <hr class="border-white/10 my-3">
                         </li>
@@ -436,6 +487,12 @@
                                     <p class="text-white font-black mb-3">
                                         {{ Auth::user()->name }}
                                     </p>
+
+                                    <a class="mb-2 inline-flex items-center justify-center gap-2 rounded-full bg-white/10 border border-white/15 px-5 py-2.5 text-sm font-black text-white no-underline"
+                                        href="{{ route('profile.edit') }}">
+                                        <i class="fas fa-user-gear"></i>
+                                        Mi Perfil
+                                    </a>
 
                                     <a class="inline-flex items-center justify-center gap-2 rounded-full bg-red-500/10 border border-red-500/30 px-5 py-2.5 text-sm font-black text-red-300 no-underline"
                                         href="{{ route('logout') }}"

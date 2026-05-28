@@ -16,6 +16,14 @@ class QPayProCallbackController extends Controller
 
     public function store(QPayProCallbackRequest $request)
     {
+        $expectedToken = config('qpaypro.callback_token');
+        $receivedToken = $request->header('X-QPayPro-Token') ?: $request->input('callback_token');
+        $signatureValid = blank($expectedToken) || hash_equals((string) $expectedToken, (string) $receivedToken);
+
+        if (! $signatureValid) {
+            abort(403, 'Invalid payment callback token.');
+        }
+
         $payload = $request->all();
         $reservacion = null;
 
@@ -29,7 +37,7 @@ class QPayProCallbackController extends Controller
             'event_type' => 'qpaypro_callback',
             'status' => $request->input('status') ?: $request->input('response_code'),
             'payload_sanitized' => $this->sanitizer->sanitize($payload),
-            'signature_valid' => false,
+            'signature_valid' => $signatureValid,
             'processed' => false,
         ]);
 

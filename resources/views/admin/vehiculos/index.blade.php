@@ -34,7 +34,7 @@
                             </div>
                             <div>
                                 <span class="block font-bold text-white uppercase">{{ $v->nombre }}</span>
-                                <span class="text-[10px] text-[#555]">ID: #{{ $v->id }}</span>
+                                <span class="text-[10px] text-[#555]">{{ $v->min_pasajeros }}-{{ $v->max_pasajeros }} pasajeros</span>
                             </div>
                         </div>
                     </td>
@@ -59,7 +59,7 @@
                                 <i class="fas fa-edit text-sm"></i>
                             </button>
 
-                            <form action="{{ route('admin.vehiculos.destroy', $v->id) }}"
+                            <form action="{{ route('admin.vehiculos.destroy', $v) }}"
                                   method="post"
                                   class="inline-block"
                                   onsubmit="return confirm('¿Eliminar este tipo de vehículo?')">

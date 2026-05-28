@@ -15,8 +15,7 @@ class CheckSocio
      */
     public function handle(Request $request, Closure $next)
     {
-        // Verificamos si está logueado y si su rol es 2 (Socio)
-        if (auth()->check() && auth()->user()->role_id == 2) {
+        if (auth()->check() && auth()->user()->role_id == config('constantes.idAffiliate')) {
             return $next($request);
         }
 

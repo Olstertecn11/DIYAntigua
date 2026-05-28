@@ -5,6 +5,8 @@
                 <th class="px-6 py-4 font-medium">Socio / Empresa</th>
                 <th class="px-6 py-4 font-medium">Contacto</th>
                 <th class="px-6 py-4 font-medium text-center">Comisión</th>
+                <th class="px-6 py-4 font-medium text-center">Reservas</th>
+                <th class="px-6 py-4 font-medium text-right">Ganancias</th>
                 <th class="px-6 py-4 font-medium text-center">Estado</th>
                 <th class="px-6 py-4 font-medium text-right">Acciones</th>
             </tr>
@@ -19,7 +21,7 @@
                             </div>
                             <div class="ml-4">
                                 <div class="text-sm font-medium text-white">{{ $afiliado->nombre_comercial ?? 'Sin nombre' }}</div>
-                                <div class="text-xs text-gray-500">ID: #00{{ $afiliado->id }}</div>
+                                <div class="text-xs text-gray-500">Código: {{ $afiliado->codigo_referido ?: 'Pendiente' }}</div>
                             </div>
                         </div>
                     </td>
@@ -33,6 +35,12 @@
                         <span class="inline-flex items-center rounded-md border border-white/10 bg-white/[0.03] px-2 py-1 text-xs font-medium text-yellow-500">
                             {{ number_format($afiliado->comision_porcentaje, 2) }}%
                         </span>
+                    </td>
+                    <td class="px-6 py-4 text-center text-white font-bold">
+                        {{ $afiliado->reservas_referidas_count ?? 0 }}
+                    </td>
+                    <td class="px-6 py-4 text-right text-yellow-500 font-black">
+                        Q{{ number_format((float) ($afiliado->comisiones_total ?? 0), 2) }}
                     </td>
                     <td class="px-6 py-4 text-center">
                         @if($afiliado->activo)
@@ -60,7 +68,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="px-6 py-12 text-center">
+                    <td colspan="7" class="px-6 py-12 text-center">
                         <div class="flex flex-col items-center">
                             <i class="fas fa-folder-open mb-3 text-3xl text-gray-700"></i>
                             <span class="text-sm text-gray-500">No se encontraron afiliados en Antigua Transfers.</span>

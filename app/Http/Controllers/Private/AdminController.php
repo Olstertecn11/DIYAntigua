@@ -11,6 +11,7 @@ use App\Models\AfiliadoInfo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Reservacion;
+use App\Services\Affiliates\ReferralTracker;
 
 
 class AdminController extends Controller
@@ -50,7 +51,7 @@ class AdminController extends Controller
 
 
 
-    public function storeAfiliado(Request $request)
+    public function storeAfiliado(Request $request, ReferralTracker $referrals)
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -68,17 +69,20 @@ class AdminController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role_id' => 2, // Asegúrate de que 2 sea el ID de Afiliado en tu tabla roles
+                'role_id' => config('constantes.idAffiliate'),
             ]);
 
             // 2. Crear la información extra
             AfiliadoInfo::create([
                 'user_id' => $user->id,
+                'codigo_referido' => null,
                 'nombre_comercial' => $request->nombre_comercial,
                 'comision_porcentaje' => $request->comision,
                 'nit' => $request->nit,
                 'telefono_negocio' => $request->telefono,
             ]);
+
+            $referrals->referralCodeFor($user->fresh('afiliadoInfo'));
 
             DB::commit();
             return back()->with('success', 'Socio creado correctamente.');
@@ -97,21 +101,84 @@ class AdminController extends Controller
     // Vista del Dashboard (Protegida)
     public function dashboard()
     {
-        // Obtenemos todos los usuarios que tengan el rol de afiliado (ID 2 en tu caso)
-        // Usamos with('afiliadoInfo') para traer los datos comerciales de una vez
-        $afiliados = AfiliadoInfo::with('user')->get();
+        [$afiliados, $reservasStats, $proximasReservas] = $this->dashboardData();
 
-        return view('admin.dashboard', compact('afiliados'));
+        return view('admin.dashboard', compact('afiliados', 'reservasStats', 'proximasReservas'));
     }
 
     // Añade esto dentro de la clase AdminController
     public function indexAfiliados()
     {
-        // Obtenemos la información de los socios
-        $afiliados = AfiliadoInfo::with('user')->get();
+        [$afiliados, $reservasStats, $proximasReservas] = $this->dashboardData();
 
-        // Puedes crear una vista específica o reutilizar la lógica del dashboard
-        return view('admin.dashboard', compact('afiliados'));
+        return view('admin.dashboard', compact('afiliados', 'reservasStats', 'proximasReservas'));
+    }
+
+    public function pagos()
+    {
+        $afiliados = AfiliadoInfo::with('user')
+            ->get()
+            ->map(function (AfiliadoInfo $afiliado) {
+                $reservas = Reservacion::where('socio_id', $afiliado->user_id)
+                    ->where('estado_pago', 'pagado')
+                    ->where('estado_viaje', '!=', 'cancelado');
+
+                $afiliado->reservas_pagadas_count = (clone $reservas)->count();
+                $afiliado->ventas_referidas_total = (float) (clone $reservas)->sum('precio_total');
+                $afiliado->comisiones_total = (float) (clone $reservas)->sum('comision_socio');
+
+                return $afiliado;
+            });
+
+        $reservasReferidas = Reservacion::with(['socio.afiliadoInfo', 'ruta.origen', 'ruta.destino'])
+            ->whereNotNull('socio_id')
+            ->latest()
+            ->paginate(15);
+
+        $totales = [
+            'ventas' => $afiliados->sum('ventas_referidas_total'),
+            'comisiones' => $afiliados->sum('comisiones_total'),
+            'reservas' => $afiliados->sum('reservas_pagadas_count'),
+        ];
+
+        return view('admin.pagos.index', compact('afiliados', 'reservasReferidas', 'totales'));
+    }
+
+    private function dashboardData(): array
+    {
+        $afiliados = AfiliadoInfo::with('user')
+            ->get()
+            ->map(function (AfiliadoInfo $afiliado) {
+                $stats = Reservacion::where('socio_id', $afiliado->user_id)
+                    ->selectRaw('count(*) as reservas_total')
+                    ->selectRaw("sum(case when estado_pago = 'pagado' and estado_viaje <> 'cancelado' then comision_socio else 0 end) as comisiones_total")
+                    ->first();
+
+                $afiliado->reservas_referidas_count = (int) ($stats->reservas_total ?? 0);
+                $afiliado->comisiones_total = (float) ($stats->comisiones_total ?? 0);
+
+                return $afiliado;
+            });
+
+        $reservasStats = [
+            'total' => Reservacion::count(),
+            'hoy' => Reservacion::whereDate('fecha_viaje', today())->count(),
+            'pagadas' => Reservacion::where('estado_pago', 'pagado')->count(),
+            'reembolsos' => Reservacion::where('reembolso_estado', 'pendiente')->count(),
+            'comisiones' => Reservacion::where('estado_pago', 'pagado')
+                ->where('estado_viaje', '!=', 'cancelado')
+                ->sum('comision_socio'),
+        ];
+
+        $proximasReservas = Reservacion::with(['ruta.origen', 'ruta.destino'])
+            ->where('estado_viaje', 'programado')
+            ->whereDate('fecha_viaje', '>=', today())
+            ->orderBy('fecha_viaje')
+            ->orderBy('hora_viaje')
+            ->limit(6)
+            ->get();
+
+        return [$afiliados, $reservasStats, $proximasReservas];
     }
 
     public function logout(Request $request) {
@@ -130,7 +197,5 @@ class AdminController extends Controller
 
         return view('admin.reservas.index', compact('reservas'));
     }
-
-
 
 }
