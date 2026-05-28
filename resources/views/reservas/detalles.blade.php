@@ -108,17 +108,12 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label class="form-label-custom">
-                                        Teléfono / WhatsApp
-                                    </label>
-
-                                    <div class="input-shell">
-                                        <i class="fab fa-whatsapp input-icon"></i>
-
-                                        <input type="tel" name="telefono_cliente" required
-                                            class="form-control modern-input" placeholder="+502 0000-0000"
-                                            value="{{ old('telefono_cliente') }}">
-                                    </div>
+                                    <x-phone-input
+                                        label="Teléfono / WhatsApp"
+                                        country-name="telefono_country_code"
+                                        number-name="telefono_national"
+                                        :value="old('telefono_cliente', auth()->user()?->telefono)"
+                                        required />
                                 </div>
                             </div>
                         </section>
@@ -651,7 +646,8 @@
                 const fields = [
                     'nombre_cliente',
                     'correo_cliente',
-                    'telefono_cliente',
+                    'telefono_country_code',
+                    'telefono_national',
                     'punto_recogida',
                     'punto_destino',
                     'fecha_viaje',

@@ -40,8 +40,12 @@
 
                 <div class="grid gap-5 md:grid-cols-2">
                     <div>
-                        <label class="text-[10px] font-black uppercase tracking-widest text-[#737373]">Teléfono</label>
-                        <input name="telefono" value="{{ old('telefono', $user->telefono) }}" class="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[#fcca00]">
+                        <x-phone-input
+                            label="Teléfono"
+                            country-name="telefono_country_code"
+                            number-name="telefono_national"
+                            :value="$user->telefono"
+                            dark />
                     </div>
                     <div>
                         <label class="text-[10px] font-black uppercase tracking-widest text-[#737373]">Dirección</label>
@@ -62,8 +66,12 @@
                                 <input name="nit" value="{{ old('nit', $user->afiliadoInfo->nit) }}" class="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[#fcca00]">
                             </div>
                             <div>
-                                <label class="text-[10px] font-black uppercase tracking-widest text-[#737373]">Teléfono negocio</label>
-                                <input name="telefono_negocio" value="{{ old('telefono_negocio', $user->afiliadoInfo->telefono_negocio) }}" class="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[#fcca00]">
+                                <x-phone-input
+                                    label="Teléfono negocio"
+                                    country-name="telefono_negocio_country_code"
+                                    number-name="telefono_negocio_national"
+                                    :value="$user->afiliadoInfo->telefono_negocio"
+                                    dark />
                             </div>
                             <div>
                                 <label class="text-[10px] font-black uppercase tracking-widest text-[#737373]">Dirección negocio</label>

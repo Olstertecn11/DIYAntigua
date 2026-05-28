@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use App\Support\PhoneNumber;
 
 class AdminProfileController extends Controller
 {
@@ -24,11 +25,13 @@ class AdminProfileController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
-            'telefono' => ['nullable', 'string', 'max:30'],
+            'telefono_country_code' => ['nullable', 'required_with:telefono_national', 'string', 'in:' . implode(',', array_keys(config('phone.countries', [])))],
+            'telefono_national' => ['nullable', 'string', 'max:30', 'regex:/^[0-9\s().-]{5,30}$/'],
             'direccion' => ['nullable', 'string', 'max:255'],
             'nombre_comercial' => [Rule::requiredIf($user->role_id == config('constantes.idAffiliate')), 'nullable', 'string', 'max:255'],
             'nit' => ['nullable', 'string', 'max:80'],
-            'telefono_negocio' => ['nullable', 'string', 'max:30'],
+            'telefono_negocio_country_code' => ['nullable', 'required_with:telefono_negocio_national', 'string', 'in:' . implode(',', array_keys(config('phone.countries', [])))],
+            'telefono_negocio_national' => ['nullable', 'string', 'max:30', 'regex:/^[0-9\s().-]{5,30}$/'],
             'direccion_negocio' => ['nullable', 'string', 'max:255'],
             'metodo_pago' => ['nullable', 'string', 'max:120'],
             'titular_pago' => ['nullable', 'string', 'max:160'],
@@ -38,7 +41,7 @@ class AdminProfileController extends Controller
         $user->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'telefono' => $validated['telefono'] ?? null,
+            'telefono' => PhoneNumber::format($validated['telefono_country_code'] ?? null, $validated['telefono_national'] ?? null),
             'direccion' => $validated['direccion'] ?? null,
         ]);
 
@@ -46,7 +49,7 @@ class AdminProfileController extends Controller
             $user->afiliadoInfo->update([
                 'nombre_comercial' => $validated['nombre_comercial'],
                 'nit' => $validated['nit'] ?? null,
-                'telefono_negocio' => $validated['telefono_negocio'] ?? null,
+                'telefono_negocio' => PhoneNumber::format($validated['telefono_negocio_country_code'] ?? null, $validated['telefono_negocio_national'] ?? null),
                 'direccion' => $validated['direccion_negocio'] ?? null,
                 'metodo_pago' => $validated['metodo_pago'] ?? null,
                 'titular_pago' => $validated['titular_pago'] ?? null,

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use App\Support\PhoneNumber;
 
 class ProfileController extends Controller
 {
@@ -24,11 +25,17 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
-            'telefono' => ['nullable', 'string', 'max:30'],
+            'telefono_country_code' => ['nullable', 'required_with:telefono_national', 'string', 'in:' . implode(',', array_keys(config('phone.countries', [])))],
+            'telefono_national' => ['nullable', 'string', 'max:30', 'regex:/^[0-9\s().-]{5,30}$/'],
             'direccion' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $user->fill($validated)->save();
+        $user->fill([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'telefono' => PhoneNumber::format($validated['telefono_country_code'] ?? null, $validated['telefono_national'] ?? null),
+            'direccion' => $validated['direccion'] ?? null,
+        ])->save();
 
         return back()->with('success', 'Tu perfil fue actualizado.');
     }

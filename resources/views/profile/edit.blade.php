@@ -43,9 +43,11 @@
                             @error('email')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label class="block text-[11px] font-black uppercase tracking-[0.16em] text-[#363636]">Teléfono</label>
-                            <input name="telefono" value="{{ old('telefono', $user->telefono) }}" class="mt-2 w-full rounded-2xl border border-black/10 bg-[#fbfaf7] px-4 py-3 text-sm font-semibold outline-none focus:border-[#fcca00] focus:ring-4 focus:ring-[#fcca00]/20">
-                            @error('telefono')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
+                            <x-phone-input
+                                label="Teléfono"
+                                country-name="telefono_country_code"
+                                number-name="telefono_national"
+                                :value="$user->telefono" />
                         </div>
                     </div>
 

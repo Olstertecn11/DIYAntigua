@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'countries' => [
+        'GT' => ['name' => 'Guatemala', 'dial' => '+502'],
+        'US' => ['name' => 'United States', 'dial' => '+1'],
+        'CA' => ['name' => 'Canada', 'dial' => '+1'],
+        'MX' => ['name' => 'Mexico', 'dial' => '+52'],
+        'SV' => ['name' => 'El Salvador', 'dial' => '+503'],
+        'HN' => ['name' => 'Honduras', 'dial' => '+504'],
+        'NI' => ['name' => 'Nicaragua', 'dial' => '+505'],
+        'CR' => ['name' => 'Costa Rica', 'dial' => '+506'],
+        'PA' => ['name' => 'Panama', 'dial' => '+507'],
+        'BZ' => ['name' => 'Belize', 'dial' => '+501'],
+        'CO' => ['name' => 'Colombia', 'dial' => '+57'],
+        'PE' => ['name' => 'Peru', 'dial' => '+51'],
+        'EC' => ['name' => 'Ecuador', 'dial' => '+593'],
+        'CL' => ['name' => 'Chile', 'dial' => '+56'],
+        'AR' => ['name' => 'Argentina', 'dial' => '+54'],
+        'BR' => ['name' => 'Brazil', 'dial' => '+55'],
+        'UY' => ['name' => 'Uruguay', 'dial' => '+598'],
+        'ES' => ['name' => 'Spain', 'dial' => '+34'],
+        'FR' => ['name' => 'France', 'dial' => '+33'],
+        'DE' => ['name' => 'Germany', 'dial' => '+49'],
+        'GB' => ['name' => 'United Kingdom', 'dial' => '+44'],
+        'IT' => ['name' => 'Italy', 'dial' => '+39'],
+        'NL' => ['name' => 'Netherlands', 'dial' => '+31'],
+        'CH' => ['name' => 'Switzerland', 'dial' => '+41'],
+        'AU' => ['name' => 'Australia', 'dial' => '+61'],
+    ],
+];

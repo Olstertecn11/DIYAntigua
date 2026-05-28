@@ -10,6 +10,7 @@ use App\Models\Ruta;
 use App\Models\RutaVehiculo;
 use App\Services\Affiliates\ReferralTracker;
 use App\Services\Payments\PaymentManager;
+use App\Support\PhoneNumber;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -105,7 +106,8 @@ class ReservaController extends Controller
             'id_detalle_ruta' => ['required', 'integer', 'exists:ruta_vehiculo,id'],
             'nombre_cliente' => ['required', 'string', 'max:150'],
             'correo_cliente' => ['required', 'email', 'max:150'],
-            'telefono_cliente' => ['required', 'string', 'max:25'],
+            'telefono_country_code' => ['required', 'string', 'in:' . implode(',', array_keys(config('phone.countries', [])))],
+            'telefono_national' => ['required', 'string', 'max:30', 'regex:/^[0-9\s().-]{5,30}$/'],
             'punto_recogida' => ['required', 'string'],
             'punto_destino' => ['required', 'string'],
             'notas_adicionales' => ['nullable', 'string'],
@@ -203,7 +205,7 @@ class ReservaController extends Controller
                     'tipo_vehiculo' => strtolower($vehiculo->nombre),
                     'nombre_cliente' => $validated['nombre_cliente'],
                     'correo_cliente' => $email,
-                    'telefono_cliente' => $validated['telefono_cliente'],
+                    'telefono_cliente' => PhoneNumber::format($validated['telefono_country_code'], $validated['telefono_national']),
                     'notas_adicionales' => $notasCompletas,
                     'precio_total' => $precioTotal,
                     'comision_socio' => $referrals->commissionFor($socioId, $precioTotal),

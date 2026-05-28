@@ -112,32 +112,11 @@
                                         @enderror
                                     </div>
 
-                                    <div>
-                                        <label for="telefono" class="block text-[11px] font-black uppercase tracking-[0.16em] text-slate-700 mb-2">
-                                            Teléfono
-                                        </label>
-
-                                        <div class="relative">
-                                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-blue-700">
-                                                <i class="fas fa-phone"></i>
-                                            </span>
-
-                                            <input id="telefono"
-                                                type="text"
-                                                name="telefono"
-                                                value="{{ old('telefono') }}"
-                                                autocomplete="tel"
-                                                placeholder="Ej. +502 5555 5555"
-                                                class="w-full rounded-full border bg-white/90 py-3.5 pl-12 pr-4 text-sm font-bold text-slate-900 outline-none transition shadow-sm
-                                                @error('telefono') border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100 @else border-blue-100 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 @enderror">
-                                        </div>
-
-                                        @error('telefono')
-                                            <p class="mt-2 text-sm font-bold text-red-600">
-                                                {{ $message }}
-                                            </p>
-                                        @enderror
-                                    </div>
+                                    <x-phone-input
+                                        label="Teléfono"
+                                        country-name="telefono_country_code"
+                                        number-name="telefono_national"
+                                        :value="old('telefono')" />
 
                                     <div>
                                         <label for="password" class="block text-[11px] font-black uppercase tracking-[0.16em] text-slate-700 mb-2">
