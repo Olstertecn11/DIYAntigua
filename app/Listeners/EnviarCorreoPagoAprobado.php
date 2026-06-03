@@ -28,6 +28,8 @@ class EnviarCorreoPagoAprobado implements ShouldQueue
             Log::warning('No se pudo enviar el correo de pago aprobado.', [
                 'reservacion_id' => $event->reserva->id,
                 'payment_transaction_id' => $event->transaction->id,
+                'mailer' => config('mail.default'),
+                'from' => config('mail.from.address'),
                 'error' => $exception->getMessage(),
             ]);
 

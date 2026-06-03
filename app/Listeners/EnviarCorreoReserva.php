@@ -27,6 +27,8 @@ class EnviarCorreoReserva implements ShouldQueue
         } catch (\Throwable $exception) {
             Log::warning('No se pudo enviar el correo de reserva.', [
                 'reservacion_id' => $event->reserva->id,
+                'mailer' => config('mail.default'),
+                'from' => config('mail.from.address'),
                 'error' => $exception->getMessage(),
             ]);
 

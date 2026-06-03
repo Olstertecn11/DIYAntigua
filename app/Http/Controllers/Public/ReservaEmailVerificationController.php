@@ -77,6 +77,8 @@ class ReservaEmailVerificationController extends Controller
 
             Log::error('No se pudo enviar el codigo de verificacion de reserva.', [
                 'email_hash' => hash('sha256', $email),
+                'mailer' => config('mail.default'),
+                'from' => config('mail.from.address'),
                 'error' => $exception->getMessage(),
             ]);
 
