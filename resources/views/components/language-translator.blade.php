@@ -1,13 +1,13 @@
-<div class="notranslate fixed bottom-24 right-5 z-[9998]" translate="no">
+<div class="notranslate fixed bottom-4 left-4 z-[9998] sm:bottom-24 sm:left-auto sm:right-5" translate="no">
     <div class="relative">
         <button id="language-toggle" type="button"
-            class="h-12 px-4 rounded-full bg-slate-950 text-white border border-white/10 shadow-2xl flex items-center gap-2 font-black text-sm hover:border-yellow-300/50 transition">
+            class="h-11 px-3 rounded-full bg-slate-950 text-white border border-white/10 shadow-2xl flex items-center gap-2 font-black text-xs hover:border-yellow-300/50 transition sm:h-12 sm:px-4 sm:text-sm">
             <i class="fa-solid fa-language text-yellow-300"></i>
             <span id="language-label">ES</span>
         </button>
 
         <div id="language-panel"
-            class="hidden absolute bottom-14 right-0 w-48 rounded-3xl bg-slate-950 border border-white/10 shadow-2xl p-3">
+            class="hidden absolute bottom-14 left-0 w-48 rounded-3xl bg-slate-950 border border-white/10 shadow-2xl p-3 sm:left-auto sm:right-0">
             <p class="text-white font-black text-sm mb-3">
                 Idioma
             </p>

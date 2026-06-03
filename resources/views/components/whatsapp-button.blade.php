@@ -10,7 +10,7 @@
 @endphp
 
 <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp"
-    class="fixed bottom-5 right-5 z-[9999] group">
+    class="fixed bottom-4 right-4 z-[9999] group sm:bottom-5 sm:right-5">
 
     <div class="relative">
         {{-- Pulso --}}
@@ -18,8 +18,8 @@
 
         {{-- Botón --}}
         <div
-            class="relative h-16 w-16 rounded-full bg-green-500 shadow-2xl shadow-green-500/40 flex items-center justify-center hover:scale-110 transition duration-300">
-            <i class="fab fa-whatsapp text-white text-4xl"></i>
+            class="relative h-12 w-12 rounded-full bg-green-500 shadow-2xl shadow-green-500/40 flex items-center justify-center hover:scale-110 transition duration-300 sm:h-16 sm:w-16">
+            <i class="fab fa-whatsapp text-white text-3xl sm:text-4xl"></i>
         </div>
 
         {{-- Tooltip --}}

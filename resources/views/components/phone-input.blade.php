@@ -22,19 +22,20 @@
         {{ $label }}
     </label>
 
-    <div class="mt-2 grid grid-cols-[minmax(130px,0.42fr)_minmax(0,1fr)] gap-2">
+    <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(160px,0.42fr)_minmax(0,1fr)]">
         <select name="{{ $countryName }}" @required($required)
-            class="min-w-0 rounded-2xl border {{ $baseField }}">
+            autocomplete="tel-country-code" aria-label="Código de país"
+            class="h-12 w-full min-w-0 appearance-auto rounded-2xl border leading-5 {{ $baseField }}">
             @foreach($countries as $code => $country)
                 <option value="{{ $code }}" @selected($selectedCountry === $code)>
-                    {{ $country['dial'] }} · {{ $country['name'] }}
+                    {{ $country['name'] }} ({{ $country['dial'] }})
                 </option>
             @endforeach
         </select>
 
         <input type="tel" name="{{ $numberName }}" value="{{ $numberValue }}" @required($required)
             autocomplete="tel-national" inputmode="tel" placeholder="Número local"
-            class="min-w-0 rounded-2xl border {{ $baseField }}">
+            class="h-12 w-full min-w-0 rounded-2xl border leading-5 {{ $baseField }}">
     </div>
 
     @error($countryName)<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror

@@ -694,6 +694,20 @@
                 }
             }
 
+            function scrollToPanel(panel) {
+                if (!panel) {
+                    return;
+                }
+
+                const offset = window.matchMedia('(max-width: 767.98px)').matches ? 82 : 110;
+                const targetTop = panel.getBoundingClientRect().top + window.scrollY - offset;
+
+                window.scrollTo({
+                    top: Math.max(0, targetTop),
+                    behavior: 'smooth',
+                });
+            }
+
             function goToPaymentStep() {
                 if (!validateTripDetails()) {
                     return;
@@ -709,7 +723,7 @@
                     paymentStepperItem?.classList.add('active');
                     stepper?.setAttribute('data-current-step', 'payment');
                     setPrimaryButtonForStep('payment');
-                    window.scrollTo({ top: Math.max(0, form.getBoundingClientRect().top + window.scrollY - 110), behavior: 'smooth' });
+                    scrollToPanel(paymentStep);
 
                     setTimeout(() => {
                         paymentStep.classList.remove('step-panel-entering');
@@ -728,7 +742,7 @@
                     paymentStepperItem?.classList.remove('active');
                     stepper?.setAttribute('data-current-step', 'details');
                     setPrimaryButtonForStep('details');
-                    window.scrollTo({ top: Math.max(0, form.getBoundingClientRect().top + window.scrollY - 110), behavior: 'smooth' });
+                    scrollToPanel(detailsStep);
 
                     setTimeout(() => {
                         detailsStep.classList.remove('step-panel-entering');
