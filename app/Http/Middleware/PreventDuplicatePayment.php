@@ -16,7 +16,15 @@ class PreventDuplicatePayment
         $lock = Cache::lock($key, 60);
 
         if (! $lock->get()) {
-            abort(409, 'Ya estamos procesando este pago.');
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Ya estamos procesando este pago. Espera el resultado antes de intentar nuevamente.',
+                ], 409);
+            }
+
+            return back()
+                ->withErrors(['payment' => 'Ya estamos procesando este pago. Espera el resultado antes de intentar nuevamente.'])
+                ->withInput();
         }
 
         try {

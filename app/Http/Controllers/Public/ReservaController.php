@@ -303,7 +303,13 @@ class ReservaController extends Controller
 
     public function confirmar($codigo)
     {
-        $reservacion = Reservacion::where('codigo_reserva', $codigo)->firstOrFail();
+        $reservacion = Reservacion::with([
+            'ruta.origen',
+            'ruta.destino',
+            'paymentTransactions' => fn ($query) => $query->latest(),
+        ])
+            ->where('codigo_reserva', $codigo)
+            ->firstOrFail();
 
         return view('reservas.confirmar', compact('reservacion'));
     }

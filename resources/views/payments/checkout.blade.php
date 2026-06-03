@@ -22,7 +22,10 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('payments.store', $reservacion->codigo_reserva) }}" id="payment-form" autocomplete="off">
+                    <form method="POST" action="{{ route('payments.store', $reservacion->codigo_reserva) }}" id="payment-form" autocomplete="off"
+                        data-processing-kicker="Pago seguro"
+                        data-processing-title="Procesando pago"
+                        data-processing-message="No cierres esta ventana. Estamos comunicándonos con el procesador de pagos.">
                         @csrf
                         <input type="hidden" name="fingerprint_session_id" value="{{ $fingerprintSessionId }}">
                         <input type="hidden" name="finger" id="finger">
@@ -145,7 +148,13 @@
             const form = document.getElementById('payment-form');
             const button = document.getElementById('pay-button');
 
-            form.addEventListener('submit', function () {
+            form.addEventListener('submit', function (event) {
+                if (!navigator.onLine) {
+                    event.preventDefault();
+                    window.DIYProcessing?.offline('Tu conexión parece estar caída. No se envió el pago.');
+                    return;
+                }
+
                 button.disabled = true;
                 button.textContent = 'Procesando pago...';
             });

@@ -829,9 +829,19 @@
                     return;
                 }
 
+                if (!navigator.onLine) {
+                    window.DIYProcessing?.offline('No podemos enviar el código porque no hay conexión a internet.');
+                    return;
+                }
+
                 const email = emailInput.value.trim();
 
                 setButtonLoading(openButton, 'Enviando código...');
+                window.DIYProcessing?.show({
+                    kicker: 'Verificación',
+                    title: 'Enviando código',
+                    message: 'Estamos enviando el código de seguridad a tu correo.',
+                });
 
                 try {
                     const response = await fetch(sendEmailCodeUrl, {
@@ -856,6 +866,7 @@
                     openModal();
                     showMessage(error.message || 'Ocurrió un error enviando el código.');
                 } finally {
+                    window.DIYProcessing?.hide();
                     resetButton(openButton);
                 }
             }
@@ -871,7 +882,17 @@
                     return;
                 }
 
+                if (!navigator.onLine) {
+                    window.DIYProcessing?.offline('No podemos verificar el código porque no hay conexión a internet.');
+                    return;
+                }
+
                 setButtonLoading(verifyButton, 'Verificando...');
+                window.DIYProcessing?.show({
+                    kicker: 'Verificación',
+                    title: 'Validando código',
+                    message: 'Estamos confirmando tu correo antes de procesar la reserva.',
+                });
 
                 try {
                     const response = await fetch(verifyEmailCodeUrl, {
@@ -905,6 +926,9 @@
                     showMessage(error.message || 'El código no es válido.');
                     clearOtp();
                 } finally {
+                    if (!formSubmitting) {
+                        window.DIYProcessing?.hide();
+                    }
                     resetButton(verifyButton);
                 }
             }
@@ -941,6 +965,11 @@
                     openButton.disabled = true;
                     openButton.innerHTML = 'Procesando reserva y pago...';
                 }
+                window.DIYProcessing?.show({
+                    kicker: 'Pago seguro',
+                    title: 'Procesando reserva y pago',
+                    message: 'No cierres esta ventana. Estamos enviando la transacción al procesador.',
+                });
                 form.submit();
             }
 

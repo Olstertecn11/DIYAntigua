@@ -562,6 +562,7 @@
             'message' => 'Hola, quiero información sobre un traslado privado.',
         ])
         @include('components.language-translator')
+        @include('components.processing-modal')
         @include('components.footer')
     </div>
 
