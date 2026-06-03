@@ -719,12 +719,17 @@
 
 @section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        function initBookingForm() {
             const origenSelect = document.getElementById('origen-select');
             const destinoSelect = document.getElementById('destino-select');
             const fechaInput = document.getElementById('fecha-reserva');
 
-            const rutas = @json($rutas);
+            if (!origenSelect || !destinoSelect) {
+                return;
+            }
+
+            const rutasData = @json($rutas);
+            const rutas = Array.isArray(rutasData) ? rutasData : [];
 
             if (fechaInput) {
                 const today = new Date().toISOString().split('T')[0];
@@ -745,6 +750,14 @@
                 option.textContent = nombre;
                 origenSelect.appendChild(option);
             });
+
+            if (!origenesMap.size) {
+                origenSelect.innerHTML = '<option value="">No hay rutas disponibles</option>';
+                destinoSelect.innerHTML = '<option value="">No hay destinos disponibles</option>';
+                origenSelect.disabled = true;
+                destinoSelect.disabled = true;
+                return;
+            }
 
             origenSelect.addEventListener('change', (event) => {
                 const origenId = String(event.target.value);
@@ -773,6 +786,12 @@
                     destinoSelect.appendChild(option);
                 });
             });
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initBookingForm);
+        } else {
+            initBookingForm();
+        }
     </script>
 @endsection

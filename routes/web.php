@@ -22,8 +22,23 @@ use Illuminate\Http\Request;
 Route::get('/', function (Request $request, ReferralTracker $referrals) {
     $referrals->capture($request);
 
-    $rutas = Cache::remember('welcome:rutas-activas', now()->addMinutes(10), function () {
-        return Ruta::where('activa', true)->with(['origen', 'destino'])->get();
+    $rutas = Cache::remember('welcome:rutas-activas:v2', now()->addMinutes(10), function () {
+        return Ruta::where('activa', true)
+            ->with(['origen:id,nombre,ciudad,estado', 'destino:id,nombre,ciudad,estado'])
+            ->get(['id', 'origen_id', 'destino_id'])
+            ->map(fn (Ruta $ruta) => [
+                'id' => $ruta->id,
+                'origen' => $ruta->origen ? [
+                    'id' => $ruta->origen->id,
+                    'nombre' => $ruta->origen->nombre,
+                ] : null,
+                'destino' => $ruta->destino ? [
+                    'id' => $ruta->destino->id,
+                    'nombre' => $ruta->destino->nombre,
+                ] : null,
+            ])
+            ->values()
+            ->all();
     });
 
     return view('welcome', compact('rutas'));
