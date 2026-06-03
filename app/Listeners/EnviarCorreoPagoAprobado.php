@@ -4,11 +4,21 @@ namespace App\Listeners;
 
 use App\Events\PagoAprobado;
 use App\Mail\PagoReservaAprobado;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class EnviarCorreoPagoAprobado
+class EnviarCorreoPagoAprobado implements ShouldQueue
 {
+    public int $tries = 3;
+
+    public int $timeout = 20;
+
+    public function backoff(): array
+    {
+        return [30, 120, 300];
+    }
+
     public function handle(PagoAprobado $event): void
     {
         try {
@@ -20,6 +30,8 @@ class EnviarCorreoPagoAprobado
                 'payment_transaction_id' => $event->transaction->id,
                 'error' => $exception->getMessage(),
             ]);
+
+            throw $exception;
         }
     }
 }

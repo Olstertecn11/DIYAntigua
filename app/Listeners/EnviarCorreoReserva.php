@@ -4,11 +4,21 @@ namespace App\Listeners;
 
 use App\Events\ReservaCreada;
 use App\Mail\ReservaConfirmada;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class EnviarCorreoReserva
+class EnviarCorreoReserva implements ShouldQueue
 {
+    public int $tries = 3;
+
+    public int $timeout = 20;
+
+    public function backoff(): array
+    {
+        return [30, 120, 300];
+    }
+
     public function handle(ReservaCreada $event)
     {
         try {
@@ -19,6 +29,8 @@ class EnviarCorreoReserva
                 'reservacion_id' => $event->reserva->id,
                 'error' => $exception->getMessage(),
             ]);
+
+            throw $exception;
         }
     }
 }
