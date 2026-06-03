@@ -12,30 +12,249 @@
     $selectedCountry = old($countryName, $split['country']);
     $numberValue = old($numberName, $split['number']);
     $countries = config('phone.countries', []);
-    $baseField = $dark
-        ? 'border-white/10 bg-black px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[#fcca00]'
-        : 'border-black/10 bg-[#fbfaf7] px-4 py-3 text-sm font-semibold text-[#111111] outline-none focus:border-[#fcca00] focus:ring-4 focus:ring-[#fcca00]/20';
+    $themeClass = $dark ? 'phone-input-group-dark' : 'phone-input-group-light';
 @endphp
 
-<div>
+@once
+    <style>
+        .phone-input-group {
+            width: 100%;
+        }
+
+        .phone-input-fields {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: .65rem;
+            width: 100%;
+            margin-top: .5rem;
+        }
+
+        .phone-input-field {
+            width: 100%;
+            min-width: 0;
+            height: 48px;
+            border-radius: 1rem;
+            border: 1px solid rgba(0, 0, 0, .10);
+            background: #fbfaf7;
+            color: #111111;
+            padding: 0 1rem;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.2;
+            outline: none;
+            box-shadow: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .phone-country-picker {
+            position: relative;
+            width: 100%;
+        }
+
+        .phone-country-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .phone-country-button span {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .phone-country-button i {
+            flex-shrink: 0;
+            color: #6b7280;
+            font-size: .85rem;
+        }
+
+        .phone-country-menu {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + .4rem);
+            z-index: 100000;
+            max-height: min(320px, 58vh);
+            overflow-y: auto;
+            padding: .35rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(0, 0, 0, .12);
+            background: #ffffff;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, .18);
+        }
+
+        .phone-country-menu[hidden] {
+            display: none;
+        }
+
+        .phone-country-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            width: 100%;
+            border: 0;
+            border-radius: .8rem;
+            background: transparent;
+            color: #111111;
+            padding: .8rem .9rem;
+            font-size: 14px;
+            font-weight: 800;
+            text-align: left;
+        }
+
+        .phone-country-option:hover,
+        .phone-country-option:focus {
+            background: rgba(252, 202, 0, .16);
+            outline: none;
+        }
+
+        .phone-country-option.is-selected {
+            background: #fcca00;
+        }
+
+        .phone-country-dial {
+            flex-shrink: 0;
+            color: #4b5563;
+        }
+
+        .phone-input-field:focus {
+            border-color: #fcca00;
+            box-shadow: 0 0 0 .25rem rgba(252, 202, 0, .20);
+        }
+
+        .phone-input-field::placeholder {
+            color: #9ca3af;
+            opacity: 1;
+        }
+
+        .phone-input-group-dark .phone-input-field {
+            border-color: rgba(255, 255, 255, .10);
+            background: #000000;
+            color: #ffffff;
+        }
+
+        .phone-input-group-dark .phone-country-menu {
+            border-color: rgba(255, 255, 255, .12);
+            background: #111111;
+        }
+
+        .phone-input-group-dark .phone-country-option {
+            color: #ffffff;
+        }
+
+        .phone-input-group-dark .phone-country-dial,
+        .phone-input-group-dark .phone-country-button i {
+            color: rgba(255, 255, 255, .64);
+        }
+
+        .phone-input-group-dark .phone-input-field::placeholder {
+            color: rgba(255, 255, 255, .55);
+        }
+    </style>
+
+    <script>
+        window.togglePhoneCountryMenu = function(button) {
+            const picker = button.closest('[data-phone-picker]');
+            const menu = picker?.querySelector('[data-phone-menu]');
+
+            if (!menu) {
+                return;
+            }
+
+            const willOpen = menu.hidden;
+            document.querySelectorAll('[data-phone-menu]').forEach(openMenu => {
+                openMenu.hidden = true;
+            });
+            menu.hidden = !willOpen;
+        };
+
+        window.selectPhoneCountry = function(button) {
+            const picker = button.closest('[data-phone-picker]');
+            const input = picker?.querySelector('[data-phone-value]');
+            const label = picker?.querySelector('[data-phone-label]');
+            const menu = picker?.querySelector('[data-phone-menu]');
+
+            if (input) {
+                input.value = button.dataset.phoneOption;
+            }
+
+            if (label) {
+                label.textContent = button.dataset.phoneLabel;
+            }
+
+            picker?.querySelectorAll('[data-phone-option]').forEach(option => {
+                option.classList.toggle('is-selected', option === button);
+            });
+
+            if (menu) {
+                menu.hidden = true;
+            }
+        };
+
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('[data-phone-picker]')) {
+                return;
+            }
+
+            document.querySelectorAll('[data-phone-menu]').forEach(menu => {
+                menu.hidden = true;
+            });
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key !== 'Escape') {
+                return;
+            }
+
+            document.querySelectorAll('[data-phone-menu]').forEach(menu => {
+                menu.hidden = true;
+            });
+        });
+    </script>
+@endonce
+
+<div class="phone-input-group {{ $themeClass }}">
     <label class="{{ $dark ? 'text-[10px] font-black uppercase tracking-widest text-[#737373]' : 'block text-[11px] font-black uppercase tracking-[0.16em] text-[#363636]' }}">
         {{ $label }}
     </label>
 
-    <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(160px,0.42fr)_minmax(0,1fr)]">
-        <select name="{{ $countryName }}" @required($required)
-            autocomplete="tel-country-code" aria-label="Código de país"
-            class="h-12 w-full min-w-0 appearance-auto rounded-2xl border leading-5 {{ $baseField }}">
+    <div class="phone-input-fields">
+        <div class="phone-country-picker" data-phone-picker>
+            <input type="hidden" name="{{ $countryName }}" value="{{ $selectedCountry }}" data-phone-value>
+
+            <button type="button" class="phone-input-field phone-country-button" data-phone-toggle
+                onclick="window.togglePhoneCountryMenu(this)"
+                aria-label="Seleccionar código de país">
+                <span data-phone-label>
+                    {{ $countries[$selectedCountry]['name'] ?? 'Guatemala' }}
+                    ({{ $countries[$selectedCountry]['dial'] ?? '+502' }})
+                </span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+
+            <div class="phone-country-menu" data-phone-menu hidden>
             @foreach($countries as $code => $country)
-                <option value="{{ $code }}" @selected($selectedCountry === $code)>
-                    {{ $country['name'] }} ({{ $country['dial'] }})
-                </option>
+                <button type="button"
+                    class="phone-country-option {{ $selectedCountry === $code ? 'is-selected' : '' }}"
+                    onclick="window.selectPhoneCountry(this)"
+                    data-phone-option="{{ $code }}"
+                    data-phone-label="{{ $country['name'] }} ({{ $country['dial'] }})">
+                    <span>{{ $country['name'] }}</span>
+                    <span class="phone-country-dial">{{ $country['dial'] }}</span>
+                </button>
             @endforeach
-        </select>
+            </div>
+        </div>
 
         <input type="tel" name="{{ $numberName }}" value="{{ $numberValue }}" @required($required)
             autocomplete="tel-national" inputmode="tel" placeholder="Número local"
-            class="h-12 w-full min-w-0 rounded-2xl border leading-5 {{ $baseField }}">
+            class="phone-input-field">
     </div>
 
     @error($countryName)<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
