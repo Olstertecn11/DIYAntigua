@@ -128,13 +128,13 @@
                             </h2>
 
                             <p class="text-soft mb-0">
-                                Todas las tarifas muestran el precio total para la ruta seleccionada.
+                                Mostramos unidades con capacidad suficiente para {{ $datos['pasajeros'] }} pasajero(s).
                             </p>
                         </div>
 
                         <div class="available-pill">
                             <i class="fas fa-check-circle me-2"></i>
-                            {{ $ruta->vehiculosDisponibles->count() }} disponibles
+                            {{ $ruta->vehiculosDisponibles->count() }} con capacidad
                         </div>
                     </div>
 
@@ -158,7 +158,7 @@
 
                                                 <div class="vehicle-capacity-mobile d-md-none">
                                                     <i class="fas fa-users me-1"></i>
-                                                    {{ $v->min_pasajeros }}-{{ $v->max_pasajeros }} pers.
+                                                    Hasta {{ $v->max_pasajeros }} pers.
                                                 </div>
                                             </div>
                                         </div>
@@ -179,7 +179,7 @@
                                                         <span class="capacity-badge d-none d-md-inline-flex">
                                                             <i class="fas fa-users me-2"></i>
                                                             Capacidad:
-                                                            {{ $v->min_pasajeros }}-{{ $v->max_pasajeros }} pers.
+                                                            hasta {{ $v->max_pasajeros }} pers.
                                                         </span>
                                                     </div>
 
@@ -247,11 +247,12 @@
                                     </div>
 
                                     <h4 class="fw-black text-main mb-3">
-                                        No hay vehículos disponibles
+                                        No hay vehículos con capacidad suficiente
                                     </h4>
 
                                     <p class="text-soft mb-4">
-                                        Lo sentimos, no hay vehículos asignados a esta ruta todavía.
+                                        No encontramos una unidad activa con espacio para {{ $datos['pasajeros'] }} pasajero(s) en esta ruta.
+                                        Cambia la cantidad de pasajeros o consulta otra ruta disponible.
                                     </p>
 
                                     <a href="{{ url('/') }}#booking"

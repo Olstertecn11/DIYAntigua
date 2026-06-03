@@ -248,7 +248,7 @@
     </section>
 
     {{-- BENEFICIOS --}}
-    <section id="destinos" class="bg-white py-24">
+    <section class="bg-white py-24">
         <div class="max-w-7xl mx-auto px-6">
             <div class="max-w-3xl mx-auto text-center mb-16">
                 <span class="text-sm font-black uppercase tracking-widest text-yellow-500">
@@ -387,7 +387,7 @@
     </section>
 
     {{-- FLOTA --}}
-    <section id="preguntas" class="bg-slate-950 text-white py-24">
+    <section class="bg-slate-950 text-white py-24">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14">
                 <div>
@@ -474,7 +474,7 @@
     </section>
 
     {{-- DESTINOS --}}
-    <section class="bg-white py-24">
+    <section id="destinos" class="bg-white py-24">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14">
                 <div>
@@ -630,7 +630,7 @@
     </section>
 
     {{-- FAQ --}}
-    <section class="bg-slate-950 text-white py-24">
+    <section id="preguntas" class="bg-slate-950 text-white py-24">
         <div class="max-w-5xl mx-auto px-6">
             <div class="text-center mb-14">
                 <span class="text-sm font-black uppercase tracking-widest text-yellow-300">
