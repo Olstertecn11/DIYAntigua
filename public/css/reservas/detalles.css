@@ -54,6 +54,9 @@
 }
 
 .form-section-card {
+    position: relative;
+    z-index: 1;
+    overflow: visible;
     padding: 1.6rem;
     border-radius: 1.75rem;
     background: rgba(255, 255, 255, .78);
@@ -61,6 +64,10 @@
     box-shadow: 0 24px 70px rgba(15, 23, 42, .08);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
+}
+
+.form-section-card.phone-menu-open {
+    z-index: 50;
 }
 
 .section-heading {

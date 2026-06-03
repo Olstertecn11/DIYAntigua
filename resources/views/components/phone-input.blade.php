@@ -158,65 +158,6 @@
         }
     </style>
 
-    <script>
-        window.togglePhoneCountryMenu = function(button) {
-            const picker = button.closest('[data-phone-picker]');
-            const menu = picker?.querySelector('[data-phone-menu]');
-
-            if (!menu) {
-                return;
-            }
-
-            const willOpen = menu.hidden;
-            document.querySelectorAll('[data-phone-menu]').forEach(openMenu => {
-                openMenu.hidden = true;
-            });
-            menu.hidden = !willOpen;
-        };
-
-        window.selectPhoneCountry = function(button) {
-            const picker = button.closest('[data-phone-picker]');
-            const input = picker?.querySelector('[data-phone-value]');
-            const label = picker?.querySelector('[data-phone-label]');
-            const menu = picker?.querySelector('[data-phone-menu]');
-
-            if (input) {
-                input.value = button.dataset.phoneOption;
-            }
-
-            if (label) {
-                label.textContent = button.dataset.phoneLabel;
-            }
-
-            picker?.querySelectorAll('[data-phone-option]').forEach(option => {
-                option.classList.toggle('is-selected', option === button);
-            });
-
-            if (menu) {
-                menu.hidden = true;
-            }
-        };
-
-        document.addEventListener('click', function(event) {
-            if (event.target.closest('[data-phone-picker]')) {
-                return;
-            }
-
-            document.querySelectorAll('[data-phone-menu]').forEach(menu => {
-                menu.hidden = true;
-            });
-        });
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key !== 'Escape') {
-                return;
-            }
-
-            document.querySelectorAll('[data-phone-menu]').forEach(menu => {
-                menu.hidden = true;
-            });
-        });
-    </script>
 @endonce
 
 <div class="phone-input-group {{ $themeClass }}">
@@ -229,7 +170,6 @@
             <input type="hidden" name="{{ $countryName }}" value="{{ $selectedCountry }}" data-phone-value>
 
             <button type="button" class="phone-input-field phone-country-button" data-phone-toggle
-                onclick="window.togglePhoneCountryMenu(this)"
                 aria-label="Seleccionar código de país">
                 <span data-phone-label>
                     {{ $countries[$selectedCountry]['name'] ?? 'Guatemala' }}
@@ -242,7 +182,6 @@
             @foreach($countries as $code => $country)
                 <button type="button"
                     class="phone-country-option {{ $selectedCountry === $code ? 'is-selected' : '' }}"
-                    onclick="window.selectPhoneCountry(this)"
                     data-phone-option="{{ $code }}"
                     data-phone-label="{{ $country['name'] }} ({{ $country['dial'] }})">
                     <span>{{ $country['name'] }}</span>
@@ -260,3 +199,88 @@
     @error($countryName)<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
     @error($numberName)<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
 </div>
+
+<script>
+    window.phoneInputToggleCountryMenu = function(button) {
+        const picker = button.closest('[data-phone-picker]');
+        const menu = picker?.querySelector('[data-phone-menu]');
+        const card = button.closest('.form-section-card');
+
+        if (!menu) {
+            return;
+        }
+
+        const willOpen = menu.hidden;
+        document.querySelectorAll('[data-phone-menu]').forEach(openMenu => {
+            openMenu.hidden = true;
+            openMenu.closest('.form-section-card')?.classList.remove('phone-menu-open');
+        });
+        menu.hidden = !willOpen;
+        card?.classList.toggle('phone-menu-open', willOpen);
+    };
+
+    window.phoneInputSelectCountry = function(button) {
+        const picker = button.closest('[data-phone-picker]');
+        const input = picker?.querySelector('[data-phone-value]');
+        const label = picker?.querySelector('[data-phone-label]');
+        const menu = picker?.querySelector('[data-phone-menu]');
+
+        if (input) {
+            input.value = button.dataset.phoneOption;
+        }
+
+        if (label) {
+            label.textContent = button.dataset.phoneLabel;
+        }
+
+        picker?.querySelectorAll('[data-phone-option]').forEach(option => {
+            option.classList.toggle('is-selected', option === button);
+        });
+
+        if (menu) {
+            menu.hidden = true;
+        }
+
+        picker?.closest('.form-section-card')?.classList.remove('phone-menu-open');
+    };
+
+    if (!window.__phoneInputEventsBound) {
+        window.__phoneInputEventsBound = true;
+
+        document.addEventListener('click', function(event) {
+            const toggle = event.target.closest('[data-phone-toggle]');
+            if (toggle) {
+                event.preventDefault();
+                window.phoneInputToggleCountryMenu(toggle);
+                return;
+            }
+
+            const option = event.target.closest('[data-phone-option]');
+            if (option) {
+                event.preventDefault();
+                window.phoneInputSelectCountry(option);
+                return;
+            }
+
+            if (event.target.closest('[data-phone-picker]')) {
+                return;
+            }
+
+            document.querySelectorAll('[data-phone-menu]').forEach(menu => {
+                menu.hidden = true;
+                menu.closest('.form-section-card')?.classList.remove('phone-menu-open');
+            });
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key !== 'Escape') {
+                return;
+            }
+
+            document.querySelectorAll('[data-phone-menu]').forEach(menu => {
+                menu.hidden = true;
+                menu.closest('.form-section-card')?.classList.remove('phone-menu-open');
+            });
+        });
+    }
+</script>
