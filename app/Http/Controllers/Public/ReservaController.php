@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 
 class ReservaController extends Controller
@@ -74,11 +75,16 @@ class ReservaController extends Controller
             ->where('activa', true)
             ->findOrFail($validated['ruta_id']);
 
+        $detalleRuta = RutaVehiculo::whereKey($validated['id_detalle_ruta'])
+            ->where('ruta_id', $ruta->id)
+            ->where('vehiculo_id', $validated['vehiculo_id'])
+            ->first();
+
         $vehiculoSeleccionado = $ruta->vehiculosDisponibles
                                      ->where('id', (int) $validated['vehiculo_id'])
                                      ->first();
 
-        if (! $vehiculoSeleccionado) {
+        if (! $detalleRuta || ! $vehiculoSeleccionado) {
             return redirect()
                 ->route('reservas.cotizar', [
                     'origen' => $ruta->origen_id,
@@ -88,6 +94,18 @@ class ReservaController extends Controller
                     'pasajeros' => $validated['pasajeros'],
                 ])
                 ->withErrors(['vehiculo_id' => 'El vehículo seleccionado no está disponible para esta ruta.']);
+        }
+
+        if ($validated['pasajeros'] < $vehiculoSeleccionado->min_pasajeros || $validated['pasajeros'] > $vehiculoSeleccionado->max_pasajeros) {
+            return redirect()
+                ->route('reservas.cotizar', [
+                    'origen' => $ruta->origen_id,
+                    'destino' => $ruta->destino_id,
+                    'fecha' => $validated['fecha'],
+                    'hora' => $validated['hora'],
+                    'pasajeros' => $validated['pasajeros'],
+                ])
+                ->withErrors(['pasajeros' => 'La cantidad de pasajeros no coincide con la capacidad del vehículo seleccionado.']);
         }
 
         $datos = $validated;
@@ -182,9 +200,15 @@ class ReservaController extends Controller
                     : null;
 
                 if (! $vehiculo) {
-                    return back()
-                        ->withErrors(['vehiculo_id' => 'El vehículo seleccionado no está disponible para esta ruta.'])
-                        ->withInput();
+                    throw ValidationException::withMessages([
+                        'vehiculo_id' => 'El vehículo seleccionado no está disponible para esta ruta.',
+                    ]);
+                }
+
+                if ($validated['pasajeros'] < $vehiculo->min_pasajeros || $validated['pasajeros'] > $vehiculo->max_pasajeros) {
+                    throw ValidationException::withMessages([
+                        'pasajeros' => 'La cantidad de pasajeros no coincide con la capacidad del vehículo seleccionado.',
+                    ]);
                 }
 
                 $notasCompletas = "RECOGIDA: {$validated['punto_recogida']}\n"
@@ -247,6 +271,8 @@ class ReservaController extends Controller
             }
 
             return redirect(URL::signedRoute('payments.result', ['transaction' => $transaction]));
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (\Throwable $e) {
             return back()
                 ->withErrors(['reserva' => 'Error al procesar la reserva: ' . $e->getMessage()])

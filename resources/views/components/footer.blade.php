@@ -21,9 +21,9 @@
                 <div>
                     <h4>Navegación</h4>
                     <a href="{{ url('/') }}">Inicio</a>
-                    <a href="{{ url('/reservar-traslado') }}">Reservar traslado</a>
-                    <a href="{{ url('/destinos') }}">Destinos</a>
-                    <a href="{{ url('/informacion-del-servicio') }}">Nosotros</a>
+                    <a href="{{ url('/') }}#booking">Reservar traslado</a>
+                    <a href="{{ url('/') }}#destinos">Destinos</a>
+                    <a href="{{ url('/') }}#como-funciona">Nosotros</a>
                 </div>
 
                 <div>
@@ -48,7 +48,7 @@
             <div>
                 <a href="#">Términos</a>
                 <a href="#">Privacidad</a>
-                <a href="{{ url('/ayuda') }}">Ayuda</a>
+                <a href="{{ url('/') }}#preguntas">Ayuda</a>
             </div>
         </div>
     </div>

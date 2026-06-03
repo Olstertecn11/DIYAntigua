@@ -54,7 +54,7 @@
                         <i class="fas fa-calendar-check"></i>
                         <h2>Aún no tienes reservaciones</h2>
                         <p>Cuando reserves con tu cuenta, tus traslados aparecerán aquí.</p>
-                        <a href="{{ url('/reservar-traslado') }}">Reservar traslado</a>
+                        <a href="{{ url('/') }}#booking">Reservar traslado</a>
                     </div>
                 </div>
             @endforelse

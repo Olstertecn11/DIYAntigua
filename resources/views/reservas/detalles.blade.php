@@ -595,6 +595,8 @@
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const sendEmailCodeUrl = @json(url('/reservas/email-code/send'));
+            const verifyEmailCodeUrl = @json(url('/reservas/email-code/verify'));
             const form = document.getElementById('reservation-form');
             const openButton = document.getElementById('open-email-verification');
             const modal = document.getElementById('email-verification-modal');
@@ -622,12 +624,20 @@
             let currentStep = openButton?.dataset.step || stepper?.dataset.currentStep || 'details';
 
             function showMessage(message, type = 'error') {
+                if (!messageBox) {
+                    return;
+                }
+
                 messageBox.textContent = message;
                 messageBox.classList.remove('d-none', 'error', 'success');
                 messageBox.classList.add(type);
             }
 
             function clearMessage() {
+                if (!messageBox) {
+                    return;
+                }
+
                 messageBox.textContent = '';
                 messageBox.classList.add('d-none');
                 messageBox.classList.remove('error', 'success');
@@ -670,6 +680,11 @@
 
             function setPrimaryButtonForStep(step) {
                 currentStep = step;
+
+                if (!openButton) {
+                    return;
+                }
+
                 openButton.dataset.step = step;
 
                 if (step === 'payment') {
@@ -729,16 +744,19 @@
                     return;
                 }
 
-                emailPreview.textContent = email;
-                modal.classList.remove('d-none');
+                if (emailPreview) {
+                    emailPreview.textContent = email;
+                }
+
+                modal?.classList.remove('d-none');
 
                 setTimeout(() => {
-                    otpInputs[0].focus();
+                    otpInputs[0]?.focus();
                 }, 150);
             }
 
             function closeModal() {
-                modal.classList.add('d-none');
+                modal?.classList.add('d-none');
                 clearMessage();
             }
 
@@ -755,12 +773,20 @@
             }
 
             function setButtonLoading(button, loadingText) {
+                if (!button) {
+                    return;
+                }
+
                 button.disabled = true;
                 button.dataset.originalHtml = button.innerHTML;
                 button.innerHTML = loadingText;
             }
 
             function resetButton(button) {
+                if (!button) {
+                    return;
+                }
+
                 button.disabled = false;
 
                 if (button.dataset.originalHtml) {
@@ -794,7 +820,7 @@
                 setButtonLoading(openButton, 'Enviando código...');
 
                 try {
-                    const response = await fetch("{{ route('reservas.email-code.send') }}", {
+                    const response = await fetch(sendEmailCodeUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -834,7 +860,7 @@
                 setButtonLoading(verifyButton, 'Verificando...');
 
                 try {
-                    const response = await fetch("{{ route('reservas.email-code.verify') }}", {
+                    const response = await fetch(verifyEmailCodeUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -897,8 +923,10 @@
                 }
 
                 formSubmitting = true;
-                openButton.disabled = true;
-                openButton.innerHTML = 'Procesando reserva y pago...';
+                if (openButton) {
+                    openButton.disabled = true;
+                    openButton.innerHTML = 'Procesando reserva y pago...';
+                }
                 form.submit();
             }
 
@@ -921,7 +949,7 @@
                 return true;
             }
 
-            openButton.addEventListener('click', function() {
+            openButton?.addEventListener('click', function() {
                 if (currentStep !== 'payment') {
                     goToPaymentStep();
                     return;
@@ -943,9 +971,9 @@
             paymentSubmitButton?.addEventListener('click', function() {
                 openButton.click();
             });
-            closeButton.addEventListener('click', closeModal);
-            resendButton.addEventListener('click', sendCode);
-            verifyButton.addEventListener('click', verifyCode);
+            closeButton?.addEventListener('click', closeModal);
+            resendButton?.addEventListener('click', sendCode);
+            verifyButton?.addEventListener('click', verifyCode);
 
             if (closeGuestChoiceModal) {
                 closeGuestChoiceModal.addEventListener('click', closeGuestChoice);
@@ -1000,7 +1028,7 @@
                 });
             });
 
-            modal.addEventListener('click', function(event) {
+            modal?.addEventListener('click', function(event) {
                 if (event.target === modal) {
                     closeModal();
                 }

@@ -328,21 +328,21 @@
                             <ul
                                 class="flex flex-row items-center list-none p-0 m-0 mx-auto gap-8 text-[12px] lg:text-[13px] uppercase tracking-widest font-black">
                                 <li>
-                                    <a href="{{ url('/reservar-traslado') }}" class="nav-link-custom">
+                                    <a href="{{ url('/') }}#booking" class="nav-link-custom">
                                         <i class="fa-solid fa-route text-[11px] text-yellow-300/80"></i>
                                         Reservar Traslado
                                     </a>
                                 </li>
 
                                 <li>
-                                    <a href="{{ url('/destinos') }}" class="nav-link-custom">
+                                    <a href="{{ url('/') }}#destinos" class="nav-link-custom">
                                         <i class="fa-solid fa-map-location-dot text-[11px] text-yellow-300/80"></i>
                                         Destinos
                                     </a>
                                 </li>
 
                                 <li>
-                                    <a href="{{ url('/informacion-del-servicio') }}" class="nav-link-custom">
+                                    <a href="{{ url('/') }}#como-funciona" class="nav-link-custom">
                                         <i class="fa-solid fa-circle-info text-[11px] text-yellow-300/80"></i>
                                         Nosotros
                                     </a>
@@ -435,21 +435,21 @@
                 <div id="mobile-menu" class="hidden md:hidden mobile-menu-panel px-4 pt-4 pb-6">
                     <ul class="flex flex-col gap-2 list-none p-0 m-0">
                         <li>
-                            <a href="{{ url('/reservar-traslado') }}" class="mobile-link">
+                            <a href="{{ url('/') }}#booking" class="mobile-link">
                                 <i class="fa-solid fa-route text-yellow-300"></i>
                                 Reservar Traslado
                             </a>
                         </li>
 
                         <li>
-                            <a href="{{ url('/destinos') }}" class="mobile-link">
+                            <a href="{{ url('/') }}#destinos" class="mobile-link">
                                 <i class="fa-solid fa-map-location-dot text-yellow-300"></i>
                                 Destinos
                             </a>
                         </li>
 
                         <li>
-                            <a href="{{ url('/informacion-del-servicio') }}" class="mobile-link">
+                            <a href="{{ url('/') }}#como-funciona" class="mobile-link">
                                 <i class="fa-solid fa-circle-info text-yellow-300"></i>
                                 Nosotros
                             </a>

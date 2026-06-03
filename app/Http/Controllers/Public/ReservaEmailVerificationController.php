@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\EmailVerificationCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -38,7 +39,7 @@ class ReservaEmailVerificationController extends Controller
 
         $code = (string) random_int(1000, 9999);
 
-        EmailVerificationCode::create([
+        $verification = EmailVerificationCode::create([
             'email' => $email,
             'code_hash' => Hash::make($code),
             'purpose' => 'reservation',
@@ -48,13 +49,27 @@ class ReservaEmailVerificationController extends Controller
             'expires_at' => now()->addMinutes(10),
         ]);
 
-        Mail::send('emails.reservas.codigo-verificacion', [
-            'code' => $code,
-            'email' => $email,
-        ], function ($message) use ($email) {
-            $message->to($email)
-                    ->subject('Código de verificación - DIY Antigua');
-        });
+        try {
+            Mail::send('emails.reservas.codigo-verificacion', [
+                'code' => $code,
+                'email' => $email,
+            ], function ($message) use ($email) {
+                $message->to($email)
+                        ->subject('Código de verificación - DIY Antigua');
+            });
+        } catch (\Throwable $exception) {
+            $verification->update(['used_at' => now()]);
+            RateLimiter::clear($rateLimitKey);
+
+            Log::error('No se pudo enviar el codigo de verificacion de reserva.', [
+                'email_hash' => hash('sha256', $email),
+                'error' => $exception->getMessage(),
+            ]);
+
+            return response()->json([
+                'message' => 'No pudimos enviar el código en este momento. Revisa la configuración de correo o intenta nuevamente.',
+            ], 503);
+        }
 
         return response()->json([
             'message' => 'Código enviado correctamente.',
