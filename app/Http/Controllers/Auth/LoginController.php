@@ -24,7 +24,7 @@ class LoginController extends Controller
         }
 
         // Si no tiene rol definido, al home por defecto
-        return redirect('/home');
+        return redirect()->route('welcome');
     }
 
     public function __construct()
