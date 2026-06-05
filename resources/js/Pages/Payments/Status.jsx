@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import PublicLayout from '@/Layouts/PublicLayout';
 
 const variants = {
     success: ['fa-circle-check', 'bg-green-500', 'text-green-300'],
@@ -11,7 +12,8 @@ export default function Status({ variant = 'processing', title, message, urls = 
     const [icon, bg, text] = variants[variant] || variants.processing;
 
     return (
-        <main className="flex min-h-screen items-center justify-center bg-black px-4 py-10 text-white">
+        <PublicLayout>
+        <main className="flex min-h-screen items-center justify-center bg-black px-4 pb-16 pt-36 text-white">
             <section className="w-full max-w-xl rounded-[2rem] border border-white/10 bg-[#111] p-8 text-center shadow-2xl">
                 <div className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl ${bg} text-2xl text-black`}>
                     <i className={`fas ${icon}`} />
@@ -25,5 +27,6 @@ export default function Status({ variant = 'processing', title, message, urls = 
                 </div>
             </section>
         </main>
+        </PublicLayout>
     );
 }

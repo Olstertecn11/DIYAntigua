@@ -7,12 +7,26 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use App\Models\Reservacion;
 use App\Services\Affiliates\ReferralTracker;
+use Inertia\Inertia;
 
 class SocioController extends BaseController
 {
     public function login()
     {
-        return view('socios.login');
+        return Inertia::render('Auth/Login', [
+            'mode' => 'socio',
+            'title' => 'Socios',
+            'kicker' => 'Acceso de socios',
+            'copy' => 'Consulta tus reservas referidas, comisiones y enlace de afiliado.',
+            'sideTitle' => 'Socios DIY Antigua',
+            'sideCopy' => 'Tu panel de comisiones y referidos.',
+            'showRegister' => false,
+            'urls' => [
+                'login' => route('login'),
+                'home' => route('welcome'),
+                'passwordRequest' => route('password.request'),
+            ],
+        ]);
     }
 
 
@@ -43,6 +57,28 @@ class SocioController extends BaseController
             'ventas' => (float) ($summary->ventas ?? 0),
         ];
 
-        return view('socios.dashboard', compact('user', 'info', 'referralLink', 'stats', 'reservas'));
+        return Inertia::render('Socios/Dashboard', [
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ],
+            'info' => $info,
+            'referralLink' => $referralLink,
+            'stats' => $stats,
+            'reservas' => $reservas->map(fn (Reservacion $reserva) => [
+                'id' => $reserva->id,
+                'codigo_reserva' => $reserva->codigo_reserva,
+                'nombre_cliente' => $reserva->nombre_cliente,
+                'ruta' => trim(($reserva->ruta?->origen?->nombre ?? 'Origen') . ' -> ' . ($reserva->ruta?->destino?->nombre ?? 'Destino')),
+                'estado_pago' => $reserva->estado_pago,
+                'estado_viaje' => $reserva->estado_viaje,
+                'precio_total' => (float) $reserva->precio_total,
+                'comision_socio' => (float) $reserva->comision_socio,
+            ])->values()->all(),
+            'urls' => [
+                'profile' => route('socios.profile.edit'),
+            ],
+        ]);
     }
 }

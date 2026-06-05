@@ -1,4 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import PublicLayout from '@/Layouts/PublicLayout';
 import { useEffect } from 'react';
 
 function money(value) {
@@ -80,7 +81,8 @@ export default function Checkout({ reserva, defaults = {}, fingerprint = {}, url
     };
 
     return (
-        <main className="min-h-screen bg-black px-4 py-8 text-white sm:px-6 lg:py-12">
+        <PublicLayout>
+        <main className="min-h-screen bg-black px-4 pb-12 pt-36 text-white sm:px-6">
             <Head>
                 {fingerprint.orgId && fingerprint.fullSessionId && (
                     <script src={`https://h.online-metrix.net/fp/tags.js?org_id=${fingerprint.orgId}&session_id=${fingerprint.fullSessionId}`} type="application/javascript" />
@@ -121,7 +123,11 @@ export default function Checkout({ reserva, defaults = {}, fingerprint = {}, url
                             <Field label="Pais" name="billing_country" data={data} setData={setData} errors={errors} maxLength="100" />
                             <Field label="Codigo postal" name="billing_zip" data={data} setData={setData} errors={errors} maxLength="20" />
                         </div>
-                        {errors.reserva && <p className="rounded-2xl bg-red-500/10 p-4 text-sm font-bold text-red-200">{errors.reserva}</p>}
+                        {(errors.reserva || errors.payment || errors.message) && (
+                            <p className="rounded-2xl bg-red-500/10 p-4 text-sm font-bold text-red-200">
+                                {errors.reserva || errors.payment || errors.message}
+                            </p>
+                        )}
                         <button
                             type="submit"
                             disabled={processing}
@@ -153,5 +159,6 @@ export default function Checkout({ reserva, defaults = {}, fingerprint = {}, url
                 </aside>
             </div>
         </main>
+        </PublicLayout>
     );
 }

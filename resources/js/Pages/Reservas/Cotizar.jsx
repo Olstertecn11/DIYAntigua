@@ -1,4 +1,5 @@
 import { Link, router } from '@inertiajs/react';
+import PublicLayout from '@/Layouts/PublicLayout';
 
 const vehicleImages = {
     sedan: '/images/sedan_image.jpg',
@@ -30,7 +31,8 @@ export default function Cotizar({ ruta, datos, images = {}, urls = {} }) {
     };
 
     return (
-        <main className="min-h-screen bg-[linear-gradient(135deg,#ffffff_0%,#f7f7f2_58%,#ecebe5_100%)] px-4 py-8 text-slate-950 sm:px-6 lg:py-12">
+        <PublicLayout>
+        <main className="min-h-screen bg-[linear-gradient(135deg,#ffffff_0%,#f7f7f2_58%,#ecebe5_100%)] px-4 pb-12 pt-36 text-slate-950 sm:px-6">
             <div className="mx-auto max-w-7xl">
                 <Link href={`${urls.home || '/'}#booking`} className="mb-8 inline-flex items-center text-xs font-black uppercase tracking-widest text-slate-700 no-underline">
                     <i className="fas fa-arrow-left mr-2" />
@@ -142,5 +144,6 @@ export default function Cotizar({ ruta, datos, images = {}, urls = {} }) {
                 </div>
             </div>
         </main>
+        </PublicLayout>
     );
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Ruta;
 use App\Models\Lugar;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class RutaController extends Controller
 {
@@ -16,7 +17,26 @@ class RutaController extends Controller
         $lugares = Lugar::orderBy('nombre')->get();
         $vehiculos = \App\Models\Vehiculo::where('activo', 1)->get();
 
-        return view('admin.rutas.index', compact('rutas', 'lugares', 'vehiculos'));
+        return Inertia::render('Admin/Rutas/Index', [
+            'rutas' => $rutas->map(fn (Ruta $ruta) => [
+                'id' => $ruta->id,
+                'origen' => $ruta->origen,
+                'destino' => $ruta->destino,
+                'vehiculos' => $ruta->vehiculosDisponibles->map(fn ($vehiculo) => [
+                    'id' => $vehiculo->id,
+                    'nombre' => $vehiculo->nombre,
+                    'precio_tarifa' => (float) $vehiculo->pivot->precio_tarifa,
+                ])->values(),
+                'urls' => [
+                    'destroy' => route('admin.rutas.destroy', $ruta),
+                ],
+            ])->values(),
+            'lugares' => $lugares,
+            'vehiculos' => $vehiculos,
+            'urls' => [
+                'store' => route('admin.rutas.store'),
+            ],
+        ]);
     }
 
     public function store(Request $request)

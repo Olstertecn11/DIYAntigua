@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import PublicLayout from '@/Layouts/PublicLayout';
 import { useEffect, useState } from 'react';
 
 function money(value) {
@@ -34,7 +35,8 @@ export default function Confirmar({ reserva, urls = {} }) {
     }, [reserva.estado_viaje, reserva.travel_at_iso]);
 
     return (
-        <main className="min-h-screen bg-[linear-gradient(90deg,#FCCA00_0_12px,transparent_12px),linear-gradient(135deg,#ffffff_0%,#f7f7f2_58%,#ecebe5_100%)] px-4 py-8 text-slate-950 sm:px-6 lg:py-12">
+        <PublicLayout>
+        <main className="min-h-screen bg-[linear-gradient(90deg,#FCCA00_0_12px,transparent_12px),linear-gradient(135deg,#ffffff_0%,#f7f7f2_58%,#ecebe5_100%)] px-4 pb-12 pt-36 text-slate-950 sm:px-6">
             <div className="mx-auto max-w-6xl">
                 <Link href={urls.home || '/'} className="inline-flex text-xs font-black uppercase tracking-widest text-slate-700 no-underline">
                     <i className="fas fa-arrow-left mr-2" />
@@ -134,5 +136,6 @@ export default function Confirmar({ reserva, urls = {} }) {
                 </div>
             </div>
         </main>
+        </PublicLayout>
     );
 }

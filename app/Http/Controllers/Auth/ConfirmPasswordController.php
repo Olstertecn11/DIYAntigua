@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ConfirmsPasswords;
+use Inertia\Inertia;
 
 class ConfirmPasswordController extends Controller
 {
@@ -25,7 +26,18 @@ class ConfirmPasswordController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
+
+    public function showConfirmForm()
+    {
+        return Inertia::render('Auth/ConfirmPassword', [
+            'urls' => [
+                'confirm' => route('password.confirm'),
+                'forgot' => route('password.request'),
+                'home' => route('welcome'),
+            ],
+        ]);
+    }
 
     /**
      * Create a new controller instance.

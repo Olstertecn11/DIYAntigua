@@ -8,13 +8,29 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use App\Support\PhoneNumber;
+use Inertia\Inertia;
 
 class ProfileController extends Controller
 {
     public function edit(Request $request)
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
+        $user = $request->user();
+        $phone = PhoneNumber::split($user->telefono);
+
+        return Inertia::render('Profile/Edit', [
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'telefono_country_code' => $phone['country'],
+                'telefono_national' => $phone['number'],
+                'direccion' => $user->direccion,
+            ],
+            'countries' => config('phone.countries', []),
+            'urls' => [
+                'update' => route('profile.update'),
+                'password' => route('profile.password'),
+            ],
         ]);
     }
 

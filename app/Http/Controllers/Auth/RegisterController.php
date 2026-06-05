@@ -8,6 +8,7 @@ use App\Support\PhoneNumber;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
 
 class RegisterController extends Controller
 {
@@ -29,7 +30,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -39,6 +40,25 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+    }
+
+    public function showRegistrationForm()
+    {
+        return Inertia::render('Auth/Register', [
+            'countries' => collect(config('phone.countries', []))
+                ->map(fn (array $country, string $code) => [
+                    'code' => $code,
+                    'name' => $country['name'],
+                    'dial' => $country['dial'],
+                ])
+                ->values()
+                ->all(),
+            'urls' => [
+                'register' => route('register'),
+                'login' => route('login'),
+                'home' => route('welcome'),
+            ],
+        ]);
     }
 
     /**
@@ -64,12 +84,15 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'telefono' => PhoneNumber::format($data['telefono_country_code'] ?? null, $data['telefono_national'] ?? null),
             'password' => Hash::make($data['password']),
-            'role_id' => config('constantes.idClient'),
         ]);
+
+        $user->assignRole('cliente');
+
+        return $user;
     }
 }

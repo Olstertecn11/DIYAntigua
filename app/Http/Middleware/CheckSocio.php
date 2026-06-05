@@ -15,7 +15,7 @@ class CheckSocio
      */
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->check() && auth()->user()->role_id == config('constantes.idAffiliate')) {
+        if (auth()->check() && auth()->user()->isAffiliate()) {
             return $next($request);
         }
 

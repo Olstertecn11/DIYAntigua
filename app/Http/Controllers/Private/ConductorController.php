@@ -5,13 +5,29 @@ namespace App\Http\Controllers\Private;
 use App\Http\Controllers\Controller;
 use App\Models\Conductor;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ConductorController extends Controller
 {
     public function index()
     {
         $conductores = Conductor::orderBy('nombre', 'asc')->get();
-        return view('admin.conductores.index', compact('conductores'));
+        return Inertia::render('Admin/Conductores/Index', [
+            'conductores' => $conductores->map(fn (Conductor $conductor) => [
+                'id' => $conductor->id,
+                'nombre' => $conductor->nombre,
+                'telefono' => $conductor->telefono,
+                'vehiculo_modelo' => $conductor->vehiculo_modelo,
+                'placa' => $conductor->placa,
+                'estado' => $conductor->estado,
+                'urls' => [
+                    'destroy' => route('admin.conductores.destroy', $conductor),
+                ],
+            ])->values(),
+            'urls' => [
+                'store' => route('admin.conductores.store'),
+            ],
+        ]);
     }
 
     public function store(Request $request)

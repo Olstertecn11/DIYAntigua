@@ -19,11 +19,16 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class ReservaController extends Controller
 {
     public function cotizar(Request $request)
     {
+        if (! $request->hasAny(['origen', 'destino', 'fecha', 'hora', 'pasajeros'])) {
+            return redirect(route('welcome') . '#booking');
+        }
+
         $validated = $request->validate([
             'origen' => ['required', 'exists:lugares,id'],
             'destino' => ['required', 'exists:lugares,id', 'different:origen'],
@@ -69,11 +74,23 @@ class ReservaController extends Controller
             'van' => asset('images/micro_image.jpg'),
         ];
 
-        return view('reservas.cotizar', compact('ruta', 'datos', 'images'));
+        return Inertia::render('Reservas/Cotizar', [
+            'ruta' => $this->formatRutaForInertia($ruta),
+            'datos' => $datos,
+            'images' => $images,
+            'urls' => [
+                'home' => route('welcome'),
+                'detalles' => route('reservas.detalles'),
+            ],
+        ]);
     }
 
     public function detalles(Request $request)
     {
+        if (! $request->hasAny(['ruta_id', 'vehiculo_id', 'id_detalle_ruta', 'fecha', 'hora', 'pasajeros'])) {
+            return redirect(route('welcome') . '#booking');
+        }
+
         $validated = $request->validate([
             'ruta_id' => ['required', 'exists:rutas,id'],
             'vehiculo_id' => ['required', 'exists:vehiculos,id'],
@@ -81,7 +98,7 @@ class ReservaController extends Controller
             'fecha' => ['required', 'date', 'after_or_equal:today'],
             'hora' => ['required'],
             'pasajeros' => ['required', 'integer', 'min:1', 'max:15'],
-            'precio' => ['required', 'numeric', 'min:0'],
+            'precio' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $ruta = Ruta::with([
@@ -125,12 +142,53 @@ class ReservaController extends Controller
                 ->withErrors(['pasajeros' => 'La cantidad de pasajeros supera la capacidad del vehículo seleccionado.']);
         }
 
-        $datos = $validated;
+        $datos = [
+            ...$validated,
+            'precio' => (float) $detalleRuta->precio_tarifa,
+            'id_detalle_ruta' => (int) $detalleRuta->id,
+        ];
         $fingerprintSessionId = 'DIYQ' . Str::upper(Str::random(24));
         $fingerprintFullSessionId = config('qpaypro.fingerprint_prefix') . $fingerprintSessionId;
         $fingerprintOrgId = config('qpaypro.fingerprint_org_id');
 
-        return view('reservas.detalles', compact('ruta', 'datos', 'fingerprintSessionId', 'fingerprintFullSessionId', 'fingerprintOrgId'));
+        $phone = PhoneNumber::split(old('telefono_cliente', auth()->user()?->telefono));
+
+        return Inertia::render('Reservas/Detalles', [
+            'ruta' => $this->formatRutaForInertia($ruta),
+            'datos' => $datos,
+            'vehiculoSeleccionado' => $vehiculoSeleccionado ? [
+                'id' => $vehiculoSeleccionado->id,
+                'nombre' => $vehiculoSeleccionado->nombre,
+                'max_pasajeros' => (int) $vehiculoSeleccionado->max_pasajeros,
+            ] : null,
+            'countries' => $this->phoneCountries(),
+            'defaults' => [
+                'nombre_cliente' => old('nombre_cliente', auth()->user()?->name),
+                'correo_cliente' => old('correo_cliente', auth()->user()?->email),
+                'telefono_country_code' => old('telefono_country_code', $phone['country']),
+                'telefono_national' => old('telefono_national', $phone['number']),
+            ],
+            'paymentDefaults' => [
+                'cc_name' => old('cc_name', ''),
+                'cc_exp_month' => old('cc_exp_month', ''),
+                'cc_exp_year' => old('cc_exp_year', ''),
+                'cc_type' => old('cc_type', 'visa'),
+                'billing_country' => old('billing_country', 'Guatemala'),
+            ],
+            'fingerprint' => [
+                'sessionId' => $fingerprintSessionId,
+                'fullSessionId' => $fingerprintFullSessionId,
+                'orgId' => $fingerprintOrgId,
+            ],
+            'authenticatedEmail' => auth()->user()?->email ? strtolower(auth()->user()->email) : null,
+            'urls' => [
+                'store' => route('reservas.store'),
+                'login' => route('login'),
+                'cotizar' => route('reservas.cotizar'),
+                'sendEmailCode' => route('reservas.email-code.send'),
+                'verifyEmailCode' => route('reservas.email-code.verify'),
+            ],
+        ]);
     }
 
     public function store(Request $request, PaymentManager $paymentManager, ReferralTracker $referrals)
@@ -311,7 +369,14 @@ class ReservaController extends Controller
             ->where('codigo_reserva', $codigo)
             ->firstOrFail();
 
-        return view('reservas.confirmar', compact('reservacion'));
+        return Inertia::render('Reservas/Confirmar', [
+            'reserva' => $this->formatReservacionForInertia($reservacion),
+            'urls' => [
+                'home' => route('welcome'),
+                'pdf' => route('reservas.pdf', $reservacion->codigo_reserva),
+                'checkout' => route('payments.checkout', $reservacion->codigo_reserva),
+            ],
+        ]);
     }
 
     public function descargarPDF($codigo)
@@ -376,5 +441,81 @@ class ReservaController extends Controller
         } while (Reservacion::where('codigo_reserva', $codigo)->exists());
 
         return $codigo;
+    }
+
+    private function formatRutaForInertia(Ruta $ruta): array
+    {
+        return [
+            'id' => $ruta->id,
+            'origen_id' => $ruta->origen_id,
+            'destino_id' => $ruta->destino_id,
+            'origen' => $ruta->origen ? [
+                'id' => $ruta->origen->id,
+                'nombre' => $ruta->origen->nombre,
+                'ciudad' => $ruta->origen->ciudad,
+            ] : null,
+            'destino' => $ruta->destino ? [
+                'id' => $ruta->destino->id,
+                'nombre' => $ruta->destino->nombre,
+                'ciudad' => $ruta->destino->ciudad,
+            ] : null,
+            'vehiculos_disponibles' => $ruta->vehiculosDisponibles
+                ->map(fn ($vehiculo) => [
+                    'id' => $vehiculo->id,
+                    'nombre' => $vehiculo->nombre,
+                    'max_pasajeros' => (int) $vehiculo->max_pasajeros,
+                    'precio_tarifa' => (float) $vehiculo->pivot->precio_tarifa,
+                    'ruta_vehiculo_id' => (int) $vehiculo->pivot->id,
+                ])
+                ->values()
+                ->all(),
+        ];
+    }
+
+    private function phoneCountries(): array
+    {
+        return collect(config('phone.countries', []))
+            ->map(fn (array $country, string $code) => [
+                'code' => $code,
+                'name' => $country['name'],
+                'dial' => $country['dial'],
+            ])
+            ->values()
+            ->all();
+    }
+
+    private function formatReservacionForInertia(Reservacion $reserva): array
+    {
+        $travelAt = $reserva->travelDateTime();
+        $transaction = $reserva->paymentTransactions->first();
+
+        return [
+            'id' => $reserva->id,
+            'codigo_reserva' => $reserva->codigo_reserva,
+            'nombre_cliente' => $reserva->nombre_cliente,
+            'correo_cliente' => $reserva->correo_cliente,
+            'telefono_cliente' => $reserva->telefono_cliente,
+            'notas_adicionales' => $reserva->notas_adicionales,
+            'fecha' => $travelAt->format('d/m/Y'),
+            'hora' => $travelAt->format('H:i'),
+            'travel_at_iso' => $travelAt->toIso8601String(),
+            'tipo_vehiculo' => strtoupper((string) $reserva->tipo_vehiculo),
+            'pasajeros' => (int) $reserva->pasajeros,
+            'precio_total' => (float) $reserva->precio_total,
+            'estado_pago' => $reserva->estado_pago,
+            'estado_viaje' => $reserva->estado_viaje,
+            'created_at' => $reserva->created_at?->format('d/m/Y H:i'),
+            'ruta' => [
+                'origen' => $reserva->ruta?->origen?->nombre,
+                'destino' => $reserva->ruta?->destino?->nombre,
+            ],
+            'transaction' => $transaction ? [
+                'provider_transaction_id' => $transaction->provider_transaction_id,
+                'reference' => $transaction->reference,
+                'card_brand' => $transaction->card_brand,
+                'card_last_four' => $transaction->card_last_four,
+            ] : null,
+            'qr_url' => 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=10&data=' . urlencode(route('reservas.confirmar', $reserva->codigo_reserva)),
+        ];
     }
 }

@@ -37,7 +37,7 @@ export default function UserReservationShow({ reserva, urls }) {
     return (
         <PublicLayout>
             <Head title={reserva.codigo_reserva} />
-            <main className="min-h-screen bg-[#f7f7f2] py-10">
+            <main className="min-h-screen bg-[#f7f7f2] pb-12 pt-36">
                 <div className="mx-auto max-w-6xl px-4">
                     <Link href={urls.index} className="text-xs font-black uppercase tracking-widest text-[#363636] no-underline"><i className="fas fa-arrow-left mr-2" />Mis reservaciones</Link>
                     <section className="mt-5 flex flex-col justify-between gap-6 rounded-[28px] border border-black/10 bg-white p-8 shadow-[0_24px_70px_rgba(0,0,0,.08)] lg:flex-row lg:items-center">

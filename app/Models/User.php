@@ -6,28 +6,39 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\AfiliadoInfo;
 
-// Agregamos 'role_id' al Fillable para poder guardarlo
-#[Fillable(['name', 'email', 'telefono', 'direccion', 'password', 'role_id'])]
+#[Fillable(['name', 'email', 'telefono', 'direccion', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * Relación con el modelo Role.
-     * Un usuario pertenece a un Rol.
-     */
-    public function role(): BelongsTo
+    public function roles(): BelongsToMany
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsToMany(Role::class)->withTimestamps();
+    }
+
+    public function hasRole(string $slug): bool
+    {
+        if ($this->relationLoaded('roles')) {
+            return $this->roles->contains('slug', $slug);
+        }
+
+        return $this->roles()->where('slug', $slug)->exists();
+    }
+
+    public function assignRole(string $slug): void
+    {
+        $role = Role::where('slug', $slug)->firstOrFail();
+        $this->roles()->syncWithoutDetaching([$role->id]);
+        $this->unsetRelation('roles');
     }
 
     /**
@@ -47,7 +58,12 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role_id == config('constantes.idAdmin');
+        return $this->hasRole('admin');
+    }
+
+    public function isAffiliate(): bool
+    {
+        return $this->hasRole('afiliado');
     }
 
     public function afiliadoInfo(): HasOne

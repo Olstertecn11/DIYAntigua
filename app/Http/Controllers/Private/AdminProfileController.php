@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use App\Support\PhoneNumber;
+use Inertia\Inertia;
 
 class AdminProfileController extends Controller
 {
@@ -15,7 +16,16 @@ class AdminProfileController extends Controller
     {
         $user = $request->user()->load('afiliadoInfo');
 
-        return view('admin.profile.edit', compact('user'));
+        $component = $user->isAffiliate() ? 'Socios/Profile/Edit' : 'Admin/Profile/Edit';
+
+        return Inertia::render($component, [
+            'user' => $this->formatProfileUser($user),
+            'countries' => config('phone.countries', []),
+            'urls' => [
+                'update' => $user->isAdmin() ? route('admin.profile.update') : route('socios.profile.update'),
+                'password' => $user->isAdmin() ? route('admin.profile.password') : route('socios.profile.password'),
+            ],
+        ]);
     }
 
     public function update(Request $request)
@@ -28,7 +38,7 @@ class AdminProfileController extends Controller
             'telefono_country_code' => ['nullable', 'required_with:telefono_national', 'string', 'in:' . implode(',', array_keys(config('phone.countries', [])))],
             'telefono_national' => ['nullable', 'string', 'max:30', 'regex:/^[0-9\s().-]{5,30}$/'],
             'direccion' => ['nullable', 'string', 'max:255'],
-            'nombre_comercial' => [Rule::requiredIf($user->role_id == config('constantes.idAffiliate')), 'nullable', 'string', 'max:255'],
+            'nombre_comercial' => [Rule::requiredIf($user->isAffiliate()), 'nullable', 'string', 'max:255'],
             'nit' => ['nullable', 'string', 'max:80'],
             'telefono_negocio_country_code' => ['nullable', 'required_with:telefono_negocio_national', 'string', 'in:' . implode(',', array_keys(config('phone.countries', [])))],
             'telefono_negocio_national' => ['nullable', 'string', 'max:30', 'regex:/^[0-9\s().-]{5,30}$/'],
@@ -45,7 +55,7 @@ class AdminProfileController extends Controller
             'direccion' => $validated['direccion'] ?? null,
         ]);
 
-        if ($user->role_id == config('constantes.idAffiliate') && $user->afiliadoInfo) {
+        if ($user->isAffiliate() && $user->afiliadoInfo) {
             $user->afiliadoInfo->update([
                 'nombre_comercial' => $validated['nombre_comercial'],
                 'nit' => $validated['nit'] ?? null,
@@ -72,5 +82,31 @@ class AdminProfileController extends Controller
         ]);
 
         return back()->with('success', 'Contraseña actualizada correctamente.');
+    }
+
+    private function formatProfileUser($user): array
+    {
+        $phone = PhoneNumber::split($user->telefono);
+        $businessPhone = PhoneNumber::split($user->afiliadoInfo?->telefono_negocio);
+
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'telefono_country_code' => $phone['country'],
+            'telefono_national' => $phone['number'],
+            'direccion' => $user->direccion,
+            'is_affiliate' => $user->isAffiliate(),
+            'afiliadoInfo' => $user->afiliadoInfo ? [
+                'nombre_comercial' => $user->afiliadoInfo->nombre_comercial,
+                'nit' => $user->afiliadoInfo->nit,
+                'telefono_negocio_country_code' => $businessPhone['country'],
+                'telefono_negocio_national' => $businessPhone['number'],
+                'direccion' => $user->afiliadoInfo->direccion,
+                'metodo_pago' => $user->afiliadoInfo->metodo_pago,
+                'titular_pago' => $user->afiliadoInfo->titular_pago,
+                'cuenta_pago' => $user->afiliadoInfo->cuenta_pago,
+            ] : null,
+        ];
     }
 }

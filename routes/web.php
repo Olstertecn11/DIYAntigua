@@ -17,6 +17,7 @@ use App\Services\Affiliates\ReferralTracker;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 // --- RUTA PÚBLICA / REFERIDOS ---
 Route::get('/', function (Request $request, ReferralTracker $referrals) {
@@ -41,8 +42,23 @@ Route::get('/', function (Request $request, ReferralTracker $referrals) {
             ->all();
     });
 
-    return view('welcome', compact('rutas'));
+    return Inertia::render('Home/Welcome', [
+        'rutas' => $rutas,
+        'urls' => [
+            'cotizar' => route('reservas.cotizar'),
+            'login' => route('login'),
+            'register' => route('register'),
+            'misReservas' => route('reservas.mine.index'),
+            'profile' => route('profile.edit'),
+        ],
+    ]);
 })->name('welcome');
+
+Route::get('/destinos/{slug}', function (string $slug) {
+    return Inertia::render('Destinations/Show', [
+        'slug' => $slug,
+    ]);
+})->name('destinations.show');
 
 Auth::routes();
 

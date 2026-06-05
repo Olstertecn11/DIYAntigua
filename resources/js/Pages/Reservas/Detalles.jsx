@@ -1,4 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import PublicLayout from '@/Layouts/PublicLayout';
 import axios from 'axios';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -216,7 +217,8 @@ export default function Detalles({
     };
 
     return (
-        <main className="min-h-screen bg-[linear-gradient(135deg,#ffffff_0%,#f7f7f2_58%,#ecebe5_100%)] px-4 py-8 text-slate-950 sm:px-6 lg:py-12">
+        <PublicLayout>
+        <main className="min-h-screen bg-[linear-gradient(135deg,#ffffff_0%,#f7f7f2_58%,#ecebe5_100%)] px-4 pb-12 pt-36 text-slate-950 sm:px-6">
             <Head>
                 {fingerprint.orgId && fingerprint.fullSessionId && (
                     <script src={`https://h.online-metrix.net/fp/tags.js?org_id=${fingerprint.orgId}&session_id=${fingerprint.fullSessionId}`} type="application/javascript" />
@@ -399,5 +401,6 @@ export default function Detalles({
                 </div>
             )}
         </main>
+        </PublicLayout>
     );
 }

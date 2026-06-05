@@ -4,13 +4,30 @@ namespace App\Http\Controllers\Private;
 use App\Http\Controllers\Controller;
 use App\Models\Vehiculo;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class VehiculoController extends Controller
 {
     public function index()
     {
         $vehiculos = Vehiculo::orderBy('max_pasajeros', 'asc')->get();
-        return view('admin.vehiculos.index', compact('vehiculos'));
+        return Inertia::render('Admin/Vehiculos/Index', [
+            'vehiculos' => $vehiculos->map(fn (Vehiculo $vehiculo) => [
+                'id' => $vehiculo->id,
+                'nombre' => $vehiculo->nombre,
+                'min_pasajeros' => (int) $vehiculo->min_pasajeros,
+                'max_pasajeros' => (int) $vehiculo->max_pasajeros,
+                'icono' => $vehiculo->icono,
+                'activo' => (bool) $vehiculo->activo,
+                'urls' => [
+                    'update' => route('admin.vehiculos.update', $vehiculo),
+                    'destroy' => route('admin.vehiculos.destroy', $vehiculo),
+                ],
+            ])->values(),
+            'urls' => [
+                'store' => route('admin.vehiculos.store'),
+            ],
+        ]);
     }
 
     public function store(Request $request)

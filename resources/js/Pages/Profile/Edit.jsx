@@ -14,7 +14,7 @@ export default function ProfileEdit({ user, countries, urls }) {
     return (
         <PublicLayout>
             <Head title="Configuracion de perfil" />
-            <main className="min-h-screen bg-[#f7f6f1] py-12">
+            <main className="min-h-screen bg-[#f7f6f1] pb-12 pt-36">
                 <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
                     <div className="mb-8">
                         <span className="inline-flex items-center gap-2 rounded-full border border-[#fcca00]/40 bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#363636]"><i className="fas fa-user-gear text-[#fcca00]" /> Mi cuenta</span>

@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import PublicLayout from '@/Layouts/PublicLayout';
 
 function money(value) {
     return `Q${Number(value || 0).toFixed(2)}`;
@@ -15,7 +16,8 @@ export default function Result({ status, message, transaction, reserva, urls = {
             : 'La reserva fue creada y el pago requiere revision o un nuevo intento.';
 
     return (
-        <main className="min-h-screen bg-[linear-gradient(135deg,#fff_0%,#f7f7f2_60%,#ecebe5_100%)] px-4 py-8 text-slate-950 sm:px-6 lg:py-12">
+        <PublicLayout>
+        <main className="min-h-screen bg-[linear-gradient(135deg,#fff_0%,#f7f7f2_60%,#ecebe5_100%)] px-4 pb-12 pt-36 text-slate-950 sm:px-6">
             <div className="mx-auto max-w-5xl rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
                 <div className="mb-8 flex flex-col justify-between gap-6 lg:flex-row">
                     <div>
@@ -71,5 +73,6 @@ export default function Result({ status, message, transaction, reserva, urls = {
                 </div>
             </div>
         </main>
+        </PublicLayout>
     );
 }

@@ -12,13 +12,27 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Reservacion;
 use App\Services\Affiliates\ReferralTracker;
+use Inertia\Inertia;
 
 
 class AdminController extends Controller
 {
     // Muestra el formulario
     public function login() {
-        return view('admin.login');
+        return Inertia::render('Auth/Login', [
+            'mode' => 'admin',
+            'title' => 'Admin',
+            'kicker' => 'Panel administrativo',
+            'copy' => 'Acceso para gestionar reservas, rutas, socios y pagos.',
+            'sideTitle' => 'Operaciones',
+            'sideCopy' => 'Control interno para DIY Antigua.',
+            'showRegister' => false,
+            'urls' => [
+                'login' => route('admin.login.post'),
+                'home' => route('welcome'),
+                'passwordRequest' => route('password.request'),
+            ],
+        ]);
     }
 
     // Procesa el login
@@ -64,13 +78,12 @@ class AdminController extends Controller
         try {
             DB::beginTransaction();
 
-            // 1. Crear el usuario con role_id de Afiliado
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role_id' => config('constantes.idAffiliate'),
             ]);
+            $user->assignRole('afiliado');
 
             // 2. Crear la información extra
             AfiliadoInfo::create([
@@ -103,7 +116,15 @@ class AdminController extends Controller
     {
         [$afiliados, $reservasStats, $proximasReservas] = $this->dashboardData();
 
-        return view('admin.dashboard', compact('afiliados', 'reservasStats', 'proximasReservas'));
+        return Inertia::render('Admin/Dashboard', [
+            'afiliados' => $this->formatAfiliados($afiliados),
+            'reservasStats' => $reservasStats,
+            'proximasReservas' => $this->formatProximasReservas($proximasReservas),
+            'urls' => [
+                'storeAfiliado' => route('admin.afiliados.store'),
+                'reservas' => route('admin.reservas.index'),
+            ],
+        ]);
     }
 
     // Añade esto dentro de la clase AdminController
@@ -111,7 +132,15 @@ class AdminController extends Controller
     {
         [$afiliados, $reservasStats, $proximasReservas] = $this->dashboardData();
 
-        return view('admin.dashboard', compact('afiliados', 'reservasStats', 'proximasReservas'));
+        return Inertia::render('Admin/Dashboard', [
+            'afiliados' => $this->formatAfiliados($afiliados),
+            'reservasStats' => $reservasStats,
+            'proximasReservas' => $this->formatProximasReservas($proximasReservas),
+            'urls' => [
+                'storeAfiliado' => route('admin.afiliados.store'),
+                'reservas' => route('admin.reservas.index'),
+            ],
+        ]);
     }
 
     public function pagos()
@@ -141,7 +170,24 @@ class AdminController extends Controller
             'reservas' => $afiliados->sum('reservas_pagadas_count'),
         ];
 
-        return view('admin.pagos.index', compact('afiliados', 'reservasReferidas', 'totales'));
+        return Inertia::render('Admin/Pagos/Index', [
+            'afiliados' => $afiliados,
+            'reservasReferidas' => $reservasReferidas->through(fn (Reservacion $reserva) => [
+                'id' => $reserva->id,
+                'codigo_reserva' => $reserva->codigo_reserva,
+                'nombre_cliente' => $reserva->nombre_cliente,
+                'socio' => $reserva->socio?->afiliadoInfo?->nombre_comercial ?? $reserva->socio?->name,
+                'ruta' => trim(($reserva->ruta?->origen?->nombre ?? 'Origen') . ' -> ' . ($reserva->ruta?->destino?->nombre ?? 'Destino')),
+                'estado_pago' => $reserva->estado_pago,
+                'estado_viaje' => $reserva->estado_viaje,
+                'precio_total' => (float) $reserva->precio_total,
+                'comision_socio' => (float) $reserva->comision_socio,
+                'urls' => [
+                    'show' => route('admin.reservas.show', $reserva),
+                ],
+            ]),
+            'totales' => $totales,
+        ]);
     }
 
     private function dashboardData(): array
@@ -195,7 +241,38 @@ class AdminController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
-        return view('admin.reservas.index', compact('reservas'));
+        return redirect()->route('admin.reservas.index');
+    }
+
+    private function formatAfiliados($afiliados): array
+    {
+        return $afiliados->map(fn (AfiliadoInfo $afiliado) => [
+            'id' => $afiliado->id,
+            'nombre_comercial' => $afiliado->nombre_comercial,
+            'codigo_referido' => $afiliado->codigo_referido,
+            'comision_porcentaje' => $afiliado->comision_porcentaje,
+            'reservas_referidas_count' => $afiliado->reservas_referidas_count ?? 0,
+            'comisiones_total' => (float) ($afiliado->comisiones_total ?? 0),
+            'activo' => (bool) ($afiliado->activo ?? true),
+            'user' => $afiliado->user ? [
+                'name' => $afiliado->user->name,
+                'email' => $afiliado->user->email,
+            ] : null,
+        ])->values()->all();
+    }
+
+    private function formatProximasReservas($reservas): array
+    {
+        return $reservas->map(fn (Reservacion $reserva) => [
+            'id' => $reserva->id,
+            'codigo_reserva' => $reserva->codigo_reserva,
+            'nombre_cliente' => $reserva->nombre_cliente,
+            'ruta' => trim(($reserva->ruta?->origen?->nombre ?? 'Origen') . ' -> ' . ($reserva->ruta?->destino?->nombre ?? 'Destino')),
+            'fecha' => $reserva->travelDateTime()->format('d/m/Y H:i'),
+            'urls' => [
+                'show' => route('admin.reservas.show', $reserva),
+            ],
+        ])->values()->all();
     }
 
 }

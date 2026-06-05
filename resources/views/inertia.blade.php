@@ -13,10 +13,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-
     @viteReactRefresh
-    @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/global.css'])
+    @vite(['resources/js/app.js', 'resources/css/global.css'])
     @inertiaHead
 </head>
 
