@@ -12,6 +12,7 @@ use App\Services\Affiliates\ReferralTracker;
 use App\Services\Payments\PaymentManager;
 use App\Support\PhoneNumber;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,7 @@ class ReservaController extends Controller
             'hora' => ['required'],
             'pasajeros' => ['required', 'integer', 'min:1', 'max:15'],
         ]);
+        $this->ensureMinimumLeadTime($validated['fecha'], $validated['hora'], 'hora');
 
         $ruta = Ruta::with([
             'origen',
@@ -100,6 +102,7 @@ class ReservaController extends Controller
             'pasajeros' => ['required', 'integer', 'min:1', 'max:15'],
             'precio' => ['nullable', 'numeric', 'min:0'],
         ]);
+        $this->ensureMinimumLeadTime($validated['fecha'], $validated['hora'], 'hora');
 
         $ruta = Ruta::with([
             'origen',
@@ -147,7 +150,7 @@ class ReservaController extends Controller
             'precio' => (float) $detalleRuta->precio_tarifa,
             'id_detalle_ruta' => (int) $detalleRuta->id,
         ];
-        $fingerprintSessionId = 'DIYQ' . Str::upper(Str::random(24));
+        $fingerprintSessionId = 'DYQ' . Str::upper(Str::random(24));
         $fingerprintFullSessionId = config('qpaypro.fingerprint_prefix') . $fingerprintSessionId;
         $fingerprintOrgId = config('qpaypro.fingerprint_org_id');
 
@@ -223,6 +226,7 @@ class ReservaController extends Controller
             'finger' => ['nullable', 'string', 'max:191'],
             'fingerprint_session_id' => ['required', 'string', 'max:191'],
         ]);
+        $this->ensureMinimumLeadTime($validated['fecha_viaje'], $validated['hora_viaje'], 'hora_viaje');
 
         $email = strtolower(trim($validated['correo_cliente']));
         $authenticatedEmail = auth()->check() && strtolower((string) auth()->user()->email) === $email;
@@ -437,10 +441,27 @@ class ReservaController extends Controller
     private function generarCodigoReserva()
     {
         do {
-            $codigo = 'DIY-' . strtoupper(Str::random(8));
+            $codigo = 'DY-' . strtoupper(Str::random(8));
         } while (Reservacion::where('codigo_reserva', $codigo)->exists());
 
         return $codigo;
+    }
+
+    private function ensureMinimumLeadTime(string $date, string $time, string $field): void
+    {
+        try {
+            $travelAt = CarbonImmutable::parse(trim("{$date} {$time}"), config('app.timezone'));
+        } catch (\Throwable) {
+            throw ValidationException::withMessages([
+                $field => 'La fecha y hora de viaje no son validas.',
+            ]);
+        }
+
+        if ($travelAt->lt(now()->addHours(5))) {
+            throw ValidationException::withMessages([
+                $field => 'Reserva con al menos 5 horas de anticipacion.',
+            ]);
+        }
     }
 
     private function formatRutaForInertia(Ruta $ruta): array

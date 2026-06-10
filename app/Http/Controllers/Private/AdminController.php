@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Models\AfiliadoInfo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Reservacion;
 use App\Services\Affiliates\ReferralTracker;
 use Inertia\Inertia;
@@ -25,7 +27,7 @@ class AdminController extends Controller
             'kicker' => 'Panel administrativo',
             'copy' => 'Acceso para gestionar reservas, rutas, socios y pagos.',
             'sideTitle' => 'Operaciones',
-            'sideCopy' => 'Control interno para DIY Antigua.',
+            'sideCopy' => 'Control interno para DYANTIGUA.',
             'showRegister' => false,
             'urls' => [
                 'login' => route('admin.login.post'),
@@ -75,13 +77,14 @@ class AdminController extends Controller
             'comision' => 'required|numeric|between:0,100',
         ]);
 
+        $plainPassword = $request->password;
+
         try {
             DB::beginTransaction();
-
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'password' => Hash::make($plainPassword),
             ]);
             $user->assignRole('afiliado');
 
@@ -98,6 +101,26 @@ class AdminController extends Controller
             $referrals->referralCodeFor($user->fresh('afiliadoInfo'));
 
             DB::commit();
+
+            try {
+                Mail::send('emails.socios.afiliado-creado', [
+                    'user' => $user,
+                    'nombreComercial' => $request->nombre_comercial,
+                    'accessUrl' => route('socios.login'),
+                    'email' => $user->email,
+                    'temporaryPassword' => $plainPassword,
+                ], function ($message) use ($user) {
+                    $message->to($user->email, $user->name)
+                        ->subject('Ya eres socio de DYANTIGUA');
+                });
+            } catch (\Throwable $mailException) {
+                Log::warning('No se pudo enviar correo de bienvenida a socio.', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                    'error' => $mailException->getMessage(),
+                ]);
+            }
+
             return back()->with('success', 'Socio creado correctamente.');
 
         } catch (\Exception $e) {

@@ -1,4 +1,4 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
@@ -13,6 +13,11 @@ function label(value) {
 export default function ReservaShow({ reserva, urls }) {
     const [openCancel, setOpenCancel] = useState(false);
     const [motivo, setMotivo] = useState('');
+    const status = useForm({ estado_viaje: reserva.estado_viaje || 'programado' });
+    const refund = useForm({
+        reembolso_estado: reserva.reembolso_estado || '',
+        reembolso_monto: reserva.reembolso_monto || '',
+    });
 
     const cancelReserva = (event) => {
         event.preventDefault();
@@ -20,6 +25,16 @@ export default function ReservaShow({ reserva, urls }) {
             preserveScroll: true,
             onSuccess: () => setOpenCancel(false),
         });
+    };
+
+    const updateStatus = (event) => {
+        event.preventDefault();
+        status.put(urls.status, { preserveScroll: true });
+    };
+
+    const updateRefund = (event) => {
+        event.preventDefault();
+        refund.put(urls.refund, { preserveScroll: true });
     };
 
     return (
@@ -58,6 +73,33 @@ export default function ReservaShow({ reserva, urls }) {
                         <InfoCard title="Pago QPayPro" rows={reserva.transaction ? [['Estado', String(reserva.transaction.status).toUpperCase()], ['Referencia', reserva.transaction.reference], ['Tarjeta', `${String(reserva.transaction.card_brand).toUpperCase()} **** ${reserva.transaction.card_last_four || ''}`], ['Respuesta', reserva.transaction.response_message]] : [['Estado', 'Sin transacciones registradas']]} />
                         <InfoCard title="Cancelacion" rows={[['Politica', reserva.policy_label], ['Cancelado', reserva.cancelado_at || 'No'], ['Reembolso', reserva.reembolso_estado ? label(reserva.reembolso_estado) : 'Sin solicitud'], ['Monto', money(reserva.reembolso_monto)]]} />
                         <InfoCard title="Comision socio" rows={[['Socio', reserva.socio?.name || 'No referido'], ['Ganancia', money(reserva.comision_socio)]]} />
+                        <form onSubmit={updateStatus} className="rounded-2xl border border-[#242424] bg-[#101010] p-5">
+                            <h2 className="mb-4 text-sm font-black uppercase tracking-widest text-[#FCCA00]">Estado operativo</h2>
+                            <select value={status.data.estado_viaje} onChange={(event) => status.setData('estado_viaje', event.target.value)} className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm text-white outline-none focus:border-[#FCCA00]">
+                                <option value="programado">Programado</option>
+                                <option value="en_progreso">En progreso</option>
+                                <option value="completado">Completado</option>
+                                <option value="cancelado">Cancelado</option>
+                            </select>
+                            {status.errors.estado_viaje && <p className="mt-2 text-xs font-bold text-red-300">{status.errors.estado_viaje}</p>}
+                            <button disabled={status.processing} className="mt-3 w-full rounded-xl bg-white px-4 py-3 text-xs font-black uppercase text-black disabled:opacity-60">Actualizar estado</button>
+                        </form>
+                        <form onSubmit={updateRefund} className="rounded-2xl border border-[#242424] bg-[#101010] p-5">
+                            <h2 className="mb-4 text-sm font-black uppercase tracking-widest text-[#FCCA00]">Gestion de reembolso</h2>
+                            <select value={refund.data.reembolso_estado} onChange={(event) => refund.setData('reembolso_estado', event.target.value)} className="w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm text-white outline-none focus:border-[#FCCA00]">
+                                <option value="">Sin solicitud</option>
+                                <option value="no_aplica">No aplica</option>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="revision">Revision</option>
+                                <option value="aprobado">Aprobado</option>
+                                <option value="rechazado">Rechazado</option>
+                                <option value="procesado">Procesado</option>
+                            </select>
+                            {refund.errors.reembolso_estado && <p className="mt-2 text-xs font-bold text-red-300">{refund.errors.reembolso_estado}</p>}
+                            <input type="number" min="0" step="0.01" value={refund.data.reembolso_monto || ''} onChange={(event) => refund.setData('reembolso_monto', event.target.value)} className="mt-3 w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm text-white outline-none focus:border-[#FCCA00]" placeholder="Monto" />
+                            {refund.errors.reembolso_monto && <p className="mt-2 text-xs font-bold text-red-300">{refund.errors.reembolso_monto}</p>}
+                            <button disabled={refund.processing} className="mt-3 w-full rounded-xl bg-[#FCCA00] px-4 py-3 text-xs font-black uppercase text-black disabled:opacity-60">Actualizar reembolso</button>
+                        </form>
                     </aside>
                 </div>
             </div>

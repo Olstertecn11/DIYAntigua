@@ -32,18 +32,20 @@ class VehiculoController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:50',
-            'min_pasajeros' => 'required|integer|min:1',
-            'max_pasajeros' => 'required|integer|gte:min_pasajeros',
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'max:80'],
+            'min_pasajeros' => ['required', 'integer', 'min:1', 'max:255'],
+            'max_pasajeros' => ['required', 'integer', 'gte:min_pasajeros', 'max:255'],
+            'icono' => ['nullable', 'string', 'max:80'],
+            'activo' => ['boolean'],
         ]);
 
         Vehiculo::create([
-            'nombre' => $request->nombre,
-            'min_pasajeros' => $request->min_pasajeros,
-            'max_pasajeros' => $request->max_pasajeros,
-            'icono' => $request->icono ?? 'fa-car',
-            'activo' => $request->has('activo')
+            'nombre' => $validated['nombre'],
+            'min_pasajeros' => $validated['min_pasajeros'],
+            'max_pasajeros' => $validated['max_pasajeros'],
+            'icono' => $validated['icono'] ?? 'fa-car',
+            'activo' => $request->boolean('activo', true),
         ]);
 
         return back()->with('success', 'Vehículo registrado correctamente.');
@@ -51,11 +53,20 @@ class VehiculoController extends Controller
 
     public function update(Request $request, Vehiculo $vehiculo)
     {
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'max:80'],
+            'min_pasajeros' => ['required', 'integer', 'min:1', 'max:255'],
+            'max_pasajeros' => ['required', 'integer', 'gte:min_pasajeros', 'max:255'],
+            'icono' => ['nullable', 'string', 'max:80'],
+            'activo' => ['boolean'],
+        ]);
+
         $vehiculo->update([
-            'nombre' => $request->nombre,
-            'min_pasajeros' => $request->min_pasajeros,
-            'max_pasajeros' => $request->max_pasajeros,
-            'activo' => $request->has('activo')
+            'nombre' => $validated['nombre'],
+            'min_pasajeros' => $validated['min_pasajeros'],
+            'max_pasajeros' => $validated['max_pasajeros'],
+            'icono' => $validated['icono'] ?? $vehiculo->icono,
+            'activo' => $request->boolean('activo'),
         ]);
 
         return back()->with('success', 'Vehículo actualizado.');

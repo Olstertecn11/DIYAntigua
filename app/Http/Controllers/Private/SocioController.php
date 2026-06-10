@@ -18,7 +18,7 @@ class SocioController extends BaseController
             'title' => 'Socios',
             'kicker' => 'Acceso de socios',
             'copy' => 'Consulta tus reservas referidas, comisiones y enlace de afiliado.',
-            'sideTitle' => 'Socios DIY Antigua',
+            'sideTitle' => 'Socios DYANTIGUA',
             'sideCopy' => 'Tu panel de comisiones y referidos.',
             'showRegister' => false,
             'urls' => [

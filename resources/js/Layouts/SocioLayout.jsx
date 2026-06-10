@@ -63,7 +63,7 @@ export default function SocioLayout({ children }) {
                             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fcca00] text-lg font-black text-black">S</div>
                             <div>
                                 <p className="mb-0 text-sm font-black uppercase tracking-tight">Socios</p>
-                                <p className="mb-0 text-[10px] font-bold uppercase tracking-widest text-white/40">DIY Antigua</p>
+                                <p className="mb-0 text-[10px] font-bold uppercase tracking-widest text-white/40">DYANTIGUA</p>
                             </div>
                         </div>
                     </div>

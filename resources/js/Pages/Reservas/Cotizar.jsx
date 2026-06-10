@@ -32,7 +32,7 @@ export default function Cotizar({ ruta, datos, images = {}, urls = {} }) {
 
     return (
         <PublicLayout>
-        <main className="min-h-screen bg-[linear-gradient(135deg,#ffffff_0%,#f7f7f2_58%,#ecebe5_100%)] px-4 pb-12 pt-36 text-slate-950 sm:px-6">
+        <main className="min-h-screen bg-[linear-gradient(90deg,#FCCA00_0_10px,transparent_10px),linear-gradient(135deg,#ffffff_0%,#f7f7f2_58%,#ecebe5_100%)] px-4 pb-12 pt-36 text-slate-950 sm:px-6">
             <div className="mx-auto max-w-7xl">
                 <Link href={`${urls.home || '/'}#booking`} className="mb-8 inline-flex items-center text-xs font-black uppercase tracking-widest text-slate-700 no-underline">
                     <i className="fas fa-arrow-left mr-2" />
@@ -41,7 +41,7 @@ export default function Cotizar({ ruta, datos, images = {}, urls = {} }) {
 
                 <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
                     <section>
-                        <div className="mb-6">
+                        <div className="soft-rise mb-6 rounded-[2rem] border border-slate-200 bg-white/85 p-6 shadow-[0_24px_70px_rgba(15,23,42,.08)] backdrop-blur">
                             <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-yellow-600">Selecciona tu unidad</p>
                             <h1 className="mb-2 text-4xl font-black">Vehiculos disponibles</h1>
                             <p className="text-slate-600">Mostramos unidades con capacidad suficiente para {datos.pasajeros} pasajero(s).</p>
@@ -53,7 +53,7 @@ export default function Cotizar({ ruta, datos, images = {}, urls = {} }) {
                                 const image = images[key] || vehicleImages[key] || '/images/car_trip.jpg';
 
                                 return (
-                                    <article key={vehiculo.id} className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
+                                    <article key={vehiculo.id} className="soft-rise overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,.08)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_28px_80px_rgba(15,23,42,.13)]">
                                         <div className="grid md:grid-cols-[260px_1fr]">
                                             <div className="relative min-h-56 overflow-hidden bg-slate-900">
                                                 <img src={image} alt={vehiculo.nombre} className="h-full w-full object-cover" />
@@ -89,7 +89,7 @@ export default function Cotizar({ ruta, datos, images = {}, urls = {} }) {
                                                 <button
                                                     type="button"
                                                     onClick={() => selectVehicle(vehiculo)}
-                                                    className="inline-flex w-full items-center justify-center rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black uppercase tracking-widest text-white transition hover:bg-slate-800 sm:w-auto"
+                                                    className="inline-flex w-full items-center justify-center rounded-2xl bg-[#FCCA00] px-5 py-3 text-sm font-black uppercase tracking-widest text-black shadow-[0_14px_34px_rgba(252,202,0,.28)] transition hover:bg-yellow-300 sm:w-auto"
                                                 >
                                                     Seleccionar vehiculo
                                                     <i className="fas fa-arrow-right ml-2" />
@@ -111,7 +111,7 @@ export default function Cotizar({ ruta, datos, images = {}, urls = {} }) {
                         </div>
                     </section>
 
-                    <aside className="h-fit rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-6">
+                    <aside className="soft-rise h-fit rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,.08)] lg:sticky lg:top-28">
                         <div className="mb-5 flex items-center justify-between">
                             <div>
                                 <p className="mb-1 text-xs font-black uppercase tracking-widest text-yellow-600">Resumen</p>

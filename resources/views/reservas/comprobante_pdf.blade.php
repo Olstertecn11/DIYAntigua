@@ -279,9 +279,9 @@
                 <tr>
                     <td style="width: 62%; vertical-align: top;">
                         @if ($logoBase64)
-                            <img src="{{ $logoBase64 }}" class="logo" alt="DIY Antigua">
+                            <img src="{{ $logoBase64 }}" class="logo" alt="DYANTIGUA">
                         @endif
-                        <div class="brand">DIY Antigua Private Transfers</div>
+                        <div class="brand">DYANTIGUA Private Transfers</div>
                         <h1 class="title">Comprobante de traslado</h1>
                         <p class="subtitle">Tu constancia digital de reserva y pago para presentar el día del viaje.</p>
                     </td>
@@ -420,7 +420,7 @@
         <div class="footer">
             <table class="footer-table">
                 <tr>
-                    <td><strong>DIY Antigua</strong><br>Servicios de transporte privado en Guatemala.</td>
+                    <td><strong>DYANTIGUA</strong><br>Servicios de transporte privado en Guatemala.</td>
                     <td style="text-align: right;">Emitido el {{ now()->format('d/m/Y H:i') }}<br>Documento generado electrónicamente.</td>
                 </tr>
             </table>

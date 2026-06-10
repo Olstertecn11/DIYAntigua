@@ -43,7 +43,7 @@ export default function Confirmar({ reserva, urls = {} }) {
                     Inicio
                 </Link>
 
-                <section className="mt-6 flex flex-col justify-between gap-6 rounded-[1.75rem] border border-slate-200 bg-white/95 p-8 shadow-sm lg:flex-row lg:items-center">
+                <section className="soft-rise mt-6 flex flex-col justify-between gap-6 rounded-[1.75rem] border border-slate-200 bg-white/95 p-8 shadow-[0_24px_70px_rgba(15,23,42,.08)] lg:flex-row lg:items-center">
                     <div>
                         <p className="mb-2 text-xs font-black uppercase tracking-[0.2em] text-yellow-600">Comprobante de reserva</p>
                         <h1 className="mb-3 text-5xl font-black tracking-tight">{reserva.codigo_reserva}</h1>
@@ -57,7 +57,7 @@ export default function Confirmar({ reserva, urls = {} }) {
                 </section>
 
                 <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
-                    <section className="rounded-[1.75rem] border border-slate-200 bg-white/95 p-6 shadow-sm">
+                    <section className="soft-rise rounded-[1.75rem] border border-slate-200 bg-white/95 p-6 shadow-[0_18px_60px_rgba(15,23,42,.08)]">
                         <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                             <div>
                                 <p className="mb-2 text-xs font-black uppercase tracking-[0.2em] text-yellow-600">Traslado privado</p>
@@ -104,7 +104,7 @@ export default function Confirmar({ reserva, urls = {} }) {
                         </div>
                     </section>
 
-                    <aside className="h-fit rounded-[1.75rem] border border-slate-200 bg-white/95 p-6 shadow-sm">
+                    <aside className="soft-rise h-fit rounded-[1.75rem] border border-slate-200 bg-white/95 p-6 shadow-[0_18px_60px_rgba(15,23,42,.08)]">
                         <h2 className="mb-5 text-2xl font-black">Estado y comprobante</h2>
                         <div className="mb-5 rounded-2xl bg-slate-50 p-5 text-center">
                             <img src={reserva.qr_url} alt="QR de reserva" className="mx-auto mb-3 h-40 w-40" />

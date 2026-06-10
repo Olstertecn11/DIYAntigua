@@ -18,8 +18,8 @@ return new class extends Migration
             $this->addIndex('payment_transactions', 'payment_transactions_reserva_latest_idx', ['reservacion_id', 'created_at']);
         }
 
-        if (Schema::hasTable('users')) {
-            $this->addIndex('users', 'users_role_idx', ['role_id']);
+        if (Schema::hasTable('role_user')) {
+            $this->addIndex('role_user', 'role_user_role_user_idx', ['role_id', 'user_id']);
         }
     }
 
@@ -30,7 +30,7 @@ return new class extends Migration
             ['reservaciones', 'reservaciones_socio_pago_viaje_idx'],
             ['reservaciones', 'reservaciones_pago_viaje_fecha_idx'],
             ['payment_transactions', 'payment_transactions_reserva_latest_idx'],
-            ['users', 'users_role_idx'],
+            ['role_user', 'role_user_role_user_idx'],
         ] as [$table, $index]) {
             if (Schema::hasTable($table) && $this->indexExists($table, $index)) {
                 DB::statement("alter table {$table} drop index {$index}");
@@ -40,6 +40,12 @@ return new class extends Migration
 
     private function addIndex(string $table, string $name, array $columns): void
     {
+        foreach ($columns as $column) {
+            if (! $this->columnExists($table, $column)) {
+                return;
+            }
+        }
+
         if ($this->indexExists($table, $name)) {
             return;
         }
@@ -57,6 +63,14 @@ return new class extends Migration
         return (bool) DB::selectOne(
             'select 1 from information_schema.statistics where table_schema = database() and table_name = ? and index_name = ? limit 1',
             [$table, $index]
+        );
+    }
+
+    private function columnExists(string $table, string $column): bool
+    {
+        return (bool) DB::selectOne(
+            'select 1 from information_schema.columns where table_schema = database() and table_name = ? and column_name = ? limit 1',
+            [$table, $column]
         );
     }
 };

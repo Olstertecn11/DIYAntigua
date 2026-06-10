@@ -3,7 +3,7 @@ import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
 const paymentStates = ['pendiente', 'procesando', 'pagado', 'rechazado', 'fallido', 'reembolso_pendiente'];
-const tripStates = ['programado', 'completado', 'cancelado'];
+const tripStates = ['programado', 'en_progreso', 'completado', 'cancelado'];
 
 function money(value) {
     return `Q${Number(value || 0).toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;

@@ -14,7 +14,7 @@
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;">
                     <tr>
                         <td align="center" style="padding:12px 0 24px;">
-                            <img src="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/logo.png?raw=true" alt="DIY Antigua" style="width:132px;height:auto;display:block;">
+                            <img src="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/logo.png?raw=true" alt="DYANTIGUA" style="width:132px;height:auto;display:block;">
                         </td>
                     </tr>
                     <tr>
@@ -53,7 +53,7 @@
                                     <td style="padding:24px;">
                                         <p style="margin:0 0 8px;color:#64748b;font-size:11px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;">Boarding pass digital</p>
                                         <h2 style="margin:0 0 12px;font-size:24px;color:#0f172a;">{{ $reserva->ruta?->origen?->nombre }} → {{ $reserva->ruta?->destino?->nombre }}</h2>
-                                        <p style="margin:0;color:#475569;font-size:14px;line-height:1.6;">Presenta este código QR para validar tu reserva con DIY Antigua.</p>
+                                        <p style="margin:0;color:#475569;font-size:14px;line-height:1.6;">Presenta este código QR para validar tu reserva con DYANTIGUA.</p>
                                     </td>
                                     <td align="center" style="padding:24px;background:#0f172a;width:190px;">
                                         <img src="{{ $qrUrl }}" alt="QR reserva" style="width:150px;height:150px;border-radius:12px;background:#ffffff;padding:8px;display:block;">
@@ -73,7 +73,7 @@
                     </tr>
                     <tr>
                         <td align="center" style="padding:22px;color:#6b7280;font-size:12px;line-height:1.6;">
-                            © {{ date('Y') }} DIY Antigua Private Transfers<br>
+                            © {{ date('Y') }} DYANTIGUA Private Transfers<br>
                             Conserva este correo como confirmación de pago.
                         </td>
                     </tr>

@@ -123,9 +123,9 @@ Route::group([
     Route::put('/perfil', [AdminProfileController::class, 'update'])->name('profile.update');
     Route::put('/perfil/password', [AdminProfileController::class, 'password'])->name('profile.password');
 
-    Route::resource('lugares', LugarController::class);
+    Route::resource('lugares', LugarController::class)->only(['index', 'store', 'update', 'destroy']);
 
-    Route::resource('rutas', RutaController::class);
+    Route::resource('rutas', RutaController::class)->only(['index', 'store', 'update', 'destroy']);
 
     // VEHICULOS
     Route::get('/vehiculos', [VehiculoController::class, 'index'])->name('vehiculos.index');
@@ -135,10 +135,13 @@ Route::group([
 
     Route::get('/conductores', [ConductorController::class, 'index'])->name('conductores.index');
     Route::post('/conductores', [ConductorController::class, 'store'])->name('conductores.store');
+    Route::put('/conductores/{conductor}', [ConductorController::class, 'update'])->name('conductores.update');
     Route::delete('/conductores/{conductore}', [ConductorController::class, 'destroy'])->name('conductores.destroy');
 
     Route::get('/reservas', [AdminReservationController::class, 'index'])->name('reservas.index');
     Route::get('/reservas/{reserva}', [AdminReservationController::class, 'show'])->name('reservas.show');
+    Route::put('/reservas/{reserva}/estado', [AdminReservationController::class, 'updateStatus'])->name('reservas.status');
+    Route::put('/reservas/{reserva}/reembolso', [AdminReservationController::class, 'updateRefund'])->name('reservas.refund');
     Route::post('/reservas/{reserva}/cancelar', [AdminReservationController::class, 'cancel'])
         ->middleware('throttle:8,1')
         ->name('reservas.cancel');

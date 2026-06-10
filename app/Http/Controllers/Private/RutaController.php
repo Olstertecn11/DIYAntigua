@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Ruta;
 use App\Models\Lugar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class RutaController extends Controller
@@ -22,12 +24,17 @@ class RutaController extends Controller
                 'id' => $ruta->id,
                 'origen' => $ruta->origen,
                 'destino' => $ruta->destino,
+                'origen_id' => $ruta->origen_id,
+                'destino_id' => $ruta->destino_id,
+                'kilometraje' => $ruta->kilometraje,
+                'activa' => (bool) $ruta->activa,
                 'vehiculos' => $ruta->vehiculosDisponibles->map(fn ($vehiculo) => [
                     'id' => $vehiculo->id,
                     'nombre' => $vehiculo->nombre,
                     'precio_tarifa' => (float) $vehiculo->pivot->precio_tarifa,
                 ])->values(),
                 'urls' => [
+                    'update' => route('admin.rutas.update', $ruta),
                     'destroy' => route('admin.rutas.destroy', $ruta),
                 ],
             ])->values(),
@@ -41,33 +48,81 @@ class RutaController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'origen_id' => 'required',
-            'destino_id' => 'required',
-            'vehiculos' => 'required|array|min:1',
+        $validated = $request->validate([
+            'origen_id' => [
+                'required',
+                'exists:lugares,id',
+                Rule::unique('rutas')->where(fn ($query) => $query
+                    ->where('origen_id', $request->origen_id)
+                    ->where('destino_id', $request->destino_id)),
+            ],
+            'destino_id' => ['required', 'exists:lugares,id', 'different:origen_id'],
+            'kilometraje' => ['nullable', 'numeric', 'min:0'],
+            'activa' => ['boolean'],
+            'vehiculos' => ['required', 'array', 'min:1'],
+            'vehiculos.*.id' => ['required', 'exists:vehiculos,id', 'distinct'],
+            'vehiculos.*.precio' => ['required', 'numeric', 'min:0'],
         ]);
 
-        // 1. Crear la ruta base
-        $ruta = Ruta::create([
-            'origen_id' => $request->origen_id,
-            'destino_id' => $request->destino_id,
-            'kilometraje' => $request->kilometraje,
-        ]);
-
-        // 2. Adjuntar vehículos con sus precios
-        // El formato esperado es: [id_vehiculo => ['precio_tarifa' => valor]]
-        foreach ($request->vehiculos as $v) {
-            $ruta->vehiculosDisponibles()->attach($v['id'], [
-                'precio_tarifa' => $v['precio']
+        DB::transaction(function () use ($validated, $request) {
+            $ruta = Ruta::create([
+                'origen_id' => $validated['origen_id'],
+                'destino_id' => $validated['destino_id'],
+                'kilometraje' => $validated['kilometraje'] ?? null,
+                'activa' => $request->boolean('activa', true),
             ]);
-        }
+
+            $ruta->vehiculosDisponibles()->sync($this->vehiclePrices($validated['vehiculos']));
+        });
 
         return back()->with('success', 'Ruta y tarifas configuradas correctamente.');
+    }
+
+    public function update(Request $request, Ruta $ruta)
+    {
+        $validated = $request->validate([
+            'origen_id' => [
+                'required',
+                'exists:lugares,id',
+                Rule::unique('rutas')->where(fn ($query) => $query
+                    ->where('origen_id', $request->origen_id)
+                    ->where('destino_id', $request->destino_id))
+                    ->ignore($ruta->id),
+            ],
+            'destino_id' => ['required', 'exists:lugares,id', 'different:origen_id'],
+            'kilometraje' => ['nullable', 'numeric', 'min:0'],
+            'activa' => ['boolean'],
+            'vehiculos' => ['required', 'array', 'min:1'],
+            'vehiculos.*.id' => ['required', 'exists:vehiculos,id', 'distinct'],
+            'vehiculos.*.precio' => ['required', 'numeric', 'min:0'],
+        ]);
+
+        DB::transaction(function () use ($ruta, $validated, $request) {
+            $ruta->update([
+                'origen_id' => $validated['origen_id'],
+                'destino_id' => $validated['destino_id'],
+                'kilometraje' => $validated['kilometraje'] ?? null,
+                'activa' => $request->boolean('activa'),
+            ]);
+
+            $ruta->vehiculosDisponibles()->sync($this->vehiclePrices($validated['vehiculos']));
+        });
+
+        return back()->with('success', 'Ruta actualizada.');
     }
 
     public function destroy(Ruta $ruta)
     {
         $ruta->delete();
         return back()->with('success', 'Ruta eliminada.');
+    }
+
+    private function vehiclePrices(array $vehicles): array
+    {
+        return collect($vehicles)
+            ->mapWithKeys(fn (array $vehicle) => [
+                $vehicle['id'] => ['precio_tarifa' => $vehicle['precio']],
+            ])
+            ->all();
     }
 }

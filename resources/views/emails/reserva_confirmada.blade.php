@@ -11,7 +11,7 @@
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;">
                     <tr>
                         <td align="center" style="padding:12px 0 24px;">
-                            <img src="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/logo.png?raw=true" alt="DIY Antigua" style="width:132px;height:auto;display:block;">
+                            <img src="https://github.com/Olstertecn11/DIYAntigua/blob/main/public/images/logo.png?raw=true" alt="DYANTIGUA" style="width:132px;height:auto;display:block;">
                         </td>
                     </tr>
                     <tr>
@@ -61,7 +61,7 @@
                     </tr>
                     <tr>
                         <td align="center" style="padding:22px;color:#6b7280;font-size:12px;line-height:1.6;">
-                            © {{ date('Y') }} DIY Antigua Private Transfers<br>
+                            © {{ date('Y') }} DYANTIGUA Private Transfers<br>
                             Este correo fue enviado automáticamente por tu reserva.
                         </td>
                     </tr>

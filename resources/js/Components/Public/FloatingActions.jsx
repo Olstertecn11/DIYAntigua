@@ -1,11 +1,8 @@
-import { useState } from 'react';
+import { useLanguage } from '@/Contexts/LanguageContext';
 
 export default function FloatingActions() {
-    const [language, setLanguage] = useState('ES');
-
-    const toggleLanguage = () => {
-        setLanguage((current) => (current === 'ES' ? 'EN' : 'ES'));
-    };
+    const { language, toggleLanguage } = useLanguage();
+    const nextLanguage = language === 'ES' ? 'EN' : 'ES';
 
     return (
         <div className="fixed bottom-5 right-5 z-[120] flex flex-col gap-3">
@@ -13,10 +10,10 @@ export default function FloatingActions() {
                 type="button"
                 onClick={toggleLanguage}
                 className="flex h-12 w-12 items-center justify-center rounded-full border border-black/10 bg-white text-xs font-black text-slate-950 shadow-2xl transition hover:-translate-y-0.5"
-                title="Cambiar idioma"
-                aria-label="Cambiar idioma"
+                title={language === 'ES' ? 'Cambiar a ingles' : 'Switch to Spanish'}
+                aria-label={language === 'ES' ? 'Cambiar a ingles' : 'Switch to Spanish'}
             >
-                {language}
+                {nextLanguage}
             </button>
             <a
                 href="https://wa.me/50200000000"

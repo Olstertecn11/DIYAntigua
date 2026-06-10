@@ -17,7 +17,9 @@ class LugarController extends Controller
                 'id' => $lugar->id,
                 'nombre' => $lugar->nombre,
                 'ciudad' => $lugar->ciudad,
+                'estado' => $lugar->estado,
                 'urls' => [
+                    'update' => route('admin.lugares.update', $lugar),
                     'destroy' => route('admin.lugares.destroy', $lugar),
                 ],
             ])->values(),
@@ -29,9 +31,27 @@ class LugarController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['nombre' => 'required|string|max:191']);
-        Lugar::create($request->all());
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'max:191'],
+            'ciudad' => ['nullable', 'string', 'max:191'],
+            'estado' => ['nullable', 'string', 'max:191'],
+        ]);
+
+        Lugar::create($validated);
         return back()->with('success', 'Lugar guardado con éxito.');
+    }
+
+    public function update(Request $request, Lugar $lugare)
+    {
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'max:191'],
+            'ciudad' => ['nullable', 'string', 'max:191'],
+            'estado' => ['nullable', 'string', 'max:191'],
+        ]);
+
+        $lugare->update($validated);
+
+        return back()->with('success', 'Lugar actualizado.');
     }
 
     public function destroy(Lugar $lugare)

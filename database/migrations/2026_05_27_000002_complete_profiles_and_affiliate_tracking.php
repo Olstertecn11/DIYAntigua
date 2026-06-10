@@ -53,10 +53,17 @@ return new class extends Migration
             });
         }
 
-        if (Schema::hasTable('users') && Schema::hasTable('afiliados_info')) {
-            DB::table('users')
-                ->whereIn('id', DB::table('afiliados_info')->select('user_id'))
-                ->update(['role_id' => config('constantes.idAffiliate')]);
+        if (Schema::hasTable('users') && Schema::hasTable('roles') && Schema::hasTable('role_user') && Schema::hasTable('afiliados_info')) {
+            $affiliateRoleId = DB::table('roles')->where('slug', 'afiliado')->value('id');
+
+            if ($affiliateRoleId) {
+                DB::statement('
+                    insert ignore into role_user (user_id, role_id, created_at, updated_at)
+                    select user_id, ?, now(), now()
+                    from afiliados_info
+                    where user_id is not null
+                ', [$affiliateRoleId]);
+            }
         }
     }
 

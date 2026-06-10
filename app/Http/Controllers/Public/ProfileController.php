@@ -22,6 +22,7 @@ class ProfileController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'avatar_base64' => $user->avatar_base64,
                 'telefono_country_code' => $phone['country'],
                 'telefono_national' => $phone['number'],
                 'direccion' => $user->direccion,
@@ -44,6 +45,7 @@ class ProfileController extends Controller
             'telefono_country_code' => ['nullable', 'required_with:telefono_national', 'string', 'in:' . implode(',', array_keys(config('phone.countries', [])))],
             'telefono_national' => ['nullable', 'string', 'max:30', 'regex:/^[0-9\s().-]{5,30}$/'],
             'direccion' => ['nullable', 'string', 'max:255'],
+            'avatar_base64' => ['nullable', 'string', 'max:650000', 'regex:/^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+\/=]+$/'],
         ]);
 
         $user->fill([
@@ -51,6 +53,7 @@ class ProfileController extends Controller
             'email' => $validated['email'],
             'telefono' => PhoneNumber::format($validated['telefono_country_code'] ?? null, $validated['telefono_national'] ?? null),
             'direccion' => $validated['direccion'] ?? null,
+            'avatar_base64' => $validated['avatar_base64'] ?? null,
         ])->save();
 
         return back()->with('success', 'Tu perfil fue actualizado.');

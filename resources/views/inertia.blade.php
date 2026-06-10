@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title inertia>{{ config('app.name', 'DIY Antigua') }}</title>
+    <title inertia>{{ config('app.name', 'DYANTIGUA') }}</title>
 
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Montserrat:400,500,600,700,800,900" rel="stylesheet">

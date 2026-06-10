@@ -4,23 +4,51 @@ import AdminLayout from '@/Layouts/AdminLayout';
 
 export default function ConductoresIndex({ conductores, urls }) {
     const [openModal, setOpenModal] = useState(false);
-    const { data, setData, post, processing, reset, errors } = useForm({
+    const [editUrl, setEditUrl] = useState(null);
+    const { data, setData, post, put, processing, reset, errors } = useForm({
         nombre: '',
         telefono: '',
         vehiculo_modelo: '',
         placa: '',
+        estado: 'activo',
     });
+
+    const openCreate = () => {
+        reset();
+        setData({ nombre: '', telefono: '', vehiculo_modelo: '', placa: '', estado: 'activo' });
+        setEditUrl(null);
+        setOpenModal(true);
+    };
+
+    const openEdit = (conductor) => {
+        setData({
+            nombre: conductor.nombre || '',
+            telefono: conductor.telefono || '',
+            vehiculo_modelo: conductor.vehiculo_modelo || '',
+            placa: conductor.placa || '',
+            estado: conductor.estado || 'activo',
+        });
+        setEditUrl(conductor.urls.update);
+        setOpenModal(true);
+    };
 
     const submit = (event) => {
         event.preventDefault();
 
-        post(urls.store, {
+        const options = {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
                 setOpenModal(false);
+                setEditUrl(null);
             },
-        });
+        };
+
+        if (editUrl) {
+            put(editUrl, options);
+        } else {
+            post(urls.store, options);
+        }
     };
 
     const destroy = (conductor) => {
@@ -43,7 +71,7 @@ export default function ConductoresIndex({ conductores, urls }) {
                     </div>
                     <button
                         type="button"
-                        onClick={() => setOpenModal(true)}
+                        onClick={openCreate}
                         className="inline-flex items-center justify-center rounded-md bg-white px-6 py-2 text-xs font-bold text-black shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all hover:bg-gray-200"
                     >
                         <i className="fas fa-plus mr-2" />
@@ -85,13 +113,22 @@ export default function ConductoresIndex({ conductores, urls }) {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <button
-                                                type="button"
-                                                onClick={() => destroy(conductor)}
-                                                className="text-xs font-bold uppercase text-red-500/50 transition-colors hover:text-red-500"
-                                            >
-                                                Eliminar
-                                            </button>
+                                            <div className="flex justify-end gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => openEdit(conductor)}
+                                                    className="text-xs font-bold uppercase text-white/60 transition-colors hover:text-white"
+                                                >
+                                                    Editar
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => destroy(conductor)}
+                                                    className="text-xs font-bold uppercase text-red-500/50 transition-colors hover:text-red-500"
+                                                >
+                                                    Eliminar
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 )) : (
@@ -111,7 +148,7 @@ export default function ConductoresIndex({ conductores, urls }) {
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
                     <div className="w-full max-w-md overflow-hidden rounded-xl border border-[#262626] bg-[#0a0a0a]">
                         <div className="p-8">
-                            <h2 className="mb-6 text-xl font-bold text-white">Registrar Conductor</h2>
+                            <h2 className="mb-6 text-xl font-bold text-white">{editUrl ? 'Editar Conductor' : 'Registrar Conductor'}</h2>
                             <form onSubmit={submit}>
                                 <div className="space-y-4">
                                     <Input label="Nombre Completo" value={data.nombre} error={errors.nombre} onChange={(value) => setData('nombre', value)} required />
@@ -119,6 +156,15 @@ export default function ConductoresIndex({ conductores, urls }) {
                                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                         <Input label="Modelo Vehiculo" placeholder="Ej. Toyota Fortuner" value={data.vehiculo_modelo} error={errors.vehiculo_modelo} onChange={(value) => setData('vehiculo_modelo', value)} />
                                         <Input label="Placa" placeholder="P-000XXX" value={data.placa} error={errors.placa} onChange={(value) => setData('placa', value)} required />
+                                    </div>
+                                    <div>
+                                        <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-[#737373]">Estado</label>
+                                        <select value={data.estado} onChange={(event) => setData('estado', event.target.value)} className="w-full rounded-md border border-[#262626] bg-black px-3 py-2 text-sm text-white transition-all focus:border-white focus:outline-none">
+                                            <option value="activo">Activo</option>
+                                            <option value="inactivo">Inactivo</option>
+                                            <option value="en_viaje">En viaje</option>
+                                        </select>
+                                        {errors.estado && <p className="mt-2 text-xs font-bold text-red-400">{errors.estado}</p>}
                                     </div>
                                 </div>
                                 <div className="mt-8 flex gap-3">
@@ -134,7 +180,7 @@ export default function ConductoresIndex({ conductores, urls }) {
                                         disabled={processing}
                                         className="flex-1 rounded-md bg-white px-4 py-2 text-xs font-bold text-black transition-all hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
                                     >
-                                        {processing ? 'Guardando...' : 'Guardar'}
+                                        {processing ? 'Guardando...' : editUrl ? 'Actualizar' : 'Guardar'}
                                     </button>
                                 </div>
                             </form>

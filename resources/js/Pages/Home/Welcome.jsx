@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { destinations } from '@/Data/destinations';
+import { useLanguage } from '@/Contexts/LanguageContext';
 import { useMemo, useState } from 'react';
 
 const images = {
@@ -79,7 +80,7 @@ function ProcessStep({ number, title, text }) {
 function FleetCard({ image, label, title, text, items, featured = false }) {
     return (
         <article
-            className={`relative overflow-hidden rounded-[2rem] bg-white/5 transition ${
+            className={`relative min-w-[82vw] overflow-hidden rounded-[2rem] bg-white/5 transition sm:min-w-[360px] md:min-w-0 ${
                 featured
                     ? 'border border-yellow-300/60 shadow-2xl shadow-yellow-500/10'
                     : 'border border-white/10 hover:border-yellow-300/60'
@@ -156,6 +157,7 @@ function FaqItem({ question, answer }) {
 }
 
 export default function Welcome({ rutas = [], urls = {} }) {
+    const { t } = useLanguage();
     const [form, setForm] = useState({
         origen: '',
         destino: '',
@@ -163,6 +165,7 @@ export default function Welcome({ rutas = [], urls = {} }) {
         hora: '',
         pasajeros: 2,
     });
+    const [submitting, setSubmitting] = useState(false);
 
     const origenes = useMemo(() => uniqueById(rutas.map((ruta) => ruta.origen).filter(Boolean)), [rutas]);
     const destinos = useMemo(() => {
@@ -180,7 +183,15 @@ export default function Welcome({ rutas = [], urls = {} }) {
 
     const submit = (event) => {
         event.preventDefault();
-        router.get(urls.cotizar || '/reservas/cotizar', form);
+
+        if (submitting) {
+            return;
+        }
+
+        setSubmitting(true);
+        router.get(urls.cotizar || '/reservas/cotizar', form, {
+            onFinish: () => setSubmitting(false),
+        });
     };
 
     return (
@@ -188,7 +199,7 @@ export default function Welcome({ rutas = [], urls = {} }) {
             <Head title="Traslados privados en Guatemala" />
 
             <main className="min-h-screen bg-white text-slate-950">
-                <header id="inicio" className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+                <header id="inicio" className="relative overflow-hidden bg-slate-950 text-white lg:min-h-[calc(100vh-72px)]">
                     <div
                         className="absolute inset-0 bg-cover bg-center"
                         style={{
@@ -197,57 +208,50 @@ export default function Welcome({ rutas = [], urls = {} }) {
                     />
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(250,204,21,.24),transparent_28%),radial-gradient(circle_at_80%_30%,rgba(59,130,246,.15),transparent_26%),radial-gradient(circle_at_50%_90%,rgba(251,146,60,.18),transparent_30%)]" />
 
-                    <div className="relative z-10 mx-auto grid min-h-screen max-w-7xl items-center gap-12 px-6 pb-16 pt-28 lg:grid-cols-2 lg:pb-20 lg:pt-32">
+                    <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-6 px-6 pb-10 pt-20 lg:min-h-[calc(100vh-72px)] lg:grid-cols-[0.95fr_1.05fr] lg:gap-10 lg:pb-10 lg:pt-24">
                         <section>
-                            <p className="mb-5 inline-flex rounded-full border border-yellow-300/30 bg-yellow-300/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
-                                Traslados privados en Guatemala
+                            <p className="mb-3 inline-flex rounded-full border border-yellow-300/30 bg-yellow-300/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-yellow-300 md:mb-4 md:text-xs">
+                                {t('Traslados privados en Guatemala')}
                             </p>
-                            <h1 className="mb-6 text-5xl font-black leading-tight tracking-normal md:text-6xl lg:text-7xl">
-                                Viaja comodo, <span className="bg-gradient-to-br from-yellow-300 to-orange-400 bg-clip-text text-transparent">seguro</span> y sin complicaciones.
+                            <h1 className="mb-4 text-3xl font-black leading-tight tracking-normal sm:text-4xl md:mb-5 md:text-5xl xl:text-6xl">
+                                {t('Viaja comodo, ')}<span className="bg-gradient-to-br from-yellow-300 to-orange-400 bg-clip-text text-transparent">{t('seguro')}</span>{t(' y sin complicaciones.')}
                             </h1>
-                            <p className="mb-8 max-w-2xl text-lg leading-relaxed text-slate-200 md:text-xl">
-                                Reserva tu traslado privado entre Ciudad de Guatemala, Antigua Guatemala, Panajachel,
-                                Quetzaltenango y mas destinos. Precio claro antes de confirmar, conductores verificados
-                                y atencion personalizada.
+                            <p className="mb-5 max-w-2xl text-sm leading-relaxed text-slate-200 sm:text-base md:mb-6 md:text-lg">
+                                {t('Reserva tu traslado privado entre Ciudad de Guatemala, Antigua Guatemala, Panajachel, Quetzaltenango y mas destinos. Precio claro antes de confirmar, conductores verificados y atencion personalizada.')}
                             </p>
-                            <div className="mb-10 flex flex-col gap-4 sm:flex-row">
-                                <GoldButton href="#booking">Reservar ahora</GoldButton>
+                            <div className="mb-5 flex flex-col gap-3 sm:mb-7 sm:flex-row">
+                                <GoldButton href="#booking">{t('Reservar ahora')}</GoldButton>
                                 <a
                                     href="#nosotros"
                                     className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-7 py-4 font-bold text-white no-underline transition hover:bg-white/20"
                                 >
-                                    Ver como funciona
+                                    {t('Ver como funciona')}
                                 </a>
-                            </div>
-                            <div className="grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
-                                <Stat value="24/7" label="Soporte y confirmacion" dark />
-                                <Stat value="100%" label="Precio visible" dark />
-                                <Stat value="+1,500" label="Viajes realizados" dark />
                             </div>
                         </section>
 
-                        <section id="booking" className="lg:pl-8">
-                            <div className="rounded-[2rem] border border-white/45 bg-white/95 p-6 text-slate-950 shadow-2xl backdrop-blur md:p-8">
-                                <div className="mb-6">
+                        <section id="booking" className="scroll-mt-24 lg:pl-4">
+                            <div className="rounded-[1.75rem] border border-white/45 bg-white/95 p-5 text-slate-950 shadow-2xl backdrop-blur md:p-6">
+                                <div className="mb-5">
                                     <span className="inline-flex rounded-full bg-slate-900 px-4 py-2 text-xs font-black uppercase tracking-widest text-yellow-300">
-                                        Reserva rapida
+                                        {t('Reserva rapida')}
                                     </span>
-                                    <h2 className="mb-2 mt-4 text-3xl font-black text-slate-950">Cotiza tu traslado</h2>
-                                    <p className="mb-0 text-slate-500">Selecciona origen, destino, fecha y numero de pasajeros.</p>
+                                    <h2 className="mb-2 mt-3 text-2xl font-black text-slate-950 md:text-3xl">{t('Cotiza tu traslado')}</h2>
+                                    <p className="mb-0 text-slate-500">{t('Selecciona origen, destino, fecha y numero de pasajeros.')}</p>
                                 </div>
 
-                                <form onSubmit={submit} className="space-y-4">
-                                    <div className="grid gap-4 md:grid-cols-2">
+                                <form onSubmit={submit} className="space-y-3">
+                                    <div className="grid gap-3 md:grid-cols-2">
                                         <div>
-                                            <label className="mb-2 block text-sm font-black text-slate-700">Origen</label>
+                                            <label className="mb-2 block text-sm font-black text-slate-700">{t('Origen')}</label>
                                             <select
                                                 value={form.origen}
                                                 onChange={(event) => setForm((current) => ({ ...current, origen: event.target.value, destino: '' }))}
                                                 required
                                                 disabled={!origenes.length}
-                                                className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-3 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100"
+                                                className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100"
                                             >
-                                                <option value="">{origenes.length ? 'Selecciona origen' : 'No hay rutas disponibles'}</option>
+                                                <option value="">{origenes.length ? t('Selecciona origen') : t('No hay rutas disponibles')}</option>
                                                 {origenes.map((origen) => (
                                                     <option key={origen.id} value={origen.id}>{origen.nombre}</option>
                                                 ))}
@@ -255,15 +259,15 @@ export default function Welcome({ rutas = [], urls = {} }) {
                                         </div>
 
                                         <div>
-                                            <label className="mb-2 block text-sm font-black text-slate-700">Destino</label>
+                                            <label className="mb-2 block text-sm font-black text-slate-700">{t('Destino')}</label>
                                             <select
                                                 value={form.destino}
                                                 onChange={(event) => setForm((current) => ({ ...current, destino: event.target.value }))}
                                                 required
                                                 disabled={!destinos.length}
-                                                className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-3 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100"
+                                                className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100"
                                             >
-                                                <option value="">{destinos.length ? 'Selecciona destino' : 'Elige origen primero'}</option>
+                                                <option value="">{destinos.length ? t('Selecciona destino') : t('Elige origen primero')}</option>
                                                 {destinos.map((destino) => (
                                                     <option key={destino.id} value={destino.id}>{destino.nombre}</option>
                                                 ))}
@@ -271,30 +275,30 @@ export default function Welcome({ rutas = [], urls = {} }) {
                                         </div>
                                     </div>
 
-                                    <div className="grid gap-4 md:grid-cols-3">
+                                    <div className="grid gap-3 md:grid-cols-3">
                                         <div>
-                                            <label className="mb-2 block text-sm font-black text-slate-700">Fecha</label>
+                                            <label className="mb-2 block text-sm font-black text-slate-700">{t('Fecha')}</label>
                                             <input
                                                 type="date"
                                                 value={form.fecha}
                                                 min={new Date().toISOString().slice(0, 10)}
                                                 onChange={(event) => setForm((current) => ({ ...current, fecha: event.target.value }))}
                                                 required
-                                                className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-3 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100"
+                                                className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100"
                                             />
                                         </div>
                                         <div>
-                                            <label className="mb-2 block text-sm font-black text-slate-700">Hora</label>
+                                            <label className="mb-2 block text-sm font-black text-slate-700">{t('Hora')}</label>
                                             <input
                                                 type="time"
                                                 value={form.hora}
                                                 onChange={(event) => setForm((current) => ({ ...current, hora: event.target.value }))}
                                                 required
-                                                className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-3 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100"
+                                                className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100"
                                             />
                                         </div>
                                         <div>
-                                            <label className="mb-2 block text-sm font-black text-slate-700">Pasajeros</label>
+                                            <label className="mb-2 block text-sm font-black text-slate-700">{t('Pasajeros')}</label>
                                             <input
                                                 type="number"
                                                 value={form.pasajeros}
@@ -302,26 +306,19 @@ export default function Welcome({ rutas = [], urls = {} }) {
                                                 max="15"
                                                 onChange={(event) => setForm((current) => ({ ...current, pasajeros: event.target.value }))}
                                                 required
-                                                className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-3 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100"
+                                                className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-slate-800 shadow-sm outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100"
                                             />
                                         </div>
                                     </div>
 
                                     <button
                                         type="submit"
-                                        className="w-full rounded-2xl bg-gradient-to-br from-yellow-300 to-orange-400 px-6 py-3 text-lg font-black text-slate-950 shadow-xl shadow-yellow-500/20 transition hover:scale-[1.01]"
+                                        disabled={submitting}
+                                        className="w-full rounded-2xl bg-gradient-to-br from-yellow-300 to-orange-400 px-6 py-3 text-base font-black text-slate-950 shadow-xl shadow-yellow-500/20 transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
                                     >
-                                        Ver tarifas disponibles
+                                        {submitting ? t('Buscando tarifas...') : t('Ver tarifas disponibles')}
                                     </button>
                                 </form>
-
-                                <div className="mt-5 grid grid-cols-1 gap-3 text-center sm:grid-cols-3">
-                                    {['Sin cargos ocultos', 'Codigo de reserva', 'Confirmacion rapida'].map((label) => (
-                                        <div key={label} className="rounded-2xl bg-slate-50 p-3">
-                                            <p className="mb-0 text-xs font-bold text-slate-500">{label}</p>
-                                        </div>
-                                    ))}
-                                </div>
                             </div>
                         </section>
                     </div>
@@ -336,51 +333,49 @@ export default function Welcome({ rutas = [], urls = {} }) {
                     </div>
                 </section>
 
-                <section className="bg-white py-24">
+                <section className="bg-white py-16 md:py-20">
                     <div className="mx-auto max-w-7xl px-6">
-                        <div className="mx-auto mb-16 max-w-3xl text-center">
-                            <p className="mb-3 text-sm font-black uppercase tracking-widest text-yellow-500">Por que elegirnos</p>
-                            <h2 className="mb-5 text-4xl font-black text-slate-950 md:text-5xl">Una experiencia diseñada para viajar tranquilo.</h2>
+                        <div className="mx-auto mb-12 max-w-3xl text-center">
+                            <p className="mb-3 text-sm font-black uppercase tracking-widest text-yellow-500">{t('Por que elegirnos')}</p>
+                            <h2 className="mb-5 text-4xl font-black text-slate-950 md:text-5xl">{t('Una experiencia diseñada para viajar tranquilo.')}</h2>
                             <p className="mb-0 text-lg text-slate-500">
-                                Ideal para turistas, familias, ejecutivos, grupos pequeños y viajeros que buscan seguridad,
-                                puntualidad y una reserva sencilla.
+                                {t('Ideal para turistas, familias, ejecutivos, grupos pequeños y viajeros que buscan seguridad, puntualidad y una reserva sencilla.')}
                             </p>
                         </div>
 
                         <div className="grid gap-6 md:grid-cols-3">
                             <BenefitCard
                                 icon="fa-shield-halved"
-                                title="Conductores verificados"
-                                text="Personal profesional, puntual y con conocimiento de rutas turisticas y zonas urbanas."
+                                title={t('Conductores verificados')}
+                                text={t('Personal profesional, puntual y con conocimiento de rutas turisticas y zonas urbanas.')}
                             />
                             <BenefitCard
                                 icon="fa-credit-card"
-                                title="Precio claro"
-                                text="Visualiza la tarifa antes de confirmar. Sin cargos sorpresa ni negociacion incomoda."
+                                title={t('Precio claro')}
+                                text={t('Visualiza la tarifa antes de confirmar. Sin cargos sorpresa ni negociacion incomoda.')}
                             />
                             <BenefitCard
                                 icon="fa-mobile-screen-button"
-                                title="Reserva facil"
-                                text="Reserva como invitado o con cuenta. Recibe tu codigo para consultar el estado del servicio."
+                                title={t('Reserva facil')}
+                                text={t('Reserva como invitado o con cuenta. Recibe tu codigo para consultar el estado del servicio.')}
                             />
                         </div>
                     </div>
                 </section>
 
-                <section id="nosotros" className="bg-slate-50 py-24">
+                <section id="nosotros" className="bg-slate-50 py-16 md:py-20">
                     <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-2">
                         <div>
-                            <p className="mb-3 text-sm font-black uppercase tracking-widest text-yellow-500">Proceso simple</p>
-                            <h2 className="mb-6 text-4xl font-black text-slate-950 md:text-5xl">Reserva tu traslado en tres pasos.</h2>
+                            <p className="mb-3 text-sm font-black uppercase tracking-widest text-yellow-500">{t('Proceso simple')}</p>
+                            <h2 className="mb-6 text-4xl font-black text-slate-950 md:text-5xl">{t('Reserva tu traslado en tres pasos.')}</h2>
                             <p className="mb-8 text-lg leading-relaxed text-slate-500">
-                                La plataforma esta pensada para que cualquier persona pueda cotizar, elegir, confirmar
-                                y consultar su reserva sin complicaciones.
+                                {t('La plataforma esta pensada para que cualquier persona pueda cotizar, elegir, confirmar y consultar su reserva sin complicaciones.')}
                             </p>
 
                             <div className="space-y-5">
-                                <ProcessStep number="1" title="Selecciona tu ruta" text="Elige origen, destino, fecha, hora y numero de pasajeros." />
-                                <ProcessStep number="2" title="Compara opciones" text="Visualiza vehiculos, capacidad, comodidad y precio final." />
-                                <ProcessStep number="3" title="Confirma tu reserva" text="Recibe codigo, detalles del servicio y seguimiento de tu traslado." />
+                                <ProcessStep number="1" title={t('Elegir')} text={t('Elige ruta, fecha, hora, pasajeros y el vehiculo ideal.')} />
+                                <ProcessStep number="2" title={t('Confirmar')} text={t('Confirma datos, verifica tu correo y paga de forma segura.')} />
+                                <ProcessStep number="3" title={t('Visualizar en tiempo real tu reserva sin complicaciones')} text={t('Consulta estado, comprobante y cuenta regresiva desde Mis reservas.')} />
                             </div>
                         </div>
 
@@ -388,10 +383,10 @@ export default function Welcome({ rutas = [], urls = {} }) {
                             <div className="relative overflow-hidden rounded-[2rem] shadow-2xl">
                                 <img src={images.trip} alt="Traslado turistico en Guatemala" className="h-[340px] w-full object-cover sm:h-[440px] lg:h-[520px]" />
                                 <div className="absolute inset-x-6 bottom-6 rounded-3xl border border-white/10 bg-slate-950/75 p-6 text-white backdrop-blur">
-                                    <p className="mb-2 text-sm font-black uppercase tracking-widest text-yellow-300">Servicio privado</p>
-                                    <h3 className="mb-2 text-2xl font-black">Del aeropuerto a tu destino sin estres.</h3>
+                                    <p className="mb-2 text-sm font-black uppercase tracking-widest text-yellow-300">{t('Servicio privado')}</p>
+                                    <h3 className="mb-2 text-2xl font-black">{t('Del aeropuerto a tu destino sin estres.')}</h3>
                                     <p className="mb-0 text-sm text-slate-300">
-                                        Perfecto para llegadas, salidas, tours, reuniones o viajes familiares.
+                                        {t('Perfecto para llegadas, salidas, tours, reuniones o viajes familiares.')}
                                     </p>
                                 </div>
                             </div>
@@ -399,19 +394,20 @@ export default function Welcome({ rutas = [], urls = {} }) {
                     </div>
                 </section>
 
-                <section id="tours" className="bg-slate-950 py-24 text-white">
+                <section id="tours" className="bg-slate-950 py-16 text-white md:py-20">
                     <div className="mx-auto max-w-7xl px-6">
-                        <div className="mb-14 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                        <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                             <div>
-                                <p className="mb-3 text-sm font-black uppercase tracking-widest text-yellow-300">Nuestra flota</p>
-                                <h2 className="mb-0 text-4xl font-black md:text-5xl">Opciones para cada tipo de viaje.</h2>
+                                <p className="mb-3 text-sm font-black uppercase tracking-widest text-yellow-300">{t('Nuestra flota')}</p>
+                                <h2 className="mb-0 text-4xl font-black md:text-5xl">{t('Opciones para cada tipo de viaje.')}</h2>
                             </div>
                             <p className="mb-0 max-w-xl text-slate-400">
-                                Vehiculos privados para traslados ejecutivos, familiares, turismo y grupos.
+                                {t('Vehiculos privados para traslados ejecutivos, familiares, turismo y grupos.')}
                             </p>
                         </div>
 
-                        <div className="grid gap-6 md:grid-cols-3">
+                        <div className="-mx-6 overflow-x-auto px-6 pb-3 md:mx-0 md:overflow-visible md:px-0 md:pb-0">
+                            <div className="flex gap-5 md:grid md:grid-cols-3 md:gap-6">
                             <FleetCard
                                 image={images.sedan}
                                 label="1-3 pasajeros"
@@ -434,18 +430,19 @@ export default function Welcome({ rutas = [], urls = {} }) {
                                 text="Solucion comoda para excursiones, eventos, colegios o empresas."
                                 items={['Equipaje grupal', 'Viajes corporativos', 'Tours y eventos']}
                             />
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                <section id="destinos" className="bg-white py-24">
+                <section id="destinos" className="bg-white py-16 md:py-20">
                     <div className="mx-auto max-w-7xl px-6">
-                        <div className="mb-14 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                        <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                             <div>
-                                <p className="mb-3 text-sm font-black uppercase tracking-widest text-yellow-500">Destinos destacados</p>
-                                <h2 className="mb-0 text-4xl font-black text-slate-950 md:text-5xl">Explora Guatemala</h2>
+                                <p className="mb-3 text-sm font-black uppercase tracking-widest text-yellow-500">{t('Destinos destacados')}</p>
+                                <h2 className="mb-0 text-4xl font-black text-slate-950 md:text-5xl">{t('Descubre Guatemala')}</h2>
                             </div>
-                            <GoldButton href="#booking" className="self-start lg:self-auto">Cotizar destino</GoldButton>
+                            <GoldButton href="#booking" className="self-start lg:self-auto">{t('Cotizar destino')}</GoldButton>
                         </div>
 
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -462,12 +459,12 @@ export default function Welcome({ rutas = [], urls = {} }) {
                     </div>
                 </section>
 
-                <section className="bg-slate-50 py-24">
+                <section className="bg-slate-50 py-16 md:py-20">
                     <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-2">
                         <div className="overflow-hidden rounded-[2rem] shadow-2xl">
                             <img
-                                src="https://images.unsplash.com/photo-1494515843206-f3117d3f51b7?auto=format&fit=crop&w=1200&q=80"
-                                alt="Viaje seguro"
+                                src={images.suv}
+                                alt="Traslado privado en SUV"
                                 className="h-[420px] w-full object-cover lg:h-[520px]"
                             />
                         </div>
@@ -490,34 +487,34 @@ export default function Welcome({ rutas = [], urls = {} }) {
                     </div>
                 </section>
 
-                <section className="bg-white py-24">
+                <section className="bg-white py-16 md:py-20">
                     <div className="mx-auto max-w-7xl px-6">
-                        <div className="mx-auto mb-14 max-w-3xl text-center">
+                        <div className="mx-auto mb-10 max-w-3xl text-center">
                             <p className="mb-3 text-sm font-black uppercase tracking-widest text-yellow-500">Opiniones</p>
                             <h2 className="mb-0 text-4xl font-black text-slate-950 md:text-5xl">Viajeros que confiaron en nosotros.</h2>
                         </div>
 
                         <div className="grid gap-6 md:grid-cols-3">
                             <Testimonial
-                                quote="Servicio puntual, vehiculo limpio y conductor muy amable. Perfecto para llegar desde el aeropuerto a Antigua."
-                                name="Maria G."
-                                meta="Traslado aeropuerto"
+                                quote="Reservamos desde el telefono y en minutos ya teniamos precio, codigo y confirmacion. El conductor llego exacto."
+                                name="Valeria M."
+                                meta="Aeropuerto a Antigua"
                             />
                             <Testimonial
-                                quote="La reserva fue rapida y el precio estaba claro desde el inicio. Muy recomendado para familias."
-                                name="Carlos R."
-                                meta="Viaje familiar"
+                                quote="Me gusto poder revisar mi reserva despues del pago. Todo se sintio claro, moderno y sin llamadas innecesarias."
+                                name="Diego A."
+                                meta="Antigua a Ciudad de Guatemala"
                             />
                             <Testimonial
-                                quote="Contratamos microbus para un grupo y todo salio ordenado. Excelente comunicacion."
-                                name="Andrea M."
-                                meta="Traslado grupal"
+                                quote="Viajamos con equipaje y ninos, la SUV estaba limpia y el precio fue el mismo que vimos al cotizar."
+                                name="Sofia L."
+                                meta="Viaje familiar a Panajachel"
                             />
                         </div>
                     </div>
                 </section>
 
-                <section id="preguntas" className="bg-slate-950 py-24 text-white">
+                <section id="preguntas" className="bg-slate-950 py-16 text-white md:py-20">
                     <div className="mx-auto max-w-5xl px-6">
                         <div className="mb-14 text-center">
                             <p className="mb-3 text-sm font-black uppercase tracking-widest text-yellow-300">Preguntas frecuentes</p>
@@ -545,7 +542,7 @@ export default function Welcome({ rutas = [], urls = {} }) {
                     </div>
                 </section>
 
-                <section className="relative overflow-hidden bg-white py-24">
+                <section className="relative overflow-hidden bg-white py-16 md:py-20">
                     <div className="absolute inset-0 bg-gradient-to-br from-yellow-50 via-white to-orange-50" />
                     <div className="relative mx-auto max-w-5xl px-6 text-center">
                         <span className="mb-6 inline-flex rounded-full bg-slate-950 px-5 py-2 text-sm font-black uppercase tracking-widest text-yellow-300">

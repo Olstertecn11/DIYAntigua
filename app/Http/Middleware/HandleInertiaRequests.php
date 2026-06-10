@@ -34,6 +34,7 @@ class HandleInertiaRequests extends Middleware
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
+                    'avatar_base64' => $user->avatar_base64,
                     'roles' => $roles,
                     'is_admin' => in_array('admin', $roles, true),
                     'is_affiliate' => in_array('afiliado', $roles, true),

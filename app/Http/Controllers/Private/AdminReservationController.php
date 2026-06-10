@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Reservacion;
 use App\Services\Reservations\ReservationCancellationService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class AdminReservationController extends Controller
@@ -80,6 +81,8 @@ class AdminReservationController extends Controller
                 'index' => route('admin.reservas.index'),
                 'pdf' => route('reservas.pdf', $reserva->codigo_reserva),
                 'cancel' => route('admin.reservas.cancel', $reserva),
+                'status' => route('admin.reservas.status', $reserva),
+                'refund' => route('admin.reservas.refund', $reserva),
             ],
         ]);
     }
@@ -95,6 +98,35 @@ class AdminReservationController extends Controller
         return redirect()
             ->route('admin.reservas.show', $reserva)
             ->with('success', 'Reserva cancelada. Si aplica, el reembolso quedó pendiente de gestión.');
+    }
+
+    public function updateStatus(Request $request, Reservacion $reserva)
+    {
+        $validated = $request->validate([
+            'estado_viaje' => ['required', Rule::in(['programado', 'en_progreso', 'completado', 'cancelado'])],
+        ]);
+
+        $reserva->update($validated);
+
+        return back()->with('success', 'Estado de viaje actualizado.');
+    }
+
+    public function updateRefund(Request $request, Reservacion $reserva)
+    {
+        $validated = $request->validate([
+            'reembolso_estado' => ['nullable', Rule::in(['no_aplica', 'pendiente', 'revision', 'aprobado', 'rechazado', 'procesado'])],
+            'reembolso_monto' => ['nullable', 'numeric', 'min:0', 'max:' . max((float) $reserva->precio_total, 0)],
+        ]);
+
+        $reserva->update([
+            'reembolso_estado' => $validated['reembolso_estado'] ?: null,
+            'reembolso_monto' => $validated['reembolso_monto'] ?? null,
+            'reembolso_solicitado_at' => in_array($validated['reembolso_estado'] ?? null, ['pendiente', 'revision'], true)
+                ? ($reserva->reembolso_solicitado_at ?? now())
+                : $reserva->reembolso_solicitado_at,
+        ]);
+
+        return back()->with('success', 'Reembolso actualizado.');
     }
 
     private function formatReservation(Reservacion $reserva, bool $detail = false): array

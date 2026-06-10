@@ -40,10 +40,10 @@ function AuthFrame({ title, copy, home, children }) {
             <section className="w-full max-w-md rounded-[2rem] border border-white/70 bg-white/90 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.14)] backdrop-blur md:p-8">
                 <Link href={home || '/'} className="mb-8 flex items-center gap-3 no-underline">
                     <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-slate-950">
-                        <img src="/images/logo.png" alt="DIY Antigua" className="h-9 w-9 object-contain" />
+                        <img src="/images/logo.png" alt="DYANTIGUA" className="h-9 w-9 object-contain" />
                     </span>
                     <span>
-                        <span className="block text-sm font-black text-slate-950">DIY Antigua</span>
+                        <span className="block text-sm font-black text-slate-950">DYANTIGUA</span>
                         <span className="block text-xs text-slate-600">Private Transfers</span>
                     </span>
                 </Link>

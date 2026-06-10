@@ -10,14 +10,22 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('telefono', 30)->nullable();
+            $table->string('direccion')->nullable();
+            $table->longText('avatar_base64')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-
-            // RELACIÓN CON ROLES
-            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
-
             $table->rememberToken();
             $table->timestamps();
+        });
+
+        Schema::create('role_user', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('role_id')->constrained('roles')->cascadeOnDelete();
+            $table->timestamps();
+
+            $table->unique(['user_id', 'role_id']);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -37,8 +45,9 @@ return new class extends Migration {
     }
 
     public function down(): void {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('role_user');
+        Schema::dropIfExists('users');
     }
 };

@@ -18,7 +18,7 @@ class LoginController extends Controller
             'title' => 'Iniciar sesion',
             'kicker' => 'Acceso privado',
             'copy' => 'Accede a tu cuenta para gestionar tus reservas y datos de viaje.',
-            'sideTitle' => 'DIY Antigua',
+            'sideTitle' => 'DYANTIGUA',
             'sideCopy' => 'Gestiona reservas privadas de forma rapida, segura y clara.',
             'showRegister' => true,
             'urls' => [

@@ -58,7 +58,7 @@ function TextArea({ label, name, data, setData, errors, required = true, placeho
 
 function Panel({ title, kicker, children }) {
     return (
-        <section className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="soft-rise rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,.08)]">
             <div className="mb-5">
                 {kicker && <p className="mb-2 text-xs font-black uppercase tracking-[0.2em] text-yellow-600">{kicker}</p>}
                 <h2 className="mb-0 text-2xl font-black">{title}</h2>
@@ -152,6 +152,10 @@ export default function Detalles({
     const normalizeEmail = (value) => String(value || '').trim().toLowerCase();
     const isAuthenticatedEmail = authenticatedEmail && normalizeEmail(data.correo_cliente) === normalizeEmail(authenticatedEmail);
 
+    useEffect(() => {
+        setData('email_verification_token', '');
+    }, [data.correo_cliente]);
+
     const submitReservation = (token = data.email_verification_token) => {
         transform((values) => ({
             ...values,
@@ -187,7 +191,7 @@ export default function Detalles({
             const response = await axios.post(urls.sendEmailCode || '/reservas/email-code/send', {
                 correo_cliente: data.correo_cliente,
             });
-            setEmailMessage(response.data?.message || 'Codigo enviado correctamente.');
+            setEmailMessage(response.data?.message || 'Codigo enviado correctamente. Revisa tu bandeja de entrada.');
         } catch (error) {
             setEmailMessage(error.response?.data?.message || 'No pudimos enviar el codigo.');
         } finally {
@@ -218,7 +222,7 @@ export default function Detalles({
 
     return (
         <PublicLayout>
-        <main className="min-h-screen bg-[linear-gradient(135deg,#ffffff_0%,#f7f7f2_58%,#ecebe5_100%)] px-4 pb-12 pt-36 text-slate-950 sm:px-6">
+        <main className="min-h-screen bg-[linear-gradient(90deg,#FCCA00_0_10px,transparent_10px),linear-gradient(135deg,#ffffff_0%,#f7f7f2_58%,#ecebe5_100%)] px-4 pb-12 pt-36 text-slate-950 sm:px-6">
             <Head>
                 {fingerprint.orgId && fingerprint.fullSessionId && (
                     <script src={`https://h.online-metrix.net/fp/tags.js?org_id=${fingerprint.orgId}&session_id=${fingerprint.fullSessionId}`} type="application/javascript" />
@@ -243,10 +247,15 @@ export default function Detalles({
 
                 <form onSubmit={startSubmit} className="grid gap-8 lg:grid-cols-[1fr_360px]">
                     <div className="space-y-6">
-                        <div>
+                        <div className="soft-rise rounded-[2rem] border border-slate-200 bg-white/80 p-6 shadow-[0_24px_70px_rgba(15,23,42,.08)] backdrop-blur">
                             <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-yellow-600">Finalizar reserva</p>
                             <h1 className="mb-3 text-4xl font-black">Detalles del traslado</h1>
-                            <p className="mb-0 max-w-2xl text-slate-600">Revisaremos la informacion para confirmar tu traslado de forma segura.</p>
+                            <p className="mb-5 max-w-2xl text-slate-600">Revisaremos la informacion, verificaremos tu correo si no has iniciado sesion y procesaremos el pago de forma segura.</p>
+                            <div className="grid gap-3 md:grid-cols-3">
+                                <Step number="1" title="Datos" active />
+                                <Step number="2" title={isAuthenticatedEmail || data.email_verification_token ? 'Correo listo' : 'Verificacion'} active={isAuthenticatedEmail || Boolean(data.email_verification_token)} />
+                                <Step number="3" title="Pago seguro" active={processing} />
+                            </div>
                         </div>
 
                         <Panel title="Informacion personal" kicker="Paso 1">
@@ -321,14 +330,15 @@ export default function Detalles({
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="mt-6 w-full rounded-2xl bg-slate-950 px-6 py-4 text-sm font-black uppercase tracking-widest text-white shadow-xl transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+                                className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl bg-[#FCCA00] px-6 py-4 text-sm font-black uppercase tracking-widest text-black shadow-[0_18px_45px_rgba(252,202,0,.32)] transition hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-70"
                             >
-                                {processing ? 'Procesando...' : 'Confirmar y pagar'}
+                                {processing && <i className="fas fa-circle-notch animate-spin" />}
+                                {processing ? 'Procesando reserva y pago...' : isAuthenticatedEmail || data.email_verification_token ? 'Confirmar y pagar' : 'Verificar correo y pagar'}
                             </button>
                         </Panel>
                     </div>
 
-                    <aside className="h-fit rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-6">
+                    <aside className="soft-rise h-fit rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,.08)] lg:sticky lg:top-28">
                         <p className="mb-2 text-xs font-black uppercase tracking-[0.2em] text-yellow-600">Resumen</p>
                         <h2 className="mb-5 text-2xl font-black">Tu traslado</h2>
                         <div className="mb-5 rounded-2xl bg-slate-50 p-4">
@@ -351,8 +361,9 @@ export default function Detalles({
                             ))}
                         </div>
                         {!isAuthenticatedEmail && (
-                            <div className="mt-5 rounded-2xl bg-yellow-50 p-4 text-sm font-bold text-yellow-900">
-                                Verificaremos el correo antes de enviar el pago.
+                            <div className="mt-5 rounded-2xl border border-yellow-200 bg-yellow-50 p-4 text-sm font-bold text-yellow-900">
+                                <i className="fas fa-shield-halved mr-2" />
+                                {data.email_verification_token ? 'Correo verificado. Puedes continuar con el pago.' : 'Te enviaremos un codigo de 4 digitos antes de cobrar.'}
                             </div>
                         )}
                     </aside>
@@ -360,8 +371,8 @@ export default function Detalles({
             </div>
 
             {emailModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 px-4">
-                    <div className="w-full max-w-md rounded-[1.75rem] bg-white p-6 shadow-2xl">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm">
+                    <div className="w-full max-w-md rounded-[1.75rem] bg-white p-6 shadow-2xl soft-rise">
                         <button type="button" onClick={() => setEmailModalOpen(false)} className="ml-auto block h-9 w-9 rounded-full bg-slate-100 text-slate-600">
                             <i className="fas fa-times" />
                         </button>
@@ -382,13 +393,14 @@ export default function Detalles({
                             placeholder="0000"
                             className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-center text-2xl font-black tracking-[0.4em] outline-none focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100"
                         />
-                        {emailMessage && <p className="mt-3 rounded-2xl bg-slate-50 p-3 text-center text-sm font-bold text-slate-700">{emailMessage}</p>}
+                        {emailMessage && <p className="mt-3 rounded-2xl border border-yellow-100 bg-yellow-50 p-3 text-center text-sm font-bold text-yellow-900">{emailMessage}</p>}
                         <button
                             type="button"
                             onClick={verifyCode}
                             disabled={emailBusy || emailCode.length !== 4}
-                            className="mt-4 w-full rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black uppercase tracking-widest text-white disabled:cursor-not-allowed disabled:opacity-60"
+                            className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#FCCA00] px-5 py-3 text-sm font-black uppercase tracking-widest text-black disabled:cursor-not-allowed disabled:opacity-60"
                         >
+                            {emailBusy && <i className="fas fa-circle-notch animate-spin" />}
                             {emailBusy ? 'Verificando...' : 'Verificar y pagar'}
                         </button>
                         <button type="button" onClick={sendCode} disabled={emailBusy} className="mt-3 w-full text-sm font-black text-slate-600">
@@ -402,5 +414,24 @@ export default function Detalles({
             )}
         </main>
         </PublicLayout>
+    );
+}
+
+function Step({ number, title, active = false }) {
+    return (
+        <div className={[
+            'flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-black transition',
+            active ? 'border-[#FCCA00] bg-[#FCCA00]/20 text-black' : 'border-slate-200 bg-white text-slate-500',
+        ].join(' ')}
+        >
+            <span className={[
+                'flex h-8 w-8 items-center justify-center rounded-xl text-xs',
+                active ? 'bg-[#FCCA00]' : 'bg-slate-100',
+            ].join(' ')}
+            >
+                {number}
+            </span>
+            {title}
+        </div>
     );
 }

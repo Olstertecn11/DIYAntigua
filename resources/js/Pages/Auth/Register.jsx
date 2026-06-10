@@ -74,10 +74,10 @@ export default function Register({ countries = [], urls = {} }) {
                                 <div className="mb-10 flex items-center justify-between gap-4">
                                     <Link href={urls.home || '/'} className="flex items-center gap-3 no-underline">
                                         <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-slate-950 shadow-lg">
-                                            <img src="/images/logo.png" alt="DIY Antigua" className="h-9 w-9 object-contain" />
+                                            <img src="/images/logo.png" alt="DYANTIGUA" className="h-9 w-9 object-contain" />
                                         </span>
                                         <span>
-                                            <span className="block text-sm font-black leading-tight text-slate-950">DIY Antigua</span>
+                                            <span className="block text-sm font-black leading-tight text-slate-950">DYANTIGUA</span>
                                             <span className="block text-xs text-slate-600">Private Transfers</span>
                                         </span>
                                     </Link>
@@ -220,7 +220,7 @@ export default function Register({ countries = [], urls = {} }) {
                             <div className="absolute left-[18%] top-[8%] h-[86%] w-24 rotate-[22deg] rounded-full bg-gradient-to-b from-yellow-300/0 via-yellow-400/80 to-yellow-300/0 blur-xl" />
                             <div className="relative z-10 flex min-h-full w-full flex-col justify-between p-8 xl:p-10">
                                 <div className="flex items-center justify-between">
-                                    <div className="text-xs font-black uppercase tracking-[0.18em] text-[#facc15]">DIY Antigua</div>
+                                    <div className="text-xs font-black uppercase tracking-[0.18em] text-[#facc15]">DYANTIGUA</div>
                                     <div className="flex items-center gap-6 text-[11px] font-bold uppercase tracking-[0.16em] text-white/60">
                                         <span>Cuenta</span>
                                         <span>Reservas</span>

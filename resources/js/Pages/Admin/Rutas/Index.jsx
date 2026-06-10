@@ -9,12 +9,47 @@ function money(value) {
 export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
     const [openModal, setOpenModal] = useState(false);
     const [selectedVehiculo, setSelectedVehiculo] = useState('');
-    const { data, setData, post, processing, reset, errors } = useForm({
+    const [editUrl, setEditUrl] = useState(null);
+    const { data, setData, post, put, processing, reset, errors } = useForm({
         origen_id: lugares[0]?.id || '',
         destino_id: lugares[1]?.id || lugares[0]?.id || '',
         kilometraje: '',
+        activa: true,
         vehiculos: [],
     });
+
+    const emptyRoute = () => ({
+        origen_id: lugares[0]?.id || '',
+        destino_id: lugares[1]?.id || lugares[0]?.id || '',
+        kilometraje: '',
+        activa: true,
+        vehiculos: [],
+    });
+
+    const openCreate = () => {
+        reset();
+        setData(emptyRoute());
+        setSelectedVehiculo('');
+        setEditUrl(null);
+        setOpenModal(true);
+    };
+
+    const openEdit = (ruta) => {
+        setData({
+            origen_id: ruta.origen_id || ruta.origen?.id || '',
+            destino_id: ruta.destino_id || ruta.destino?.id || '',
+            kilometraje: ruta.kilometraje || '',
+            activa: ruta.activa,
+            vehiculos: ruta.vehiculos.map((vehiculo) => ({
+                id: vehiculo.id,
+                nombre: vehiculo.nombre,
+                precio: vehiculo.precio_tarifa,
+            })),
+        });
+        setSelectedVehiculo('');
+        setEditUrl(ruta.urls.update);
+        setOpenModal(true);
+    };
 
     const addVehiculo = () => {
         if (!selectedVehiculo) {
@@ -43,20 +78,22 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
     const submit = (event) => {
         event.preventDefault();
 
-        post(urls.store, {
+        const options = {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
-                setData({
-                    origen_id: lugares[0]?.id || '',
-                    destino_id: lugares[1]?.id || lugares[0]?.id || '',
-                    kilometraje: '',
-                    vehiculos: [],
-                });
+                setData(emptyRoute());
                 setSelectedVehiculo('');
+                setEditUrl(null);
                 setOpenModal(false);
             },
-        });
+        };
+
+        if (editUrl) {
+            put(editUrl, options);
+        } else {
+            post(urls.store, options);
+        }
     };
 
     const destroy = (ruta) => {
@@ -79,7 +116,7 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
                     </div>
                     <button
                         type="button"
-                        onClick={() => setOpenModal(true)}
+                        onClick={openCreate}
                         className="inline-flex items-center justify-center rounded-md bg-white px-6 py-2 text-xs font-bold text-black shadow-lg hover:bg-gray-200"
                     >
                         <i className="fas fa-plus mr-2" />
@@ -106,6 +143,10 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
                                                 <i className="fas fa-arrow-right text-[10px] text-yellow-500" />
                                                 <span className="font-bold text-white">{ruta.destino?.nombre || 'N/A'}</span>
                                             </div>
+                                            <div className="mt-1 flex flex-wrap gap-2 text-[10px] uppercase tracking-widest text-[#737373]">
+                                                <span>{ruta.kilometraje ? `${ruta.kilometraje} km` : 'Sin kilometraje'}</span>
+                                                <span className={ruta.activa ? 'text-green-500' : 'text-red-400'}>{ruta.activa ? 'Activa' : 'Inactiva'}</span>
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-wrap gap-2">
@@ -117,14 +158,24 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <button
-                                                type="button"
-                                                onClick={() => destroy(ruta)}
-                                                className="text-red-500/40 transition-colors hover:text-red-500"
-                                                title="Eliminar"
-                                            >
-                                                <i className="fas fa-trash" />
-                                            </button>
+                                            <div className="flex justify-end gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => openEdit(ruta)}
+                                                    className="text-white/60 transition-colors hover:text-white"
+                                                    title="Editar"
+                                                >
+                                                    <i className="fas fa-edit" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => destroy(ruta)}
+                                                    className="text-red-500/40 transition-colors hover:text-red-500"
+                                                    title="Eliminar"
+                                                >
+                                                    <i className="fas fa-trash" />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 )) : (
@@ -143,12 +194,30 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
             {openModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4">
                     <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-[#262626] bg-[#0a0a0a] p-8">
-                        <h2 className="mb-6 text-xl font-bold">Configurar Nueva Ruta y Vehiculos</h2>
+                        <h2 className="mb-6 text-xl font-bold">{editUrl ? 'Editar Ruta y Tarifas' : 'Configurar Nueva Ruta y Vehiculos'}</h2>
 
                         <form onSubmit={submit} className="space-y-6">
                             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                                 <SelectField label="Lugar de Origen" value={data.origen_id} error={errors.origen_id} onChange={(value) => setData('origen_id', value)} options={lugares} />
                                 <SelectField label="Lugar de Destino" value={data.destino_id} error={errors.destino_id} onChange={(value) => setData('destino_id', value)} options={lugares} />
+                            </div>
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+                                <div>
+                                    <label className="text-[10px] font-bold uppercase text-[#737373]">Kilometraje</label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={data.kilometraje}
+                                        onChange={(event) => setData('kilometraje', event.target.value)}
+                                        className="mt-1 w-full rounded-lg border border-[#262626] bg-black p-3 text-white outline-none focus:border-white"
+                                    />
+                                    {errors.kilometraje && <p className="mt-2 text-xs font-bold text-red-400">{errors.kilometraje}</p>}
+                                </div>
+                                <label className="flex items-center gap-3 rounded-lg border border-[#262626] bg-[#050505] p-3 text-xs font-bold uppercase text-white">
+                                    <input type="checkbox" checked={data.activa} onChange={(event) => setData('activa', event.target.checked)} className="h-4 w-4 accent-yellow-500" />
+                                    Ruta activa
+                                </label>
                             </div>
 
                             <div className="rounded-xl border border-[#262626] bg-[#050505] p-4">
@@ -229,7 +298,7 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
                                     disabled={processing}
                                     className="flex-1 rounded-xl bg-white py-3 text-xs font-bold uppercase text-black transition-all hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
-                                    {processing ? 'Guardando...' : 'Guardar Ruta Completa'}
+                                    {processing ? 'Guardando...' : editUrl ? 'Actualizar Ruta' : 'Guardar Ruta Completa'}
                                 </button>
                             </div>
                         </form>

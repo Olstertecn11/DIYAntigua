@@ -34,7 +34,7 @@ class QPayProPayloadBuilder
             'cc_type' => strtolower($cardData['cc_type']),
             'x_first_name' => $firstName,
             'x_last_name' => $lastName,
-            'x_company' => 'DIY Antigua',
+            'x_company' => 'DYANTIGUA',
             'x_address' => $cardData['billing_address'],
             'x_city' => $cardData['billing_city'],
             'x_state' => $cardData['billing_state'],
@@ -73,7 +73,7 @@ class QPayProPayloadBuilder
     {
         $parts = preg_split('/\s+/', trim($name), 2);
 
-        return [$parts[0] ?? 'Cliente', $parts[1] ?? $parts[0] ?? 'DIY Antigua'];
+        return [$parts[0] ?? 'Cliente', $parts[1] ?? $parts[0] ?? 'DYANTIGUA'];
     }
 
     private function expiration(string $month, string $year): string

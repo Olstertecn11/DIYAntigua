@@ -69,7 +69,7 @@ class ReservaEmailVerificationController extends Controller
                 'email' => $email,
             ], function ($message) use ($email) {
                 $message->to($email)
-                        ->subject('Código de verificación - DIY Antigua');
+                        ->subject('Código de verificación - DYANTIGUA');
             });
         } catch (\Throwable $exception) {
             $verification->update(['used_at' => now()]);
