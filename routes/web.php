@@ -9,6 +9,7 @@ use App\Http\Controllers\Private\ConductorController;
 use App\Http\Controllers\Private\LugarController;
 use App\Http\Controllers\Private\VehiculoController;
 use App\Http\Controllers\Public\ProfileController;
+use App\Http\Controllers\Public\PasswordSecurityController;
 use App\Http\Controllers\Public\ReservaController;
 use App\Http\Controllers\Public\ReservaEmailVerificationController;
 use App\Http\Controllers\Public\UserReservationController;
@@ -67,7 +68,16 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::middleware('auth')->prefix('perfil')->name('profile.')->group(function () {
     Route::get('/', [ProfileController::class, 'edit'])->name('edit');
     Route::put('/', [ProfileController::class, 'update'])->name('update');
-    Route::put('/password', [ProfileController::class, 'password'])->name('password');
+    Route::get('/seguridad', [PasswordSecurityController::class, 'edit'])->name('security.edit');
+    Route::post('/seguridad/codigo', [PasswordSecurityController::class, 'send'])
+        ->middleware('throttle:6,1')
+        ->name('security.send');
+    Route::post('/seguridad/verificar', [PasswordSecurityController::class, 'verify'])
+        ->middleware('throttle:10,1')
+        ->name('security.verify');
+    Route::put('/seguridad/password', [PasswordSecurityController::class, 'update'])
+        ->middleware('throttle:5,1')
+        ->name('security.update');
 });
 
 Route::middleware('auth')->prefix('mis-reservas')->name('reservas.mine.')->group(function () {

@@ -157,6 +157,7 @@ class AdminReservationController extends Controller
             'policy_label' => $reserva->canBeCancelledWithRefund() ? 'Cancelable con reembolso' : 'Fuera de politica',
             'hours_until_travel' => $reserva->hoursUntilTravel(),
             'travel_at' => $travelAt->format('d/m/Y H:i'),
+            'travel_iso' => $travelAt->toIso8601String(),
             'travel_date' => $travelAt->format('d/m/Y H:i'),
             'is_guest' => ! $reserva->user_id,
             'ruta' => [

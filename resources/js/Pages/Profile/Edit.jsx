@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { useMemo } from 'react';
 
@@ -11,7 +11,6 @@ export default function ProfileEdit({ user, countries, urls }) {
         direccion: user.direccion || '',
         avatar_base64: user.avatar_base64 || '',
     });
-    const password = useForm({ current_password: '', password: '', password_confirmation: '' });
     const avatarPreview = profile.data.avatar_base64 || '';
     const initials = useMemo(() => String(profile.data.name || profile.data.email || 'U').trim().slice(0, 1).toUpperCase(), [profile.data.email, profile.data.name]);
 
@@ -67,15 +66,16 @@ export default function ProfileEdit({ user, countries, urls }) {
                             </form>
                         </section>
 
-                        <section className="soft-rise rounded-[1.75rem] border border-black/10 bg-[#111111] p-6 text-white shadow-[0_24px_70px_rgba(0,0,0,.12)]">
-                            <h2 className="text-xl font-black">Seguridad</h2>
-                            <p className="mt-2 text-sm text-white/60">Cambia tu contrasena periodicamente y usa una combinacion segura.</p>
-                            <form onSubmit={(event) => { event.preventDefault(); password.put(urls.password, { preserveScroll: true, onSuccess: () => password.reset() }); }} className="mt-6 grid gap-4">
-                                <PasswordInput placeholder="Contrasena actual" value={password.data.current_password} error={password.errors.current_password} onChange={(value) => password.setData('current_password', value)} />
-                                <PasswordInput placeholder="Nueva contrasena" value={password.data.password} error={password.errors.password} onChange={(value) => password.setData('password', value)} />
-                                <PasswordInput placeholder="Confirmar contrasena" value={password.data.password_confirmation} onChange={(value) => password.setData('password_confirmation', value)} />
-                                <button disabled={password.processing} className="inline-flex items-center justify-center gap-2 rounded-full border border-[#fcca00]/70 px-6 py-3 text-sm font-black text-[#fcca00] transition hover:bg-[#fcca00] hover:text-black disabled:opacity-60">{password.processing && <i className="fas fa-circle-notch animate-spin" />}Actualizar contrasena</button>
-                            </form>
+                        <section className="soft-rise relative overflow-hidden rounded-[1.75rem] border border-black/10 bg-[#111111] p-6 text-white shadow-[0_24px_70px_rgba(0,0,0,.12)]">
+                            <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#FCCA00]/20 blur-3xl" />
+                            <div className="relative">
+                                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FCCA00] text-black"><i className="fas fa-shield-halved" /></span>
+                                <h2 className="mt-6 text-2xl font-black">Seguridad de tu cuenta</h2>
+                                <p className="mt-3 text-sm leading-7 text-white/55">El cambio de contraseña ahora incluye verificación por correo para proteger mejor tu cuenta.</p>
+                                <Link href={urls.security} className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#FCCA00]/70 px-6 py-3 text-sm font-black text-[#FCCA00] no-underline transition hover:bg-[#FCCA00] hover:text-black">
+                                    Cambiar contraseña <i className="fas fa-arrow-right" />
+                                </Link>
+                            </div>
                         </section>
                     </div>
                 </div>
@@ -102,10 +102,6 @@ function AccountPill({ icon, label, value }) {
 
 function TextInput({ label, value, onChange, error, type = 'text', required = true }) {
     return <div><label className="block text-[11px] font-black uppercase tracking-[0.16em] text-[#363636]">{label}</label><input type={type} value={value} onChange={(event) => onChange(event.target.value)} required={required} className="mt-2 w-full rounded-2xl border border-black/10 bg-[#fbfaf7] px-4 py-3 text-sm font-semibold outline-none focus:border-[#fcca00] focus:ring-4 focus:ring-[#fcca00]/20" />{error && <p className="mt-1 text-xs font-semibold text-red-600">{error}</p>}</div>;
-}
-
-function PasswordInput({ placeholder, value, onChange, error }) {
-    return <div><input type="password" value={value} onChange={(event) => onChange(event.target.value)} required placeholder={placeholder} className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white outline-none focus:border-[#fcca00]" />{error && <p className="text-xs font-semibold text-red-300">{error}</p>}</div>;
 }
 
 function AvatarInput({ value, name, initials, error, onChange }) {
@@ -167,27 +163,27 @@ function PhoneInput({ label, countries, country, number, error, setCountry, setN
         <div>
             <label className="block text-[11px] font-black uppercase tracking-[0.16em] text-[#363636]">{label}</label>
             <div className={[
-                'mt-2 grid overflow-hidden rounded-2xl border bg-[#fbfaf7] shadow-sm transition focus-within:border-[#fcca00] focus-within:ring-4 focus-within:ring-[#fcca00]/20 sm:grid-cols-[170px_1fr]',
+                'mt-2 grid min-w-0 overflow-hidden rounded-2xl border bg-[#fbfaf7] shadow-sm transition focus-within:border-[#fcca00] focus-within:ring-4 focus-within:ring-[#fcca00]/20 xl:grid-cols-[150px_minmax(0,1fr)]',
                 error ? 'border-red-300' : 'border-black/10',
             ].join(' ')}
             >
-                <label className="flex items-center gap-2 border-b border-black/10 px-4 py-3 sm:border-b-0 sm:border-r">
+                <label className="flex min-w-0 items-center gap-2 border-b border-black/10 px-4 py-3 xl:border-b-0 xl:border-r">
                     <i className="fas fa-globe text-[#b08a00]" />
-                    <select value={country} onChange={(event) => setCountry(event.target.value)} className="w-full bg-transparent text-sm font-black text-[#111] outline-none">
+                    <select value={country} onChange={(event) => setCountry(event.target.value)} className="min-w-0 flex-1 bg-transparent text-sm font-black text-[#111] outline-none">
                         {Object.entries(countries).map(([code, data]) => (
                             <option key={code} value={code}>{data.dial} {code}</option>
                         ))}
                     </select>
                 </label>
-                <div className="flex items-center gap-3 px-4 py-3">
-                    <span className="text-sm font-black text-[#777]">{selected.dial || ''}</span>
+                <div className="flex min-w-0 items-center gap-2 px-4 py-3">
+                    <span className="shrink-0 text-sm font-black text-[#777]">{selected.dial || ''}</span>
                     <input
                         value={number}
                         inputMode="tel"
                         autoComplete="tel-national"
                         placeholder="Numero de telefono"
                         onChange={(event) => setNumber(event.target.value.replace(/[^\d\s().-]/g, ''))}
-                        className="min-w-0 flex-1 bg-transparent text-sm font-semibold outline-none placeholder:text-[#999]"
+                        className="w-full min-w-0 flex-1 bg-transparent text-sm font-semibold outline-none placeholder:text-[#999]"
                     />
                 </div>
             </div>

@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Password;
 use App\Support\PhoneNumber;
 use Inertia\Inertia;
 
@@ -30,7 +28,7 @@ class ProfileController extends Controller
             'countries' => config('phone.countries', []),
             'urls' => [
                 'update' => route('profile.update'),
-                'password' => route('profile.password'),
+                'security' => route('profile.security.edit'),
             ],
         ]);
     }
@@ -59,17 +57,4 @@ class ProfileController extends Controller
         return back()->with('success', 'Tu perfil fue actualizado.');
     }
 
-    public function password(Request $request)
-    {
-        $validated = $request->validate([
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
-        ]);
-
-        $request->user()->update([
-            'password' => Hash::make($validated['password']),
-        ]);
-
-        return back()->with('success', 'Tu contraseña fue actualizada.');
-    }
 }

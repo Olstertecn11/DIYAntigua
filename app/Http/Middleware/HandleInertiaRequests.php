@@ -67,6 +67,7 @@ class HandleInertiaRequests extends Middleware
                     'login' => route('login'),
                     'register' => route('register'),
                     'profile' => route('profile.edit'),
+                    'security' => route('profile.security.edit'),
                     'reservasMine' => route('reservas.mine.index'),
                 ],
             ],

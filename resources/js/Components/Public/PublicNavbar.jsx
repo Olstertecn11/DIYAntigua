@@ -110,6 +110,7 @@ export default function PublicNavbar() {
                                     <div className="mt-2 grid gap-1">
                                         <MenuLink href={routes.reservasMine || '/mis-reservas'} icon="fa-calendar-check" label={t('Mis reservas')} onClick={() => setOpen(false)} />
                                         <MenuLink href={routes.profile || '/perfil'} icon="fa-user-gear" label={t('Perfil')} onClick={() => setOpen(false)} />
+                                        <MenuLink href={routes.security || '/perfil/seguridad'} icon="fa-shield-halved" label={t('Cambiar contraseña')} onClick={() => setOpen(false)} />
                                         <MenuLink href={navHref(home, '#booking')} icon="fa-plus" label={t('Nueva reserva')} onClick={() => setOpen(false)} />
                                         <button
                                             type="button"

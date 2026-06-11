@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import PublicLayout from '@/Layouts/PublicLayout';
+import ReservationCountdown from '@/Components/Reservations/ReservationCountdown';
 
 function money(value) {
     return `Q${Number(value || 0).toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -11,27 +12,8 @@ function human(value) {
 }
 
 export default function UserReservationShow({ reserva, urls }) {
-    const [countdown, setCountdown] = useState(reserva.estado_viaje === 'cancelado' ? 'Cancelada' : 'Calculando...');
     const [openCancel, setOpenCancel] = useState(false);
     const [motivo, setMotivo] = useState('');
-
-    useEffect(() => {
-        if (reserva.estado_viaje === 'cancelado') return undefined;
-        const update = () => {
-            const diff = new Date(reserva.travel_iso).getTime() - Date.now();
-            if (diff <= 0) {
-                setCountdown('En curso');
-                return;
-            }
-            const days = Math.floor(diff / 86400000);
-            const hours = Math.floor((diff % 86400000) / 3600000);
-            const minutes = Math.floor((diff % 3600000) / 60000);
-            setCountdown(`${days}d ${hours}h ${minutes}m`);
-        };
-        update();
-        const timer = setInterval(update, 60000);
-        return () => clearInterval(timer);
-    }, [reserva.estado_viaje, reserva.travel_iso]);
 
     const cancel = (event) => {
         event.preventDefault();
@@ -43,8 +25,9 @@ export default function UserReservationShow({ reserva, urls }) {
     return (
         <PublicLayout>
             <Head title={reserva.codigo_reserva} />
-            <main className="min-h-screen bg-[#f5f4ef] pb-14 pt-32 text-black">
-                <section className="border-b border-black/10 bg-[linear-gradient(90deg,#FCCA00_0_12px,transparent_12px),linear-gradient(135deg,#10100e_0%,#050505_64%,#17130a_100%)] text-white">
+            <main className="min-h-screen bg-[radial-gradient(circle_at_85%_10%,rgba(252,202,0,.13),transparent_28%),#f5f4ef] pb-14 pt-[72px] text-black">
+                <section className="relative overflow-hidden border-b border-black/10 bg-[linear-gradient(135deg,#15150f_0%,#050505_58%,#1c1807_100%)] text-white">
+                    <div className="pointer-events-none absolute -right-32 -top-40 h-[34rem] w-[34rem] rounded-full bg-[#FCCA00]/15 blur-3xl" />
                     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                         <Link href={urls.index} className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-xs font-black uppercase tracking-widest text-white/70 no-underline transition hover:border-[#FCCA00]/40 hover:text-[#FCCA00]">
                             <i className="fas fa-arrow-left mr-2" />
@@ -63,11 +46,7 @@ export default function UserReservationShow({ reserva, urls }) {
                                     Tu comprobante digital reúne ruta, pago, políticas de cancelación y referencia de transacción.
                                 </p>
                             </div>
-                            <div className="rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 text-center backdrop-blur">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Tiempo restante</span>
-                                <strong className="my-2 block text-4xl font-black text-[#FCCA00]">{countdown}</strong>
-                                <small className="font-bold text-white/55">{reserva.travel_at}</small>
-                            </div>
+                            <ReservationCountdown travelIso={reserva.travel_iso} travelAt={reserva.travel_at} status={reserva.estado_viaje} dark compact />
                         </div>
                     </div>
                 </section>
