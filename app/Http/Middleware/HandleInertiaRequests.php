@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
             'routes' => [
                 'admin' => [
                     'dashboard' => route('admin.dashboard'),
+                    'usuarios' => route('admin.usuarios.index'),
                     'reservas' => route('admin.reservas.index'),
                     'rutas' => route('admin.rutas.index'),
                     'lugares' => route('admin.lugares.index'),

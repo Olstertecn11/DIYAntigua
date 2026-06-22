@@ -21,24 +21,36 @@ return new class extends Migration
         }
 
         if ($this->columnExists('users', 'role_id')) {
-            DB::statement('
-                insert ignore into role_user (user_id, role_id, created_at, updated_at)
-                select id, role_id, coalesce(created_at, now()), coalesce(updated_at, now())
-                from users
-                where role_id is not null
-            ');
+            DB::table('users')
+                ->whereNotNull('role_id')
+                ->select(['id', 'role_id', 'created_at', 'updated_at'])
+                ->orderBy('id')
+                ->get()
+                ->each(function ($user) {
+                    DB::table('role_user')->insertOrIgnore([
+                        'user_id' => $user->id,
+                        'role_id' => $user->role_id,
+                        'created_at' => $user->created_at ?? now(),
+                        'updated_at' => $user->updated_at ?? now(),
+                    ]);
+                });
         }
 
         if (Schema::hasTable('afiliados_info')) {
             $affiliateRoleId = DB::table('roles')->where('slug', 'afiliado')->value('id');
 
             if ($affiliateRoleId) {
-                DB::statement('
-                    insert ignore into role_user (user_id, role_id, created_at, updated_at)
-                    select user_id, ?, now(), now()
-                    from afiliados_info
-                    where user_id is not null
-                ', [$affiliateRoleId]);
+                DB::table('afiliados_info')
+                    ->whereNotNull('user_id')
+                    ->pluck('user_id')
+                    ->each(function ($userId) use ($affiliateRoleId) {
+                        DB::table('role_user')->insertOrIgnore([
+                            'user_id' => $userId,
+                            'role_id' => $affiliateRoleId,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    });
             }
         }
 
@@ -82,22 +94,21 @@ return new class extends Migration
 
     private function columnExists(string $table, string $column): bool
     {
-        return (bool) DB::selectOne(
-            'select 1 from information_schema.columns where table_schema = database() and table_name = ? and column_name = ? limit 1',
-            [$table, $column]
-        );
+        return Schema::hasColumn($table, $column);
     }
 
     private function indexExists(string $table, string $index): bool
     {
-        return (bool) DB::selectOne(
-            'select 1 from information_schema.statistics where table_schema = database() and table_name = ? and index_name = ? limit 1',
-            [$table, $index]
-        );
+        return collect(Schema::getIndexes($table))
+            ->contains(fn (array $existingIndex) => ($existingIndex['name'] ?? null) === $index);
     }
 
     private function foreignKeyExists(string $table, string $foreignKey): bool
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return false;
+        }
+
         return (bool) DB::selectOne(
             'select 1 from information_schema.table_constraints where table_schema = database() and table_name = ? and constraint_name = ? and constraint_type = "FOREIGN KEY" limit 1',
             [$table, $foreignKey]

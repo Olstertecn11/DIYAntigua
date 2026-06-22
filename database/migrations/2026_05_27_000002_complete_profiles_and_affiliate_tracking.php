@@ -57,12 +57,17 @@ return new class extends Migration
             $affiliateRoleId = DB::table('roles')->where('slug', 'afiliado')->value('id');
 
             if ($affiliateRoleId) {
-                DB::statement('
-                    insert ignore into role_user (user_id, role_id, created_at, updated_at)
-                    select user_id, ?, now(), now()
-                    from afiliados_info
-                    where user_id is not null
-                ', [$affiliateRoleId]);
+                DB::table('afiliados_info')
+                    ->whereNotNull('user_id')
+                    ->pluck('user_id')
+                    ->each(function ($userId) use ($affiliateRoleId) {
+                        DB::table('role_user')->insertOrIgnore([
+                            'user_id' => $userId,
+                            'role_id' => $affiliateRoleId,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    });
             }
         }
     }
@@ -102,9 +107,6 @@ return new class extends Migration
 
     private function columnExists(string $table, string $column): bool
     {
-        return (bool) DB::selectOne(
-            'select 1 from information_schema.columns where table_schema = database() and table_name = ? and column_name = ? limit 1',
-            [$table, $column]
-        );
+        return Schema::hasColumn($table, $column);
     }
 };

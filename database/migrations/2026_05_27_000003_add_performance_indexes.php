@@ -33,6 +33,11 @@ return new class extends Migration
             ['role_user', 'role_user_role_user_idx'],
         ] as [$table, $index]) {
             if (Schema::hasTable($table) && $this->indexExists($table, $index)) {
+                if (DB::getDriverName() === 'sqlite') {
+                    DB::statement("drop index {$index}");
+                    continue;
+                }
+
                 DB::statement("alter table {$table} drop index {$index}");
             }
         }
@@ -60,17 +65,12 @@ return new class extends Migration
 
     private function indexExists(string $table, string $index): bool
     {
-        return (bool) DB::selectOne(
-            'select 1 from information_schema.statistics where table_schema = database() and table_name = ? and index_name = ? limit 1',
-            [$table, $index]
-        );
+        return collect(Schema::getIndexes($table))
+            ->contains(fn (array $existingIndex) => ($existingIndex['name'] ?? null) === $index);
     }
 
     private function columnExists(string $table, string $column): bool
     {
-        return (bool) DB::selectOne(
-            'select 1 from information_schema.columns where table_schema = database() and table_name = ? and column_name = ? limit 1',
-            [$table, $column]
-        );
+        return Schema::hasColumn($table, $column);
     }
 };

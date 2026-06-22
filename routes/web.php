@@ -3,6 +3,7 @@
 use App\Http\Controllers\Private\AdminController;
 use App\Http\Controllers\Private\AdminProfileController;
 use App\Http\Controllers\Private\AdminReservationController;
+use App\Http\Controllers\Private\AdminUserController;
 use App\Http\Controllers\Private\RutaController;
 use App\Http\Controllers\Private\SocioController;
 use App\Http\Controllers\Private\ConductorController;
@@ -132,6 +133,12 @@ Route::group([
     Route::get('/perfil', [AdminProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/perfil', [AdminProfileController::class, 'update'])->name('profile.update');
     Route::put('/perfil/password', [AdminProfileController::class, 'password'])->name('profile.password');
+    Route::get('/usuarios', [AdminUserController::class, 'index'])->name('usuarios.index');
+    Route::post('/usuarios', [AdminUserController::class, 'store'])->name('usuarios.store');
+    Route::put('/usuarios/{usuario}', [AdminUserController::class, 'update'])->name('usuarios.update');
+    Route::post('/usuarios/{usuario}/invitacion', [AdminUserController::class, 'invite'])
+        ->middleware('throttle:6,1')
+        ->name('usuarios.invite');
 
     Route::resource('lugares', LugarController::class)->only(['index', 'store', 'update', 'destroy']);
 

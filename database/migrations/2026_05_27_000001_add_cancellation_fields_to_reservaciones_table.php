@@ -57,10 +57,6 @@ return new class extends Migration
 
     private function columnExists(string $table, string $column): bool
     {
-        return DB::table('information_schema.columns')
-            ->where('table_schema', DB::getDatabaseName())
-            ->where('table_name', $table)
-            ->where('column_name', $column)
-            ->exists();
+        return Schema::hasColumn($table, $column);
     }
 };

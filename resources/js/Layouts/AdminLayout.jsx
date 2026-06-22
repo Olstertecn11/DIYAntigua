@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 const adminItems = [
     { label: 'Dashboard', icon: 'fa-grid-2', route: 'dashboard' },
+    { label: 'Usuarios', icon: 'fa-user-gear', route: 'usuarios', section: 'Administracion' },
     { label: 'Reservas', icon: 'fa-calendar-check', route: 'reservas', section: 'Operaciones' },
     { label: 'Rutas y Tarifas', icon: 'fa-route', route: 'rutas' },
     { label: 'Lugares / Hoteles', icon: 'fa-map-location-dot', route: 'lugares' },

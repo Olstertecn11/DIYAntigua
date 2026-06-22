@@ -27,13 +27,6 @@ return new class extends Migration
 
     private function columnExists(string $table, string $column): bool
     {
-        $database = DB::getDatabaseName();
-
-        $result = DB::selectOne(
-            'select count(*) as total from information_schema.columns where table_schema = ? and table_name = ? and column_name = ?',
-            [$database, $table, $column],
-        );
-
-        return (int) ($result->total ?? 0) > 0;
+        return Schema::hasColumn($table, $column);
     }
 };
