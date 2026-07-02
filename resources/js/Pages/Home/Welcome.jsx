@@ -80,11 +80,10 @@ function ProcessStep({ number, title, text }) {
 function FleetCard({ image, label, title, text, items, featured = false }) {
     return (
         <article
-            className={`relative min-w-[82vw] overflow-hidden rounded-[2rem] bg-white/5 transition sm:min-w-[360px] md:min-w-0 ${
-                featured
-                    ? 'border border-yellow-300/60 shadow-2xl shadow-yellow-500/10'
-                    : 'border border-white/10 hover:border-yellow-300/60'
-            }`}
+            className={`relative min-w-[82vw] overflow-hidden rounded-[2rem] bg-white/5 transition sm:min-w-[360px] md:min-w-0 ${featured
+                ? 'border border-yellow-300/60 shadow-2xl shadow-yellow-500/10'
+                : 'border border-white/10 hover:border-yellow-300/60'
+                }`}
         >
             {featured && (
                 <div className="absolute right-5 top-5 z-10 rounded-full bg-yellow-300 px-4 py-2 text-xs font-black text-slate-950">
@@ -196,7 +195,43 @@ export default function Welcome({ rutas = [], urls = {} }) {
 
     return (
         <PublicLayout>
-            <Head title="Traslados privados en Guatemala" />
+            <Head>
+                <title>DYANTIGUA | Traslados Privados y Seguros en Guatemala</title>
+                <meta name="description" content="Reserva tu traslado privado en Guatemala de forma fácil y segura. Transporte confiable entre el Aeropuerto, Antigua, Panajachel y más." />
+
+                {/* Datos estructurados fijos para Google */}
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "TaxiService",
+                        "name": "DYANTIGUA",
+                        "legalName": "DYANTIGUA Traslados Privados",
+                        "url": "https://dyantigua.com", // Cambia esto por tu dominio real
+                        "logo": "https://dyantigua.com/images/logo.png",
+                        "description": "Servicio profesional de transporte privado y traslados ejecutivos y turísticos en el territorio de Guatemala, especializándose en rutas al Aeropuerto La Aurora, Antigua Guatemala y Panajachel.",
+                        "provider": {
+                            "@type": "LocalBusiness",
+                            "name": "DYANTIGUA",
+                            "image": "https://dyantigua.com/images/logo.png",
+                            "telephone": "+50235977809", // Tu teléfono de contacto comercial
+                            "priceRange": "$$",
+                            "address": {
+                                "@type": "PostalAddress",
+                                "addressLocality": "Antigua Guatemala",
+                                "addressRegion": "Sacatepéquez",
+                                "addressCountry": "GT"
+                            }
+                        },
+                        "areaServed": [
+                            { "@type": "Place", "name": "Guatemala" },
+                            { "@type": "Place", "name": "Antigua Guatemala" },
+                            { "@type": "Place", "name": "Aeropuerto Internacional La Aurora" },
+                            { "@type": "Place", "name": "Panajachel" }
+                        ],
+                        "serviceType": "Private Airport Shuttle & Transfers"
+                    })}
+                </script>
+            </Head>
 
             <main className="min-h-screen bg-white text-slate-950">
                 <header id="inicio" className="relative overflow-hidden bg-slate-950 text-white lg:min-h-[calc(100vh-72px)]">
@@ -408,28 +443,28 @@ export default function Welcome({ rutas = [], urls = {} }) {
 
                         <div className="-mx-6 overflow-x-auto px-6 pb-3 md:mx-0 md:overflow-visible md:px-0 md:pb-0">
                             <div className="flex gap-5 md:grid md:grid-cols-3 md:gap-6">
-                            <FleetCard
-                                image={images.sedan}
-                                label="1-3 pasajeros"
-                                title="Sedan Ejecutivo"
-                                text="Ideal para viajes de negocios, parejas o traslados privados desde el aeropuerto."
-                                items={['Aire acondicionado', '2 maletas grandes', 'Servicio privado']}
-                            />
-                            <FleetCard
-                                image={images.suv}
-                                label="4-6 pasajeros"
-                                title="SUV Familiar"
-                                text="Mayor espacio, comodidad y capacidad para familias o grupos pequeños."
-                                items={['Mas espacio interior', '4 maletas grandes', 'Recomendado para Antigua y Lago Atitlan']}
-                                featured
-                            />
-                            <FleetCard
-                                image={images.micro}
-                                label="7-15 pasajeros"
-                                title="Microbus Grupal"
-                                text="Solucion comoda para excursiones, eventos, colegios o empresas."
-                                items={['Equipaje grupal', 'Viajes corporativos', 'Tours y eventos']}
-                            />
+                                <FleetCard
+                                    image={images.sedan}
+                                    label="1-3 pasajeros"
+                                    title="Sedan Ejecutivo"
+                                    text="Ideal para viajes de negocios, parejas o traslados privados desde el aeropuerto."
+                                    items={['Aire acondicionado', '2 maletas grandes', 'Servicio privado']}
+                                />
+                                <FleetCard
+                                    image={images.suv}
+                                    label="4-6 pasajeros"
+                                    title="SUV Familiar"
+                                    text="Mayor espacio, comodidad y capacidad para familias o grupos pequeños."
+                                    items={['Mas espacio interior', '4 maletas grandes', 'Recomendado para Antigua y Lago Atitlan']}
+                                    featured
+                                />
+                                <FleetCard
+                                    image={images.micro}
+                                    label="7-15 pasajeros"
+                                    title="Microbus Grupal"
+                                    text="Solucion comoda para excursiones, eventos, colegios o empresas."
+                                    items={['Equipaje grupal', 'Viajes corporativos', 'Tours y eventos']}
+                                />
                             </div>
                         </div>
                     </div>

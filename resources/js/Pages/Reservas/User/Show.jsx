@@ -24,7 +24,11 @@ export default function UserReservationShow({ reserva, urls }) {
 
     return (
         <PublicLayout>
-            <Head title={reserva.codigo_reserva} />
+            <Head>
+                <title>{`Reservación ${reserva.codigo_reserva} | DYANTIGUA`}</title>
+                <meta name="robots" content="noindex, nofollow" />
+                <meta name="googlebot" content="noindex, nofollow" />
+            </Head>
             <main className="min-h-screen bg-[radial-gradient(circle_at_85%_10%,rgba(252,202,0,.13),transparent_28%),#f5f4ef] pb-14 pt-[72px] text-black">
                 <section className="relative overflow-hidden border-b border-black/10 bg-[linear-gradient(135deg,#15150f_0%,#050505_58%,#1c1807_100%)] text-white">
                     <div className="pointer-events-none absolute -right-32 -top-40 h-[34rem] w-[34rem] rounded-full bg-[#FCCA00]/15 blur-3xl" />

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <!-- Cambiamos esto para que Inertia controle el título dinámicamente de forma nativa -->
     <title inertia>{{ config('app.name', 'DYANTIGUA') }}</title>
 
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -20,6 +21,34 @@
 
 <body>
     @inertia
+
+    <!-- Schema Markup global para SEO Local -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TaxiService",
+      "name": "DYANTIGUA",
+      "url": "{{ url('/') }}",
+      "provider": {
+        "@type": "LocalBusiness",
+        "name": "DYANTIGUA",
+        "image": "{{ asset('images/logo.png') }}",
+        "telephone": "+50235977809",
+        "priceRange": "$$",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Antigua Guatemala",
+          "addressCountry": "GT"
+        }
+      },
+      "areaServed": [
+        { "@type": "Place", "name": "Guatemala City Airport (GUA)" },
+        { "@type": "Place", "name": "Antigua Guatemala" },
+        { "@type": "Place", "name": "Panajachel" },
+        { "@type": "Place", "name": "Quetzaltenango" }
+      ]
+    }
+    </script>
 </body>
 
 </html>
