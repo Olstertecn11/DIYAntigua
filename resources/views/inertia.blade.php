@@ -22,33 +22,35 @@
 <body>
     @inertia
 
+    @php
+        $localBusinessSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'TaxiService',
+            'name' => 'DYANTIGUA',
+            'url' => url('/'),
+            'provider' => [
+                '@type' => 'LocalBusiness',
+                'name' => 'DYANTIGUA',
+                'image' => asset('images/logo.png'),
+                'telephone' => '+50235977809',
+                'priceRange' => '$$',
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'addressLocality' => 'Antigua Guatemala',
+                    'addressCountry' => 'GT',
+                ],
+            ],
+            'areaServed' => [
+                ['@type' => 'Place', 'name' => 'Guatemala City Airport (GUA)'],
+                ['@type' => 'Place', 'name' => 'Antigua Guatemala'],
+                ['@type' => 'Place', 'name' => 'Panajachel'],
+                ['@type' => 'Place', 'name' => 'Quetzaltenango'],
+            ],
+        ];
+    @endphp
+
     <!-- Schema Markup global para SEO Local -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "TaxiService",
-      "name": "DYANTIGUA",
-      "url": "{{ url('/') }}",
-      "provider": {
-        "@type": "LocalBusiness",
-        "name": "DYANTIGUA",
-        "image": "{{ asset('images/logo.png') }}",
-        "telephone": "+50235977809",
-        "priceRange": "$$",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Antigua Guatemala",
-          "addressCountry": "GT"
-        }
-      },
-      "areaServed": [
-        { "@type": "Place", "name": "Guatemala City Airport (GUA)" },
-        { "@type": "Place", "name": "Antigua Guatemala" },
-        { "@type": "Place", "name": "Panajachel" },
-        { "@type": "Place", "name": "Quetzaltenango" }
-      ]
-    }
-    </script>
+    <script type="application/ld+json">@json($localBusinessSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)</script>
 </body>
 
 </html>
