@@ -48,21 +48,10 @@ class RutaController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'origen_id' => [
-                'required',
-                'exists:lugares,id',
-                Rule::unique('rutas')->where(fn ($query) => $query
-                    ->where('origen_id', $request->origen_id)
-                    ->where('destino_id', $request->destino_id)),
-            ],
-            'destino_id' => ['required', 'exists:lugares,id', 'different:origen_id'],
-            'kilometraje' => ['nullable', 'numeric', 'min:0'],
-            'activa' => ['boolean'],
-            'vehiculos' => ['required', 'array', 'min:1'],
-            'vehiculos.*.id' => ['required', 'exists:vehiculos,id', 'distinct'],
-            'vehiculos.*.precio' => ['required', 'numeric', 'min:0'],
-        ]);
+        $validated = $request->validate(
+            $this->rules($request),
+            $this->messages()
+        );
 
         DB::transaction(function () use ($validated, $request) {
             $ruta = Ruta::create([
@@ -80,22 +69,10 @@ class RutaController extends Controller
 
     public function update(Request $request, Ruta $ruta)
     {
-        $validated = $request->validate([
-            'origen_id' => [
-                'required',
-                'exists:lugares,id',
-                Rule::unique('rutas')->where(fn ($query) => $query
-                    ->where('origen_id', $request->origen_id)
-                    ->where('destino_id', $request->destino_id))
-                    ->ignore($ruta->id),
-            ],
-            'destino_id' => ['required', 'exists:lugares,id', 'different:origen_id'],
-            'kilometraje' => ['nullable', 'numeric', 'min:0'],
-            'activa' => ['boolean'],
-            'vehiculos' => ['required', 'array', 'min:1'],
-            'vehiculos.*.id' => ['required', 'exists:vehiculos,id', 'distinct'],
-            'vehiculos.*.precio' => ['required', 'numeric', 'min:0'],
-        ]);
+        $validated = $request->validate(
+            $this->rules($request, $ruta),
+            $this->messages()
+        );
 
         DB::transaction(function () use ($ruta, $validated, $request) {
             $ruta->update([
@@ -115,6 +92,49 @@ class RutaController extends Controller
     {
         $ruta->delete();
         return back()->with('success', 'Ruta eliminada.');
+    }
+
+    private function rules(Request $request, ?Ruta $ruta = null): array
+    {
+        $uniqueRoute = Rule::unique('rutas', 'origen_id')
+            ->where(fn ($query) => $query->where('destino_id', $request->input('destino_id')));
+
+        if ($ruta) {
+            $uniqueRoute->ignore($ruta->getKey(), $ruta->getKeyName());
+        }
+
+        return [
+            'origen_id' => [
+                'required',
+                'exists:lugares,id',
+                $uniqueRoute,
+            ],
+            'destino_id' => ['required', 'exists:lugares,id', 'different:origen_id'],
+            'kilometraje' => ['nullable', 'numeric', 'min:0'],
+            'activa' => ['boolean'],
+            'vehiculos' => ['required', 'array', 'min:1'],
+            'vehiculos.*.id' => ['required', 'exists:vehiculos,id', 'distinct'],
+            'vehiculos.*.precio' => ['required', 'numeric', 'min:0'],
+        ];
+    }
+
+    private function messages(): array
+    {
+        return [
+            'origen_id.required' => 'Selecciona un lugar de origen.',
+            'origen_id.exists' => 'El lugar de origen seleccionado no existe.',
+            'origen_id.unique' => 'Ya existe una ruta con este origen y destino.',
+            'destino_id.required' => 'Selecciona un lugar de destino.',
+            'destino_id.exists' => 'El lugar de destino seleccionado no existe.',
+            'destino_id.different' => 'El destino debe ser diferente al origen.',
+            'vehiculos.required' => 'Agrega al menos un vehiculo a esta ruta.',
+            'vehiculos.min' => 'Agrega al menos un vehiculo a esta ruta.',
+            'vehiculos.*.id.exists' => 'Uno de los vehiculos seleccionados no existe.',
+            'vehiculos.*.id.distinct' => 'No puedes agregar el mismo vehiculo dos veces.',
+            'vehiculos.*.precio.required' => 'Ingresa la tarifa de cada vehiculo.',
+            'vehiculos.*.precio.numeric' => 'La tarifa debe ser un numero valido.',
+            'vehiculos.*.precio.min' => 'La tarifa no puede ser negativa.',
+        ];
     }
 
     private function vehiclePrices(array $vehicles): array

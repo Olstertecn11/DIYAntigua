@@ -10,17 +10,17 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
     const [openModal, setOpenModal] = useState(false);
     const [selectedVehiculo, setSelectedVehiculo] = useState('');
     const [editUrl, setEditUrl] = useState(null);
-    const { data, setData, post, put, processing, reset, errors } = useForm({
-        origen_id: lugares[0]?.id || '',
-        destino_id: lugares[1]?.id || lugares[0]?.id || '',
+    const { data, setData, post, put, processing, reset, errors, clearErrors } = useForm({
+        origen_id: '',
+        destino_id: '',
         kilometraje: '',
         activa: true,
         vehiculos: [],
     });
 
     const emptyRoute = () => ({
-        origen_id: lugares[0]?.id || '',
-        destino_id: lugares[1]?.id || lugares[0]?.id || '',
+        origen_id: '',
+        destino_id: '',
         kilometraje: '',
         activa: true,
         vehiculos: [],
@@ -31,6 +31,7 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
         setData(emptyRoute());
         setSelectedVehiculo('');
         setEditUrl(null);
+        clearErrors();
         setOpenModal(true);
     };
 
@@ -48,6 +49,7 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
         });
         setSelectedVehiculo('');
         setEditUrl(ruta.urls.update);
+        clearErrors();
         setOpenModal(true);
     };
 
@@ -192,9 +194,9 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
             </div>
 
             {openModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4">
-                    <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-[#262626] bg-[#0a0a0a] p-8">
-                        <h2 className="mb-6 text-xl font-bold">{editUrl ? 'Editar Ruta y Tarifas' : 'Configurar Nueva Ruta y Vehiculos'}</h2>
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-3 sm:p-4">
+                    <div className="max-h-[calc(100dvh-1.5rem)] w-full max-w-3xl overflow-y-auto rounded-xl border border-[#262626] bg-[#0a0a0a] p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:max-h-[90vh] sm:rounded-2xl sm:p-8">
+                        <h2 className="mb-6 text-lg font-bold sm:text-xl">{editUrl ? 'Editar Ruta y Tarifas' : 'Configurar Nueva Ruta y Vehiculos'}</h2>
 
                         <form onSubmit={submit} className="space-y-6">
                             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -226,7 +228,7 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
                                     <select
                                         value={selectedVehiculo}
                                         onChange={(event) => setSelectedVehiculo(event.target.value)}
-                                        className="flex-1 rounded-lg border border-[#262626] bg-black p-2 text-white outline-none"
+                                        className="min-w-0 flex-1 rounded-lg border border-[#262626] bg-black p-2 text-white outline-none"
                                     >
                                         <option value="">Selecciona un tipo de vehiculo...</option>
                                         {vehiculos.map((vehiculo) => (
@@ -263,7 +265,7 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
                                                                 value={item.precio}
                                                                 onChange={(event) => updatePrecio(index, event.target.value)}
                                                                 required
-                                                                className="w-32 rounded border border-[#262626] bg-black px-2 py-1 font-mono text-green-500 outline-none focus:border-green-500"
+                                                                className="w-full max-w-32 rounded border border-[#262626] bg-black px-2 py-1 font-mono text-green-500 outline-none focus:border-green-500"
                                                             />
                                                         </td>
                                                         <td className="py-3 text-right">
@@ -282,21 +284,22 @@ export default function RutasIndex({ rutas, lugares, vehiculos, urls }) {
                                 </div>
                             </div>
 
-                            <div className="flex gap-4 pt-4">
+                            <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:gap-4">
                                 <button
                                     type="button"
                                     onClick={() => {
                                         setOpenModal(false);
                                         setData('vehiculos', []);
+                                        clearErrors();
                                     }}
-                                    className="flex-1 py-3 text-xs font-bold uppercase text-[#a1a1a1] transition-colors hover:text-white"
+                                    className="order-2 flex-1 py-3 text-xs font-bold uppercase text-[#a1a1a1] transition-colors hover:text-white sm:order-1"
                                 >
                                     Cancelar
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="flex-1 rounded-xl bg-white py-3 text-xs font-bold uppercase text-black transition-all hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="order-1 flex-1 rounded-xl bg-white px-4 py-3 text-xs font-bold uppercase text-black transition-all hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60 sm:order-2"
                                 >
                                     {processing ? 'Guardando...' : editUrl ? 'Actualizar Ruta' : 'Guardar Ruta Completa'}
                                 </button>
@@ -319,6 +322,7 @@ function SelectField({ label, value, onChange, options, error }) {
                 required
                 className="mt-1 w-full rounded-lg border border-[#262626] bg-black p-3 text-white outline-none focus:border-white"
             >
+                <option value="">Selecciona un lugar...</option>
                 {options.map((option) => (
                     <option key={option.id} value={option.id}>{option.nombre}</option>
                 ))}
