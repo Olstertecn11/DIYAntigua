@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useLanguage } from '@/Contexts/LanguageContext';
+import { publicContact } from '@/Data/contact';
 
 export default function PublicFooter() {
     const { props } = usePage();
@@ -47,7 +48,8 @@ export default function PublicFooter() {
                 <section>
                     <h3 className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-[#FCCA00]">{t('Contacto')}</h3>
                     <div className="space-y-3 text-sm font-bold text-white/65">
-                        <a href="https://wa.me/50200000000" className="block no-underline hover:text-[#FCCA00]">WhatsApp</a>
+                        <a href={publicContact.whatsappUrl} target="_blank" rel="noreferrer" className="block no-underline hover:text-[#FCCA00]">WhatsApp {publicContact.phoneDisplay}</a>
+                        <a href={publicContact.emailUrl} className="block no-underline hover:text-[#FCCA00]">{publicContact.email}</a>
                         <span className="block">Guatemala</span>
                         <span className="block">{t('Atencion para traslados privados')}</span>
                     </div>

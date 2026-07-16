@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { destinations } from '@/Data/destinations';
+import { publicContact } from '@/Data/contact';
 import { useLanguage } from '@/Contexts/LanguageContext';
 import { useMemo, useState } from 'react';
 
@@ -213,7 +214,8 @@ export default function Welcome({ rutas = [], urls = {} }) {
                             "@type": "LocalBusiness",
                             "name": "DYANTIGUA",
                             "image": "https://dyantigua.com/images/logo.png",
-                            "telephone": "+50235977809", // Tu teléfono de contacto comercial
+                            "telephone": `+${publicContact.whatsappInternational}`,
+                            "email": publicContact.email,
                             "priceRange": "$$",
                             "address": {
                                 "@type": "PostalAddress",

@@ -1,4 +1,5 @@
 import { useLanguage } from '@/Contexts/LanguageContext';
+import { publicContact } from '@/Data/contact';
 
 export default function FloatingActions() {
     const { language, toggleLanguage } = useLanguage();
@@ -16,7 +17,7 @@ export default function FloatingActions() {
                 {nextLanguage}
             </button>
             <a
-                href="https://wa.me/50200000000"
+                href={publicContact.whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500 text-xl text-white no-underline shadow-2xl transition hover:-translate-y-0.5 hover:bg-green-600"
