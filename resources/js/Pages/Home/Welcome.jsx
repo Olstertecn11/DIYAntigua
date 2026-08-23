@@ -447,14 +447,14 @@ export default function Welcome({ rutas = [], urls = {} }) {
                             <div className="flex gap-5 md:grid md:grid-cols-3 md:gap-6">
                                 <FleetCard
                                     image={images.sedan}
-                                    label="1-3 pasajeros"
+                                    label="1-2 pasajeros"
                                     title="Sedan Ejecutivo"
                                     text="Ideal para viajes de negocios, parejas o traslados privados desde el aeropuerto."
                                     items={['Aire acondicionado', '2 maletas grandes', 'Servicio privado']}
                                 />
                                 <FleetCard
                                     image={images.suv}
-                                    label="4-6 pasajeros"
+                                    label="1-3 pasajeros"
                                     title="SUV Familiar"
                                     text="Mayor espacio, comodidad y capacidad para familias o grupos pequeños."
                                     items={['Mas espacio interior', '4 maletas grandes', 'Recomendado para Antigua y Lago Atitlan']}
@@ -462,7 +462,7 @@ export default function Welcome({ rutas = [], urls = {} }) {
                                 />
                                 <FleetCard
                                     image={images.micro}
-                                    label="7-15 pasajeros"
+                                    label="1-7 pasajeros"
                                     title="Microbus Grupal"
                                     text="Solucion comoda para excursiones, eventos, colegios o empresas."
                                     items={['Equipaje grupal', 'Viajes corporativos', 'Tours y eventos']}
